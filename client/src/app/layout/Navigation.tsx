@@ -24,6 +24,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Task } from '../models/task'; 
+import AppRouter from '../routing/AppRouter';
 
 const drawerWidth = 240;
 
@@ -96,25 +97,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+
 export default function MiniDrawer() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const [tasks, setTasks] = React.useState<Task[]>([])
-
-  interface Props {
-    page: string;
-  }
-
-  React.useEffect(() => {
-    fetch('http://localhost:5000/api/tasks')
-      .then(response => response.json())
-      .then(data => setTasks(data))
-  }, [])
-
-  
-  
-
-  
+  const [open, setOpen] = React.useState(false); 
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -142,7 +128,7 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6">
-            THIS SPRINT
+             THIS PAGE
           </Typography>
           <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', mr: '20px'}}>
             6/26 - 7/5
@@ -209,8 +195,8 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* Below will go the page ternary */}
-        <SprintView tasks={tasks}/>         
+        {/* Below handles the routing */}
+        <AppRouter />        
       </Box>
     </Box>
   );

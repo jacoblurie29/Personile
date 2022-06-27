@@ -10,6 +10,7 @@ export default function TaskColumnView({tasks}: Props) {
 
     return (
         <Box>
+            { /* Might want to abstract the card in the future */ }
             {tasks.map(task => (
                 
                 <Card sx={{ minWidth: 200, margin: "10px auto", width: 400 }} elevation={2}>
@@ -19,8 +20,13 @@ export default function TaskColumnView({tasks}: Props) {
                         {task.description}
                     </Typography>
                     </CardContent>
-                    <CardActions>
-                        <StateToggleButton startingState={task.currentState}/>
+                    <CardActions sx={{display: 'flex', width: 'auto'}}>
+                        <Box sx={{flexGrow: 1, textAlign: 'left'}}>
+                            <StateToggleButton startingState={task.currentState}/>
+                        </Box>
+                        <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px'}}>
+                            <Button variant='contained'>Open task</Button>
+                        </Box>
                     </CardActions>
                 </Card>
 
