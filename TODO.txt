@@ -1,0 +1,26 @@
+TODO:
+
+NOTES: All operations that can be done with the dummy database should be done before the authorization is added
+       FOLOW ALONG WITH THE COURSE AND DON'T JUMP TOO MUCH
+
+Error handling
+Reception delay
+Sprint page date range selector
+Today page
+Sprint/Today/Future page add button (animate up cirle)
+Task more pop up (split into two - view and edit, also used for add)
+Page titles
+Status posting/updating
+Sprint data structure
+Dto's
+Grouping by color
+Sprint page coloring
+Widget card implementation
+Widget graphs
+
+
+Later:
+Authorization
+Roles
+Accounts
+Groups

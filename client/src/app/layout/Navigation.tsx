@@ -25,8 +25,30 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Task } from '../models/task'; 
 import AppRouter from '../routing/AppRouter';
+import { Link, NavLink } from 'react-router-dom';
 
 const drawerWidth = 240;
+
+const navButtonStyles = {
+  display: 'block',
+  color: 'inherit',
+  typography: 'h6',
+  '&.active': {
+    backgroundColor: '#DCDCDC'
+  }
+}
+
+const sprintLinks = [
+  {linkTitle: "Today", linkRoute: '/today'},
+  {linkTitle: "Sprint", linkRoute: '/sprint'},
+  {linkTitle: "Future", linkRoute: '/future'}
+]
+
+const adminLinks = [
+  {linkTitle: "Profile", linkRoute: "/profile"},
+  {linkTitle: "Settings", linkRoute: "/settings"},
+  {linkTitle: "Logout", linkRoute: "/logout"}
+]
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -144,14 +166,19 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Today', 'Sprint', 'Future'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {sprintLinks.map(({linkTitle, linkRoute}, index) => (
+            <ListItem key={linkRoute}
+                      disablePadding 
+                      sx={navButtonStyles}
+                      component={NavLink}
+                      to={linkRoute}>
+                      
               <ListItemButton
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
-                }}
+                }}         
               >
                 <ListItemIcon
                   sx={{
@@ -162,15 +189,19 @@ export default function MiniDrawer() {
                 >
                   {index === 0 ? <TodayIcon /> : index === 1 ? <DateRangeIcon /> : <AccessTimeIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {['Profile', 'Settings', 'Logout'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {adminLinks.map(({linkTitle, linkRoute}, index) => (
+            <ListItem key={linkRoute} 
+                      disablePadding
+                      component={NavLink}
+                      to={linkRoute}
+                      sx={navButtonStyles}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -187,7 +218,7 @@ export default function MiniDrawer() {
                 >
                   {index === 0 ? <AccountBoxIcon /> : index === 1 ? <SettingsIcon /> : <LogoutIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}

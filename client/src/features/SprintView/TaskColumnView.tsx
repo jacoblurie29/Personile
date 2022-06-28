@@ -9,11 +9,11 @@ interface Props {
 export default function TaskColumnView({tasks}: Props) {
 
     return (
-        <Box>
+        <Box padding={'10px'}>
             { /* Might want to abstract the card in the future */ }
             {tasks.map(task => (
                 
-                <Card sx={{ minWidth: 200, margin: "10px auto", width: 400 }} elevation={2}>
+                <Card sx={{margin: "10px auto", width: "100%" }} elevation={2}>
                     <CardHeader title = {task.name} />
                     <CardContent>
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
