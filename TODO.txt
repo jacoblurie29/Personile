@@ -1,7 +1,7 @@
-TODO:
+!!! PROJECT TODO LIST !!!
 
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
-       FOLOW ALONG WITH THE COURSE AND DON'T JUMP TOO MUCH
+       FOLLOW ALONG WITH THE COURSE AND DON'T JUMP TOO MUCH
 
 Error handling
 Reception delay
