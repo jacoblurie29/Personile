@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -16,16 +15,18 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import SprintView from '../../features/SprintView/SprintView';
 import TodayIcon from '@mui/icons-material/Today';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Task } from '../models/task'; 
 import AppRouter from '../routing/AppRouter';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { FormControl, Select, MenuItem, SelectChangeEvent, CircularProgress } from '@mui/material';
+import { useEffect, useState } from 'react';
+import agent from '../api/agent';
+import { Task } from '../models/task';
 
 const drawerWidth = 240;
 
@@ -120,9 +121,41 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-export default function MiniDrawer() {
+export default function Navigation() {
+
+  const [loading, setLoading] = useState(true);
+  const [sprint, setSprint] = useState<string>();
+  const [sprints, setSprints] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>();
+
+  const handleSprintChange = (event: SelectChangeEvent) => {
+      setSprint(event.target.value);
+      var currentSprint = event.target.value;
+      agent.Sprint.tasks(currentSprint).then(response => setTasks(response));
+  }
+
+  useEffect(() => {
+      agent.Sprint.titles()
+      .then(response => {
+          setSprints(response);
+
+          // setSprints state function is asyncronous so a local variable must be introduced
+          var currentSprint = ""
+          if (sprints) {
+
+            // HERE is where the current sprint will have to be figured out
+            setSprint(response[0]);
+            currentSprint = response[0];
+          }
+          agent.Sprint.tasks(currentSprint).then(response => setTasks(response));
+        })
+      .finally(() => setLoading(false))
+      
+  }, [])
+
+
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false); 
+  const [open, setOpen] = useState(false); 
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -131,6 +164,8 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  if (loading) return <CircularProgress />
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -152,10 +187,20 @@ export default function MiniDrawer() {
           <Typography variant="h6">
              THIS PAGE
           </Typography>
-          <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', mr: '20px'}}>
-            6/26 - 7/5
+          <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
+              <FormControl sx={{m: 1, minWidth: "120px"}}>
+                <Select
+                    value={sprint!}
+                    onChange={handleSprintChange}
+                    displayEmpty
+                    sx={{ backgroundColor: 'white'}}
+                >
+                    {sprints?.map((title, index) => (
+                        <MenuItem key={index} value={title}>{title}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
           </Typography>
-          { /*Selector for sprint goes here*/}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -227,7 +272,7 @@ export default function MiniDrawer() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {/* Below handles the routing */}
-        <AppRouter />        
+        <AppRouter tasks={tasks || []}/>        
       </Box>
     </Box>
   );

@@ -5,9 +5,10 @@ NOTES: All operations that can be done with the dummy database should be done be
 
 Error handling
 Reception delay
-Sprint page date range selector
+Sprint page date range selector (Selector finished, date parsing needed)
 Today page
 Sprint/Today/Future page add button (animate up cirle)
+Add subtask feature
 Task more pop up (split into two - view and edit, also used for add)
 Page titles
 Status posting/updating
