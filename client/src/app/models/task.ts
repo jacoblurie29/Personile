@@ -1,3 +1,5 @@
+import { SubTask } from "./subTask";
+
 export interface Task {
     id: string;
     userId: string;
@@ -13,4 +15,5 @@ export interface Task {
     tags: string;
     effort: number;
     color: number;
+    subTasks: SubTask[];
 }

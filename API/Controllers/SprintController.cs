@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -22,27 +23,23 @@ namespace API.Controllers
             
         }
 
+        // Gets the sprint structure for a specific sprint id
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<TaskEntity>>> GetSprint(string id) {
+        public async Task<ActionResult<SprintEntity>> GetSprint(string id) {
 
-            return await _context.Tasks.Where(t => t.SprintId == id).ToListAsync();
+            var sprint = await _context.Sprints.Where(s => s.SprintEntityId == id).FirstOrDefaultAsync();
 
-        }
-
-/*
-        [HttpGet("{id}/subtasks")]
-        public async Task<ActionResult<List<SubTaskEntity>>> GetSubTaskForSprint(string id) {
-
-            return await _context.Tasks.Where()
+            return sprint;
 
         }
-*/
 
+
+        // Gets the titles of all sprints
         [HttpGet("titles")]
         public async Task<ActionResult<List<string>>> GetSprintTitles() {
-            return await _context.Tasks.Select(t => t.SprintId).Distinct().ToListAsync();
+            return await _context.Sprints.Select(t => t.SprintEntityId).Distinct().ToListAsync();
         }
-
+        
 
     }
 }

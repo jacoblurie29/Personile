@@ -131,7 +131,7 @@ export default function Navigation() {
   const handleSprintChange = (event: SelectChangeEvent) => {
       setSprint(event.target.value);
       var currentSprint = event.target.value;
-      agent.Sprint.tasks(currentSprint).then(response => setTasks(response));
+      agent.Sprint.getSprint(currentSprint).then(response => setTasks(response.tasks));
   }
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function Navigation() {
             setSprint(response[0]);
             currentSprint = response[0];
           }
-          agent.Sprint.tasks(currentSprint).then(response => setTasks(response));
+          agent.Sprint.getSprint(currentSprint).then(response => setTasks(response.tasks));
         })
       .finally(() => setLoading(false))
       

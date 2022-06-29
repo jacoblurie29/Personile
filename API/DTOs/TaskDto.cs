@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Entities
+namespace API.DTOs
 {
-    public class TaskEntity
+    public class TaskDto
     {
-        public string TaskEntityId { get; set; }
+         public string Id { get; set; }
+        public string UserId { get; set; }
+        public string SprintId { get; set; }
+        public string GroupId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Links { get; set; }
@@ -18,9 +21,6 @@ namespace API.Entities
         public string Tags { get; set; }
         public int Effort { get; set; }
         public int Color { get; set; }
-        public virtual List<SubTaskEntity> SubTasks { get; set; }
-        public virtual SprintEntity Sprint { get; set; }
-        public virtual string SprintId { get; set; }
-        
+        public List<SubTaskDto> SubTasks { get; set; }
     }
 }

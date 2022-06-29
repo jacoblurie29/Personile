@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,10 @@ namespace API.Data
         {
         }
 
+        public DbSet<SprintEntity> Sprints { get; set; }
+
         public DbSet<TaskEntity> Tasks { get; set; }
+
+        public DbSet<SubTaskEntity> SubTasks { get; set; }
     }
 }

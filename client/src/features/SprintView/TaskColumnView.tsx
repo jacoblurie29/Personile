@@ -1,8 +1,9 @@
-import { Box, Button, Card, CardHeader, Grid, Typography, Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import { Box, Button, Card, CardHeader, Grid, Typography, Accordion, AccordionDetails, AccordionSummary, Paper, Divider } from "@mui/material";
 import React from "react";
 import { Task } from "../../app/models/task";
 import StateToggleButton from "./StateToggleButton";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SubTasksView from "./SubTasksView";
 
 interface Props {
     tasks: Task[],
@@ -39,7 +40,11 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                         
                     </Card>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <Divider />
+                    <AccordionDetails sx={{alignItems: 'center'}}>
+                    <Card elevation={1} sx={{width: '100%', mb: '10px', backgroundColor: 'rgba(256, 256, 256, 0.5)'}}>
+                        {task.subTasks.length > 0 && <SubTasksView task={task} />}
+                    </Card>
                     <Grid container sx={{display: 'flex', width: 'auto'}}>
                         <Grid item xs={6}>
                             <Box sx={{flexGrow: 1, textAlign: 'left'}}>
@@ -47,7 +52,7 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                             </Box>
                         </Grid>
                         <Grid item xs={6}>
-                            <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px'}}>
+                            <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
                                 <Button variant='contained'>Open task</Button>
                             </Box>
                         </Grid>

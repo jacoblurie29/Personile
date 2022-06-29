@@ -14,7 +14,7 @@ const requests = {
 
 // Futute: edit the tasks to have a sprint id
 const Sprint = {
-    tasks: (id: string) => requests.get(`sprint/${id}`),
+    getSprint: (id: string) => requests.get(`sprint/${id}`),
     titles: () => requests.get('sprint/titles')
 }
 

@@ -22,12 +22,13 @@ export default function StateToggleButton({startingState} : Props) {
 
     return (
       <ToggleButtonGroup
+        sx={{backgroundColor:'white'}}
         value={alignment}
         exclusive
         onChange={handleAlignment}
         aria-label="text alignment"
       >
-            <ToggleButton value="new" aria-label="left aligned" selected={startingState === 0} >
+            <ToggleButton value="new" aria-label="left aligned" selected={startingState === 0}>
             <HighlightOffIcon color="error"/>
             </ToggleButton>
             <ToggleButton value="active" aria-label="centered" selected={startingState === 1}>

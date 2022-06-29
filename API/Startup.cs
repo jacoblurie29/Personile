@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using API.Data;
 using API.Middleware;
 using Microsoft.AspNetCore.Builder;
@@ -30,7 +31,10 @@ namespace API
             });
             services.AddDbContext<PersonileContext>(opt => {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                opt.UseLazyLoadingProxies();
             });
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             services.AddCors();
         }
 

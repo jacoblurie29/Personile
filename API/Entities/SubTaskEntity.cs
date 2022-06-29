@@ -7,9 +7,10 @@ namespace API.Entities
 {
     public class SubTaskEntity
     {
-        public string Id { get; set; }
-        public string SprintId { get; set; }
+        public string SubTaskEntityId { get; set; }
         public string Status { get; set; }
         public string Details { get; set; }
+        public virtual TaskEntity Task { get; set; }
+        public virtual string TaskEntityId { get; set; }
     }
 }
