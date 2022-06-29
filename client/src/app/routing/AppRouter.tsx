@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Route } from "react-router-dom";
 import SprintView from "../../features/SprintView/SprintView";
 import TodayView from "../../features/TodayView/TodayView";

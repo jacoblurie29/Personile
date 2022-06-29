@@ -29,6 +29,15 @@ namespace API.Controllers
 
         }
 
+/*
+        [HttpGet("{id}/subtasks")]
+        public async Task<ActionResult<List<SubTaskEntity>>> GetSubTaskForSprint(string id) {
+
+            return await _context.Tasks.Where()
+
+        }
+*/
+
         [HttpGet("titles")]
         public async Task<ActionResult<List<string>>> GetSprintTitles() {
             return await _context.Tasks.Select(t => t.SprintId).Distinct().ToListAsync();

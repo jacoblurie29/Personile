@@ -141,7 +141,7 @@ export default function Navigation() {
 
           // setSprints state function is asyncronous so a local variable must be introduced
           var currentSprint = ""
-          if (sprints) {
+          if (response) {
 
             // HERE is where the current sprint will have to be figured out
             setSprint(response[0]);
@@ -269,7 +269,7 @@ export default function Navigation() {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, height: '95vh' }}>
         <DrawerHeader />
         {/* Below handles the routing */}
         <AppRouter tasks={tasks || []}/>        
