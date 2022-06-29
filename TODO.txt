@@ -1,7 +1,6 @@
 !!! PROJECT TODO LIST !!!
 
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
-       FOLLOW ALONG WITH THE COURSE AND DON'T JUMP TOO MUCH
 
 6/29
     1) Add dummy SubTaskData
