@@ -15,7 +15,8 @@ NOTES: All operations that can be done with the dummy database should be done be
     10) Sprint frontend refactor
 
 Essentially by the end of these ten tasks I want the frontend to request a SPRINT by it's ID and get returned the
-sprint object with the list of Tasks that have lists of SubTasks. The dummy data needs to be updated to correctly reflect this.
+sprint object with the list of Tasks that have lists of SubTasks. This will require a slight restructure of the backend endpoints.
+The dummy data needs to be updated to correctly reflect this (15 tasks + 2/3 subtasks each should be enough for now).
 After this I will pause forward development to begin abstracting the frontend code so it is more readable.
 
 TODO CURRENT LIST:
@@ -35,7 +36,8 @@ Widget graphs
 
 
 FUTURE:
-Authorization
+Authorization/Authentication (JWT)
 Roles
 Accounts
-Groups
+Groups?
+Collborative boards?
