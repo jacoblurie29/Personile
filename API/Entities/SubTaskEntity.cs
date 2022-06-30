@@ -10,7 +10,7 @@ namespace API.Entities
         public string SubTaskEntityId { get; set; }
         public string Status { get; set; }
         public string Details { get; set; }
-        public virtual TaskEntity Task { get; set; }
-        public virtual string TaskEntityId { get; set; }
+        public TaskEntity Task { get; set; }
+        public string TaskId { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,12 @@ namespace API.Controllers
         }
 
         // Gets the sprint structure for a specific sprint id
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SprintEntity>> GetSprint(string id) {
+        [HttpGet("{sprintId}")]
+        public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId) {
 
-            var sprint = await _context.Sprints.Where(s => s.SprintEntityId == id).FirstOrDefaultAsync();
+            var sprint = await _context.Sprints.Where(s => s.SprintEntityId == sprintId).Include(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            return sprint;
+            return sprint.mapSprintToDto();
 
         }
 
@@ -39,7 +40,14 @@ namespace API.Controllers
         public async Task<ActionResult<List<string>>> GetSprintTitles() {
             return await _context.Sprints.Select(t => t.SprintEntityId).Distinct().ToListAsync();
         }
-        
 
+/*
+        // Adds a task to a specific sprint
+        [HttpPost("{sprintId}")]
+        public async Task<ActionResult<Task>> AddTaskToSprint(TaskDto taskDto) {
+
+        }
+*/
+ 
     }
 }

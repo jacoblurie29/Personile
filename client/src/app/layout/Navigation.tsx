@@ -27,6 +27,7 @@ import { FormControl, Select, MenuItem, SelectChangeEvent, CircularProgress } fr
 import { useEffect, useState } from 'react';
 import agent from '../api/agent';
 import { Task } from '../models/task';
+import LoadingComponent from './LoadingComponent';
 
 const drawerWidth = 240;
 
@@ -121,39 +122,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
+
 export default function Navigation() {
 
   const [loading, setLoading] = useState(true);
-  const [sprint, setSprint] = useState<string>();
-  const [sprints, setSprints] = useState<string[]>([]);
-  const [tasks, setTasks] = useState<Task[]>();
-
-  const handleSprintChange = (event: SelectChangeEvent) => {
-      setSprint(event.target.value);
-      var currentSprint = event.target.value;
-      agent.Sprint.getSprint(currentSprint).then(response => setTasks(response.tasks));
-  }
-
-  useEffect(() => {
-      agent.Sprint.titles()
-      .then(response => {
-          setSprints(response);
-
-          // setSprints state function is asyncronous so a local variable must be introduced
-          var currentSprint = ""
-          if (response) {
-
-            // HERE is where the current sprint will have to be figured out
-            setSprint(response[0]);
-            currentSprint = response[0];
-          }
-          agent.Sprint.getSprint(currentSprint).then(response => setTasks(response.tasks));
-        })
-      .finally(() => setLoading(false))
-      
-  }, [])
-
-
   const theme = useTheme();
   const [open, setOpen] = useState(false); 
 
@@ -165,7 +137,6 @@ export default function Navigation() {
     setOpen(false);
   };
 
-  if (loading) return <CircularProgress />
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -186,20 +157,6 @@ export default function Navigation() {
           </IconButton>
           <Typography variant="h6">
              THIS PAGE
-          </Typography>
-          <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
-              <FormControl sx={{m: 1, minWidth: "120px"}}>
-                <Select
-                    value={sprint!}
-                    onChange={handleSprintChange}
-                    displayEmpty
-                    sx={{ backgroundColor: 'white'}}
-                >
-                    {sprints?.map((title, index) => (
-                        <MenuItem key={index} value={title}>{title}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
           </Typography>
         </Toolbar>
       </AppBar>
@@ -272,7 +229,7 @@ export default function Navigation() {
       <Box component="main" sx={{ flexGrow: 1, p: 3, height: '95vh' }}>
         <DrawerHeader />
         {/* Below handles the routing */}
-        <AppRouter tasks={tasks || []}/>        
+          <AppRouter />         
       </Box>
     </Box>
   );

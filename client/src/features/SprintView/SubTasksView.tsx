@@ -1,7 +1,8 @@
-import { Avatar, Checkbox, Divider, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Typography } from "@mui/material";
+import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
 import { useState } from "react";
 import { Task } from "../../app/models/task";
 import CircleIcon from '@mui/icons-material/Circle';
+import LoadingComponent from "../../app/layout/LoadingComponent";
 
 interface Props {
     task: Task
@@ -23,6 +24,7 @@ export default function SubTasksView({task}: Props) {
 
         setChecked(newChecked);
     };
+
 
     return (
         <>
@@ -56,7 +58,6 @@ export default function SubTasksView({task}: Props) {
             })}
             </List> 
         </>
-        // {task.subTasks.map((subTask, index) => (
-        // ))}
+
     )
 }

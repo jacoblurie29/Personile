@@ -47,12 +47,12 @@ namespace API.Data.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TaskEntityId")
+                    b.Property<string>("TaskId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("SubTaskEntityId");
 
-                    b.HasIndex("TaskEntityId");
+                    b.HasIndex("TaskId");
 
                     b.ToTable("SubTasks");
                 });
@@ -106,7 +106,7 @@ namespace API.Data.Migrations
                 {
                     b.HasOne("API.Entities.TaskEntity", "Task")
                         .WithMany("SubTasks")
-                        .HasForeignKey("TaskEntityId");
+                        .HasForeignKey("TaskId");
 
                     b.Navigation("Task");
                 });

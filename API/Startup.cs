@@ -31,10 +31,7 @@ namespace API
             });
             services.AddDbContext<PersonileContext>(opt => {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-                opt.UseLazyLoadingProxies();
             });
-            services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             services.AddCors();
         }
 

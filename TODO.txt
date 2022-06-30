@@ -2,23 +2,6 @@
 
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
 
-6/29
-    1) Add dummy SubTaskData  DONE
-    2) Finish SubTask end point   DONE
-    3) Implement SubTask frontend DONE
-    4) Create subtask UI DONE
-    5) Error handling
-    6) Reception delay
-    7) Sprint entity   DONE
-    8) Dummy sprint data   DONE
-    9) Sprint end point fixes   DONE
-    10) Sprint frontend refactor DONE
-
-Essentially by the end of these ten tasks I want the frontend to request a SPRINT by it's ID and get returned the
-sprint object with the list of Tasks that have lists of SubTasks. This will require a slight restructure of the backend endpoints.
-The dummy data needs to be updated to correctly reflect this (15 tasks + 2/3 subtasks each should be enough for now).
-After this I will pause forward development to begin abstracting the frontend code so it is more readable.
-
 TODO CURRENT LIST:
 Error handling
 Reception delay

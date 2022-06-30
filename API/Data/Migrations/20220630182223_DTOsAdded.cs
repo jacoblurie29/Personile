@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class SubTasksAdded : Migration
+    public partial class DTOsAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,22 +57,22 @@ namespace API.Data.Migrations
                     SubTaskEntityId = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: true),
                     Details = table.Column<string>(type: "TEXT", nullable: true),
-                    TaskEntityId = table.Column<string>(type: "TEXT", nullable: true)
+                    TaskId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubTasks", x => x.SubTaskEntityId);
                     table.ForeignKey(
-                        name: "FK_SubTasks_Tasks_TaskEntityId",
-                        column: x => x.TaskEntityId,
+                        name: "FK_SubTasks_Tasks_TaskId",
+                        column: x => x.TaskId,
                         principalTable: "Tasks",
                         principalColumn: "TaskEntityId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubTasks_TaskEntityId",
+                name: "IX_SubTasks_TaskId",
                 table: "SubTasks",
-                column: "TaskEntityId");
+                column: "TaskId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_SprintId",

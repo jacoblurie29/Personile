@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardHeader, Grid, Typography, Accordion, AccordionDetails, AccordionSummary, Paper, Divider } from "@mui/material";
+import { Box, Button, Card, CardHeader, Grid, Typography, Accordion, AccordionDetails, AccordionSummary, Divider } from "@mui/material";
 import React from "react";
 import { Task } from "../../app/models/task";
 import StateToggleButton from "./StateToggleButton";

@@ -28,7 +28,6 @@ namespace API.Data
             var tasksForSprint0 = new List<TaskEntity> {
                 new TaskEntity {
                     TaskEntityId = "TASK_ID_0",
-                    SprintId = "SPRINT_ID_1",
                     Name = "Build app frontend",
                     Description = "Build the frontend of the Personile application using React, TypeScript, and Redux",
                     Links="https://www.google.com|https://linkedin.com|https://www.instagram.com",
@@ -42,7 +41,6 @@ namespace API.Data
                 },
                 new TaskEntity {
                     TaskEntityId = "TASK_ID_1",
-                    SprintId = "SPRINT_ID_1",
                     Name = "Build app backend",
                     Description = "Build the backend of the Personile application using C# and .NET",
                     Links="https://www.fox.com|https://linkedin.com|https://www.instagram.com",
@@ -55,7 +53,6 @@ namespace API.Data
                     Color = 0
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_2",
-                    SprintId = "SPRINT_ID_1",
                     Name = "Build app database",
                     Description = "Build the database of the Personile application using SQL and .NET EF",
                     Links="https://www.google.com|https://snapchat.com|https://www.instagram.com",
@@ -68,7 +65,6 @@ namespace API.Data
                     Color = 0
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_3",
-                    SprintId = "SPRINT_ID_1",
                     Name = "Build app marketing",
                     Description = "Build the marketing of the Personile application using Adobe",
                     Links="https://www.google.com|https://linkedin.com|https://www.instagram.com",
@@ -85,7 +81,6 @@ namespace API.Data
         var tasksForSprint1 = new List<TaskEntity> { 
             new TaskEntity {
                     TaskEntityId = "TASK_ID_4",
-                    SprintId = "SPRINT_ID_1",
                     Name = "Create app social media",
                     Description = "Build the social media presence of the Personile application",
                     Links="https://www.google.com|https://linkedin.com|https://www.tiktok.com",
@@ -98,7 +93,6 @@ namespace API.Data
                     Color = 1
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_5",
-                    SprintId = "SPRINT_ID_0",
                     Name = "Make app idea",
                     Description = "Create the idea for the Personile application",
                     Links="https://www.cnn.com|https://linkedin.com|https://www.instagram.com",
@@ -111,7 +105,6 @@ namespace API.Data
                     Color = 2
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_6",
-                    SprintId = "SPRINT_ID_0",
                     Name = "Collaborate with team",
                     Description = "Work with other team members to create the application",
                     Links="https://www.cnn.com|https://linkedin.com|https://www.instagram.com",
@@ -124,7 +117,6 @@ namespace API.Data
                     Color = 2
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_7",
-                    SprintId = "SPRINT_ID_0",
                     Name = "Get outside funding",
                     Description = "Convince people to invest in the application",
                     Links="https://www.cnn.com|https://linkedin.com|https://www.instagram.com",
@@ -137,7 +129,6 @@ namespace API.Data
                     Color = 2
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_8",
-                    SprintId = "SPRINT_ID_0",
                     Name = "Write app documentation",
                     Description = "Write wiki on how people can use the applcation efficiently",
                     Links="https://www.cnn.com|https://linkedin.com|https://www.instagram.com",
@@ -158,43 +149,27 @@ namespace API.Data
                             SubTaskEntityId = "SUBTASK_ID_1",
                             Status = "Incomplete",
                             Details = "Details",
-                            TaskEntityId = tasksForSprint0[0].TaskEntityId,
-                            Task = tasksForSprint0[0]
                         },
                         new SubTaskEntity {
                             SubTaskEntityId = "SUBTASK_ID_2",
                             Status = "Incomplete",
                             Details = "Details",
-                            TaskEntityId = tasksForSprint0[0].TaskEntityId,
-                            Task = tasksForSprint0[0]   
                         },
                         new SubTaskEntity {
                             SubTaskEntityId = "SUBTASK_ID_3",
                             Status = "Complete",
                             Details = "Details",
-                            TaskEntityId = tasksForSprint0[0].TaskEntityId,
-                            Task = tasksForSprint0[0]
                         },
                         new SubTaskEntity {
                             SubTaskEntityId = "SUBTASK_ID_4",
                             Status = "Complete",
                             Details = "Details",
-                            TaskEntityId = tasksForSprint0[0].TaskEntityId,
-                            Task = tasksForSprint0[0]
                         }
                 };
 
         tasksForSprint0[0].SubTasks = subTasksForTask0;
 
 
-            
-        for(int i = 0; i < tasksForSprint0.Count; i++) {
-            tasksForSprint0[i].Sprint = sprints[0];
-        }
-
-        for(int i = 0; i < tasksForSprint1.Count; i++) {
-            tasksForSprint1[i].Sprint = sprints[1];
-        }
 
         sprints[0].Tasks = tasksForSprint0;
 

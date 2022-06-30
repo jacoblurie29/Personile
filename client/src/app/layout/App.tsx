@@ -1,5 +1,6 @@
-import CssBaseline from '@mui/material/CssBaseline';
+import { ToastContainer } from 'react-toastify';
 import Navigation from "./Navigation";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 /*
@@ -17,7 +18,17 @@ function App() {
 
   
   return (
-    <>      
+    <>
+        <ToastContainer position="bottom-left"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        theme='dark'
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover/>
         <Navigation />
     </>
   );

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220629161853_SubTasksAdded")]
-    partial class SubTasksAdded
+    [Migration("20220630182223_DTOsAdded")]
+    partial class DTOsAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,12 +49,12 @@ namespace API.Data.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TaskEntityId")
+                    b.Property<string>("TaskId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("SubTaskEntityId");
 
-                    b.HasIndex("TaskEntityId");
+                    b.HasIndex("TaskId");
 
                     b.ToTable("SubTasks");
                 });
@@ -108,7 +108,7 @@ namespace API.Data.Migrations
                 {
                     b.HasOne("API.Entities.TaskEntity", "Task")
                         .WithMany("SubTasks")
-                        .HasForeignKey("TaskEntityId");
+                        .HasForeignKey("TaskId");
 
                     b.Navigation("Task");
                 });

@@ -3,7 +3,6 @@ import { useState } from "react";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PunchClockIcon from '@mui/icons-material/PunchClock';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import internal from "stream";
 
 interface Props {
     startingState: number
