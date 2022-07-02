@@ -77,8 +77,8 @@ export default function SprintView() {
 
     return (
         <Box sx={{ flexGrow: 1, height: '100%'}}>
-            <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
-                <FormControl sx={{m: 1, minWidth: "120px"}}>
+            <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px', marginBottom: '20px'}}>
+                <FormControl sx={{m: '5px', minWidth: "120px"}}>
                     <Select
                         value={sprint}
                         onChange={handleSprintChange}
@@ -93,23 +93,23 @@ export default function SprintView() {
             </Typography>
             <Grid container 
                 spacing={1}
-                columns={12.2}
-                sx={{height: '100%'}}
+                columns={12.5}
+                sx={{height: '100%', width: '100%'}}
                 display='flex'
                 justifyContent='center'
 
                 >
-                <Grid item xs={4} justifyContent="center">
+                <Grid item xs={4} justifyContent="center" sx={{backgroundColor:'#EEEEEE', borderRadius:'5px'}} marginRight='20px' marginBottom='10px'>
                     <TaskColumnView stateTitle={"New"} tasks={tasks?.filter((task) => {
                         return task.currentState === 0;
                     }) || []} />
                 </Grid>  
-                <Grid item xs={4}>
+                <Grid item xs={4} justifyContent="center" sx={{backgroundColor:'#EEEEEE', borderRadius:'5px'}} marginRight='20px' marginBottom='10px'>
                     <TaskColumnView stateTitle={"Active"} tasks={tasks?.filter((task) => {
                         return task.currentState === 1;
                     }) || []} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={4} justifyContent="center" sx={{backgroundColor:'#EEEEEE', borderRadius:'5px'}} marginBottom='10px'>
                     <TaskColumnView stateTitle={"Completed"} tasks={tasks?.filter((task) => {
                         return task.currentState === 2;
                     }) || []} />

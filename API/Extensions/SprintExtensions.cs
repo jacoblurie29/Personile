@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -37,5 +38,38 @@ namespace API.Extensions
                 };
 
             }
+        
+
+        public static TaskDto mapTaskToDto(this TaskEntity taskEntity) {
+            return new TaskDto {
+                    TaskEntityId = taskEntity.TaskEntityId,
+                    Name = taskEntity.Name,
+                    Description = taskEntity.Description,
+                    Links = taskEntity.Links,
+                    DateCreated = taskEntity.DateCreated,
+                    DateFinished = taskEntity.DateFinished,
+                    DueDate = taskEntity.DueDate,
+                    CurrentState = taskEntity.CurrentState,
+                    Tags = taskEntity.Tags,
+                    Effort = taskEntity.Effort,
+                    Color = taskEntity.Color,
+                    SubTasks = taskEntity.SubTasks.Select(subTask => new SubTaskDto {
+                        SubTaskEntityId = subTask.SubTaskEntityId,
+                        Status = subTask.Status,
+                        Details = subTask.Details
+                }).ToList()
+            };
         }
+
+        public static SubTaskDto mapSubtaskToDto(this SubTaskEntity subTaskEntity) {
+            return new SubTaskDto {
+                    SubTaskEntityId = subTaskEntity.SubTaskEntityId,
+                    Status = subTaskEntity.Status,
+                    Details = subTaskEntity.Details
+            };
+        }
+
+        
     }
+}
+    

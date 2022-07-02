@@ -3,8 +3,6 @@ import { SubTask } from "./subTask";
 export interface Task {
     id: string;
     userId: string;
-    sprintId: string;
-    groupId: string;
     name: string;
     description: string;
     links: string;

@@ -12,5 +12,11 @@ namespace API.Entities
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public List<TaskEntity> Tasks { get; set; }
+
+        public void AddTask(TaskEntity taskEntity) {
+            if (Tasks.All(task => task.TaskEntityId != taskEntity.TaskEntityId)) {
+                Tasks.Add(taskEntity);
+            }
+        }
     }
 }
