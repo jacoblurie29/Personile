@@ -4,9 +4,8 @@ import { Task } from "../../app/models/task";
 import StateToggleButton from "./StateToggleButton";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SubTasksView from "./SubTasksView";
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import PunchClockIcon from '@mui/icons-material/PunchClock';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import TaskDialog from "./TaskDialog";
+
 
 interface Props {
     tasks: Task[],
@@ -31,8 +30,11 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
     const handleClose = () => {
         setOpen(false);
     };
+
+
     const handleToggle = (task: Task) => {
         setFocusedTask(task);
+        setOpen(false);
         setOpen(true);
     };
 
@@ -56,7 +58,7 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                     <Divider />
                     <AccordionDetails sx={{alignItems: 'center'}}>
                     <Card elevation={1} sx={{width: '100%', mb: '10px', backgroundColor: 'rgba(256, 256, 256, 0.5)'}}>
-                        {task.subTasks.length > 0 && <SubTasksView task={task} />}
+                        {task.subTasks.length > 0 && <SubTasksView task={task} isDialog={false}/>}
                     </Card>
                     <Grid container sx={{display: 'flex', width: 'auto'}}>
                         <Grid item xs={6}>
@@ -74,75 +76,8 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                 </Accordion>
                 
             ))}
-            {open &&
-                <Backdrop
-                sx={{ color: '#FAFAFA', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={open}
-              >
-                <Dialog open={open} onClose={handleClose} maxWidth='xs'>
-                    <DialogTitle>{focusedTask?.name}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            {focusedTask?.description}
-                        </DialogContentText>
-                        <Divider sx={{paddingTop: '5px', paddingBottom: '5px'}}/>
-                        <Grid container paddingTop='10px' display='flex'>
-                            <Grid item xs={6}>
-                                {/* ABSTRACT THIS OUT IN THE FUTURE*/}
-                                {focusedTask?.currentState == 0 ? 
-                                    <>
-                                        <Grid container>
-                                            <Grid item paddingRight='5px'>
-                                                <HighlightOffIcon color="error"/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="body1">New</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </>
-                               : focusedTask?.currentState == 1 ? 
-                                    <>
-                                        <Grid container>
-                                            <Grid item paddingRight='5px'>
-                                                <PunchClockIcon color="warning"/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="body1">Active</Typography>
-                                            </Grid>
-                                        </Grid>
-                                        
-                                    </> 
-                               : 
-                                    <>
-                                        <Grid container>
-                                            <Grid item paddingRight='5px'>
-                                                <CheckCircleOutlineIcon color="success"/>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="body1">Completed</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </> }
-                            </Grid>
-                            <Grid item xs={6}>
-                                {focusedTask?.dueDate &&
-                                    <Typography variant="body1" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
-                                        Due date:&nbsp;
-                                        { 
-                                        new Date(focusedTask?.dueDate).toLocaleDateString()
-                                        }
-                                    </Typography>                                
-                                }
-                            </Grid>
-                        </Grid>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Edit</Button>
-                        <Button onClick={handleClose}>Close</Button>
-                    </DialogActions>
-                </Dialog>
-                
-              </Backdrop>
+            {focusedTask != null &&
+                <TaskDialog focusedTask={focusedTask} open={open} handleClose={handleClose} />
             }   
         </Box>
     )
