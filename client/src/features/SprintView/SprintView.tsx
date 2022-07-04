@@ -23,18 +23,19 @@ export default function SprintView() {
       
         // useEffect loads the titles for the selector and the initial tasks for the screen
         useEffect(() => {
-           var title = "";
-           if(titles != null) {
+            setLoading(true);
+
+            var title = "";
+            if(titles != null) {
                 title = titles[0];
                 setCurrentSprintTitle(titles[0]);
-           }
+            }
 
-           if(sprints != null) {
-                var deepSprintCopy = Object.values(sprints);
-                var cs = deepSprintCopy.find(x => x.sprintEntityId === title);
-                setTasks(cs?.tasks);
-           }
-           setLoading(false);
+            if(sprints != null) {
+                setTasks(sprints.find(x => x.sprintEntityId === currentSprintTitle)?.tasks);
+            }
+
+            setLoading(false);
            
         }, [sprints, titles])
 
