@@ -9,7 +9,8 @@ namespace API.Data
         public PersonileContext(DbContextOptions options) : base(options)
         {
         }
-
+        
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<SprintEntity> Sprints { get; set; }
 
         public DbSet<TaskEntity> Tasks { get; set; }

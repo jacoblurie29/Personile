@@ -5,15 +5,48 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Extensions
 {
     public static class SprintExtensions
     {
+
+        public static UserDto mapUserToDto(this UserEntity userEntity) {
+            return new UserDto {
+                UserEntityId = userEntity.UserEntityId,
+                FirstName = userEntity.FirstName,
+                LastName = userEntity.LastName,
+                Email = userEntity.Email,
+                Sprints = userEntity.Sprints.Select(sprint => new SprintDto {
+                    SprintEntityId = sprint.SprintEntityId,
+                    StartDate = sprint.StartDate,
+                    EndDate = sprint.EndDate,
+                    Tasks = sprint.Tasks.Select(task => new TaskDto {
+                        TaskEntityId = task.TaskEntityId,
+                        Name = task.Name,
+                        Description = task.Description,
+                        Links = task.Links,
+                        DateCreated = task.DateCreated,
+                        DateFinished = task.DateFinished,
+                        DueDate = task.DueDate,
+                        CurrentState = task.CurrentState,
+                        Tags = task.Tags,
+                        Effort = task.Effort,
+                        Color = task.Color,
+                        SubTasks = task.SubTasks.Select(subTask => new SubTaskDto {
+                            SubTaskEntityId = subTask.SubTaskEntityId,
+                            Status = subTask.Status,
+                            Details = subTask.Details
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
+        }
+
         public static SprintDto mapSprintToDto(this SprintEntity sprintEntity) {
             return new SprintDto {
                 SprintEntityId = sprintEntity.SprintEntityId,
-                UserId = sprintEntity.UserId,
                 StartDate = sprintEntity.StartDate,
                 EndDate = sprintEntity.EndDate,
                 Tasks = sprintEntity.Tasks.Select(task => new TaskDto {

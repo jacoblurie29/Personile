@@ -8,10 +8,11 @@ namespace API.Entities
     public class SprintEntity
     {
         public string SprintEntityId { get; set; }
-        public string UserId { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public List<TaskEntity> Tasks { get; set; }
+        public string UserId { get; set; }
+        public UserEntity User { get; set; }
 
         public void AddTask(TaskEntity taskEntity) {
             if (Tasks.All(task => task.TaskEntityId != taskEntity.TaskEntityId)) {

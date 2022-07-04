@@ -14,6 +14,13 @@ namespace API.Data
         public static void Initialize(PersonileContext context) {
             if(context.Sprints.Any()) return;
 
+            var user = new UserEntity {
+                UserEntityId = "USER_ID_1",
+                FirstName = "Jacob",
+                LastName = "Lurie",
+                Email = "jacoblurie29@gmail.com"
+            };
+
             var sprints = new List<SprintEntity>  {
                     new SprintEntity {
                         SprintEntityId = "SPRINT_ID_1",
@@ -175,14 +182,12 @@ namespace API.Data
 
         sprints[1].Tasks = tasksForSprint1;
 
-        foreach (var sprint in sprints)
-        {
-            context.Sprints.Add(sprint);
-        }
+        user.Sprints = sprints;
 
 
+        context.Users.Add(user);
 
-            context.SaveChanges();
+        context.SaveChanges();
         }
     }
 }

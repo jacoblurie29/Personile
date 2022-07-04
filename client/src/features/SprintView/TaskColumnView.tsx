@@ -1,10 +1,9 @@
-import { Box, Button, Card, CardHeader, Grid, Typography, Accordion, AccordionDetails, AccordionSummary, Divider, Backdrop, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { Box, Button, CardHeader, Grid, Typography, Accordion, AccordionDetails, AccordionSummary, Divider } from "@mui/material";
 import React, { useState } from "react";
 import { Task } from "../../app/models/task";
 import StateToggleButton from "./StateToggleButton";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SubTasksView from "./SubTasksView";
-import TaskDialog from "./TaskDialog";
+import TaskMoreDetails from "./TaskMoreDetails";
 
 
 interface Props {
@@ -15,8 +14,6 @@ interface Props {
 export default function TaskColumnView({tasks, stateTitle}: Props) {
 
     const [expanded, setExpanded] = useState<string | false>(false);
-    const [open, setOpen] = useState(false);
-    const [focusedTask, setFocusedTask] = useState<Task>();
 
     const handleChange =
       (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -24,42 +21,31 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
       };
 
     function chooseColor(title: String) {
-        return title === "New" ? '#FFCCCB' : stateTitle === "Active" ? '#FFDE99' : '#ABF7B1'
+        return title === "New" 
+            ? 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)' 
+            : stateTitle === "Active" ? 'linear-gradient(90deg, rgba(255,209,125,1) 0%, rgba(255,196,54,1) 100%)' 
+            : 'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'
     }
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-
-    const handleToggle = (task: Task) => {
-        setFocusedTask(task);
-        setOpen(false);
-        setOpen(true);
-    };
 
 
     return (
         <Box sx={{height: '100%', pr: '10px'}} margin='5px'>
             { /* Might want to abstract the card in the future */ }
-            <Typography variant='h4'>{stateTitle}</Typography>
+            <Typography variant='h4' sx={{fontWeight: '700', color: 'white'}}>{stateTitle}</Typography>
             {tasks.map((task, index) => (
-         
-                <Accordion sx={{backgroundColor: chooseColor(stateTitle)}} expanded={expanded === 'panel' + index}  onChange={handleChange('panel' + index)} key={index}>
+                <Accordion sx={{background: chooseColor(stateTitle), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded === 'panel' + index}  onChange={handleChange('panel' + index)} key={index}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Card sx={{margin: "10px", width: "100%" }} elevation={2} key={index}>
-                        <CardHeader title = {task.name} />
-                        <Typography sx={{ fontSize: 14, marginLeft: '10px'  }} color="text.secondary" gutterBottom>
-                            {task.description}
-                        </Typography>
-                        
-                    </Card>
+                        <Box flexGrow={1}>
+                            <CardHeader title = {task.name} sx={{color: 'white'}} titleTypographyProps={{variant: 'h5', fontFamily:'Open Sans', fontWeight:'700'}}/>
+                            <Typography sx={{ fontSize: 14, marginLeft: '4%', width:'90%' }} color="text.secondary">
+                                {task.description}
+                            </Typography> 
+                        </Box>
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails sx={{alignItems: 'center'}}>
-                    <Card elevation={1} sx={{width: '100%', mb: '10px', backgroundColor: 'rgba(256, 256, 256, 0.5)'}}>
-                        {task.subTasks.length > 0 && <SubTasksView task={task} isDialog={false}/>}
-                    </Card>
+                    <TaskMoreDetails focusedTask={task} />
                     <Grid container sx={{display: 'flex', width: 'auto'}}>
                         <Grid item xs={6}>
                             <Box sx={{flexGrow: 1, textAlign: 'left'}}>
@@ -68,7 +54,7 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                         </Grid>
                         <Grid item xs={6}>
                             <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                                <Button variant='contained' onClick={() => handleToggle(task)}>Open task</Button>
+                                <Button variant='contained'>Edit task</Button>
                             </Box>
                         </Grid>
                     </Grid>
@@ -76,9 +62,6 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                 </Accordion>
                 
             ))}
-            {focusedTask != null &&
-                <TaskDialog focusedTask={focusedTask} open={open} handleClose={handleClose} />
-            }   
         </Box>
     )
 }

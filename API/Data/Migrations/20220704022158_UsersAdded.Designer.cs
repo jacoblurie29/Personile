@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220630182223_DTOsAdded")]
-    partial class DTOsAdded
+    [Migration("20220704022158_UsersAdded")]
+    partial class UsersAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,8 @@ namespace API.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("SprintEntityId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Sprints");
                 });
@@ -104,6 +106,34 @@ namespace API.Data.Migrations
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("API.Entities.UserEntity", b =>
+                {
+                    b.Property<string>("UserEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserEntityId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("API.Entities.SprintEntity", b =>
+                {
+                    b.HasOne("API.Entities.UserEntity", "User")
+                        .WithMany("Sprints")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("API.Entities.SubTaskEntity", b =>
                 {
                     b.HasOne("API.Entities.TaskEntity", "Task")
@@ -130,6 +160,11 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.TaskEntity", b =>
                 {
                     b.Navigation("SubTasks");
+                });
+
+            modelBuilder.Entity("API.Entities.UserEntity", b =>
+                {
+                    b.Navigation("Sprints");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,6 @@
 import { Box, FormControl, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import agent from "../../app/api/agent";
+import { useAppContext } from "../../app/context/AppContext";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { Task } from "../../app/models/task";
 import TaskColumnView from "./TaskColumnView";
@@ -9,57 +9,59 @@ import TaskColumnView from "./TaskColumnView";
 // "{tasks}: Props" destructures the props for the fields inside
 export default function SprintView() {
 
+        const {sprints, titles} = useAppContext();
 
         const [loading, setLoading] = useState(true);
+        const [currentSprintTitle, setCurrentSprintTitle] = useState<string>("");
         const [tasks, setTasks] = useState<Task[]>();
-        const [sprints, setSprints] = useState<string[]>([]);
-        const [sprint, setSprint] = useState<string>("");
 
         const handleSprintChange = (event: SelectChangeEvent) => {
-            setTasks(undefined);
             setLoading(true);
-            setSprint(event.target.value);
-            var currentSprint = event.target.value;
-            agent.Sprint.getSprint(currentSprint).then(response => setTasks(response.tasks));
+            setCurrentSprintTitle(event.target.value);
             setLoading(false);
         }
       
+        // useEffect loads the titles for the selector and the initial tasks for the screen
+        useEffect(() => {
+           var title = "";
+           if(titles != null) {
+                title = titles[0];
+                setCurrentSprintTitle(titles[0]);
+           }
+
+           if(sprints != null) {
+                var deepSprintCopy = Object.values(sprints);
+                var cs = deepSprintCopy.find(x => x.sprintEntityId === title);
+                setTasks(cs?.tasks);
+           }
+           setLoading(false);
+           
+        }, [sprints, titles])
+
+        // use effect checks for the changing of the currentSprintTitle state (the selector) and updates the screen as such
         useEffect(() => {
             setLoading(true);
-            agent.Sprint.titles()
-            .then(response => {
-                  setSprints(response);
-                  // setSprints state function is asyncronous so a local variable must be introduced
-                  var currentSprint = ""
-                    if (response) {
-
-                        // HERE is where the current sprint will have to be figured out
-                        setSprint(response[0]);
-                        currentSprint = response[0];
-                    }
-                    agent.Sprint.getSprint(currentSprint).then(response => setTasks(response.tasks));
-                  
-              })
-            .finally(() => {
-                setLoading(false);
-            }).catch(error => console.log(error))
-        
-            
-        }, [])
+            if(sprints != null) {
+                var deepSprintCopy = Object.values(sprints);
+                var cs = deepSprintCopy.find(x => x.sprintEntityId === currentSprintTitle);
+                setTasks(cs?.tasks);
+            }
+            setLoading(false);
+        }, [currentSprintTitle, sprints])
       
 
-    if(loading || tasks == undefined) return (
+    if(loading) return (
 
-        <Box sx={{ flexGrow: 1, height: '100%'}}>
+        <Box marginTop='20px'>
             <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
                 <FormControl sx={{m: 1, minWidth: "120px"}}>
                     <Select
-                        value={sprint}
+                        value={currentSprintTitle}
                         onChange={handleSprintChange}
                         displayEmpty
                         sx={{ backgroundColor: 'white'}}
                     >
-                        {sprints?.map((title, index) => (
+                        {titles?.map((title, index) => (
                             <MenuItem key={index} value={title}>{title}</MenuItem>
                         ))}
                     </Select>
@@ -70,22 +72,17 @@ export default function SprintView() {
 
     )
     
-    
-    
-    
-    
-
     return (
-        <Box sx={{ flexGrow: 1, height: '100%'}}>
-            <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px', marginBottom: '20px'}}>
+        <Box marginTop='20px'>
+            <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
                 <FormControl sx={{m: '5px', minWidth: "120px"}}>
                     <Select
-                        value={sprint}
+                        value={currentSprintTitle}
                         onChange={handleSprintChange}
                         displayEmpty
                         sx={{ backgroundColor: 'white'}}
                     >
-                        {sprints?.map((title, index) => (
+                        {titles?.map((title, index) => (
                             <MenuItem key={index} value={title}>{title}</MenuItem>
                         ))}
                     </Select>
@@ -94,22 +91,21 @@ export default function SprintView() {
             <Grid container 
                 spacing={1}
                 columns={12.5}
-                sx={{height: '100%', width: '100%'}}
                 display='flex'
                 justifyContent='center'
 
                 >
-                <Grid item xs={4} justifyContent="center" sx={{backgroundColor:'#EEEEEE', borderRadius:'5px'}} marginRight='20px' marginBottom='10px'>
+                <Grid item xs={4} justifyContent="center" sx={{borderRadius:'5px'}} marginRight='20px'>
                     <TaskColumnView stateTitle={"New"} tasks={tasks?.filter((task) => {
                         return task.currentState === 0;
                     }) || []} />
                 </Grid>  
-                <Grid item xs={4} justifyContent="center" sx={{backgroundColor:'#EEEEEE', borderRadius:'5px'}} marginRight='20px' marginBottom='10px'>
+                <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}} marginRight='20px'>
                     <TaskColumnView stateTitle={"Active"} tasks={tasks?.filter((task) => {
                         return task.currentState === 1;
                     }) || []} />
                 </Grid>
-                <Grid item xs={4} justifyContent="center" sx={{backgroundColor:'#EEEEEE', borderRadius:'5px'}} marginBottom='10px'>
+                <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}}>
                     <TaskColumnView stateTitle={"Completed"} tasks={tasks?.filter((task) => {
                         return task.currentState === 2;
                     }) || []} />

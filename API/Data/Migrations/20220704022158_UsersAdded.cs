@@ -5,22 +5,41 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class DTOsAdded : Migration
+    public partial class UsersAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: true),
+                    LastName = table.Column<string>(type: "TEXT", nullable: true),
+                    Email = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserEntityId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Sprints",
                 columns: table => new
                 {
                     SprintEntityId = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sprints", x => x.SprintEntityId);
+                    table.ForeignKey(
+                        name: "FK_Sprints_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserEntityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -70,6 +89,11 @@ namespace API.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sprints_UserId",
+                table: "Sprints",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubTasks_TaskId",
                 table: "SubTasks",
                 column: "TaskId");
@@ -90,6 +114,9 @@ namespace API.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sprints");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

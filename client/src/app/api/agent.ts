@@ -57,13 +57,14 @@ const requests = {
 }
 
 // Futute: edit the tasks to have a sprint id
-const Sprint = {
-    getSprint: (id: string) => requests.get(`sprint/${id}`),
-    titles: () => requests.get('sprint/titles')
+const Sprints = {
+    getSprints: (userId: string) => requests.get(`Sprints/user/${userId}/sprints`),
+    getSprint: (userId: string, sprintId: string) => requests.get(`Sprints/user/${userId}/sprints/${sprintId}`),
+    titles: (userId: string) => requests.get(`sprints/user/${userId}/sprints/titles`)
 }
 
 const agent = {
-    Sprint,
+    Sprints,
     TestErrors
 }
 

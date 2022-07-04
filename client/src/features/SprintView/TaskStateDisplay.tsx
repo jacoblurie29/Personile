@@ -7,7 +7,7 @@ interface Props {
     currentState: number
 }
 
-export default function TaskStateDialogDisplay({currentState}: Props) {
+export default function TaskStateDisplay({currentState}: Props) {
 
     return (
         <Grid container display='flex' flexGrow={1} justifyContent='flex-end'>

@@ -1,8 +1,7 @@
-import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader, Typography } from "@mui/material";
+import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
 import { useState } from "react";
 import { Task } from "../../app/models/task";
 import CircleIcon from '@mui/icons-material/Circle';
-import LoadingComponent from "../../app/layout/LoadingComponent";
 
 interface Props {
     task: Task,
@@ -29,15 +28,14 @@ export default function SubTasksView({task, isDialog}: Props) {
 
     return (
         <>
-            <List dense sx={{ width: '100%', borderRadius: '5px', backgroundColor: 'rgba(256, 256, 256, 1)' }} subheader={!isDialog && <ListSubheader sx={{backgroundColor: 'rgba(256, 256, 256, 0)'}}>Subtasks</ListSubheader>}>
-            <Divider />        
+            <List dense sx={{ width: '100%', borderRadius: '5px' }} subheader={!isDialog && <ListSubheader sx={{backgroundColor: 'rgba(256, 256, 256, 0)'}}>Subtasks</ListSubheader>}>  
             {task.subTasks.map((subTask, index) => {
                 const labelId = `checkbox-list-secondary-label-${index}`;
                 return (
                 <div key={index + 'div'}>
                     <ListItem
                         key={subTask.subTaskEntityId}
-                        sx={{backgroundColor: 'rgba(256, 256, 256, 0)'}}
+                        sx={{backgroundColor: 'rgba(256, 256, 256, 1)', borderRadius: task.subTasks.length === 1 ? '5px 5px 5px 5px' : index === 0 ? '5px 5px 0 0' : index === task.subTasks.length - 1 ? '0 0 5px 5px' : ''}}
                         secondaryAction={
                         <Checkbox
                             key={subTask.subTaskEntityId + '-checkbox'}
@@ -54,7 +52,9 @@ export default function SubTasksView({task, isDialog}: Props) {
                             <ListItemText key={subTask.subTaskEntityId + '-listItemText'} id={labelId} primary={subTask.details} sx={{ my: 0 }} />
                         </ListItemButton>
                     </ListItem>
-                    <Divider key={subTask.subTaskEntityId + '-divider'} />
+                    {index !== task.subTasks.length - 1 &&
+                        <Divider sx={{backgroundColor: '#DDDDDD'}} key={subTask.subTaskEntityId + '-divider'} />
+                    }
                 </div>
                 );
             })}
