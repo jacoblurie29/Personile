@@ -1,5 +1,4 @@
 import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
-import { useState } from "react";
 import { Task } from "../../app/models/task";
 import CircleIcon from '@mui/icons-material/Circle';
 
@@ -10,19 +9,10 @@ interface Props {
 
 export default function SubTasksView({task, isDialog}: Props) {
 
-    const [checked, setChecked] = useState([1]);
+
 
     const handleToggle = (value: number) => () => {
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-
-        if (currentIndex === -1) {
-        newChecked.push(value);
-        } else {
-        newChecked.splice(currentIndex, 1);
-        }
-
-        setChecked(newChecked);
+        // Update redux and database to reflect checked state
     };
 
 
@@ -41,7 +31,6 @@ export default function SubTasksView({task, isDialog}: Props) {
                             key={subTask.subTaskEntityId + '-checkbox'}
                             edge="end"
                             onChange={handleToggle(index)}
-                            checked={checked.indexOf(index) !== -1}
                             inputProps={{ 'aria-labelledby': labelId }}
                         />
                         }

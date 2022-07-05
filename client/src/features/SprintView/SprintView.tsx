@@ -1,54 +1,31 @@
 import { Box, FormControl, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
-import { useAppContext } from "../../app/context/AppContext";
+import { useEffect } from "react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-import { Task } from "../../app/models/task";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { setCurrentSprint, setLoading } from "./sprintSlice";
 import TaskColumnView from "./TaskColumnView";
 
 
 // "{tasks}: Props" destructures the props for the fields inside
 export default function SprintView() {
 
-        const {sprints, titles} = useAppContext();
-
-        const [loading, setLoading] = useState(true);
-        const [currentSprintTitle, setCurrentSprintTitle] = useState<string>("");
-        const [tasks, setTasks] = useState<Task[]>();
+        const sprints = useAppSelector(state => state.user.userData?.sprints);
+        const { currentSprint, loading, isExpanded } = useAppSelector(state => state.sprintView);
+        const dispatch = useAppDispatch();
+;
 
         const handleSprintChange = (event: SelectChangeEvent) => {
-            setLoading(true);
-            setCurrentSprintTitle(event.target.value);
-            setLoading(false);
+            dispatch(setLoading(true));
+            dispatch(setCurrentSprint(event.target.value));
+            dispatch(setLoading(false));
         }
+
+        // sets the initial sprint upon load (will use date time later)
+        useEffect(() => {
+            if(sprints != undefined)
+                dispatch(setCurrentSprint(sprints[0].sprintEntityId));
+        }, [])
       
-        // useEffect loads the titles for the selector and the initial tasks for the screen
-        useEffect(() => {
-            setLoading(true);
-
-            var title = "";
-            if(titles != null) {
-                title = titles[0];
-                setCurrentSprintTitle(titles[0]);
-            }
-
-            if(sprints != null) {
-                setTasks(sprints.find(x => x.sprintEntityId === currentSprintTitle)?.tasks);
-            }
-
-            setLoading(false);
-           
-        }, [sprints, titles])
-
-        // use effect checks for the changing of the currentSprintTitle state (the selector) and updates the screen as such
-        useEffect(() => {
-            setLoading(true);
-            if(sprints != null) {
-                var deepSprintCopy = Object.values(sprints);
-                var cs = deepSprintCopy.find(x => x.sprintEntityId === currentSprintTitle);
-                setTasks(cs?.tasks);
-            }
-            setLoading(false);
-        }, [currentSprintTitle, sprints])
       
 
     if(loading) return (
@@ -57,13 +34,13 @@ export default function SprintView() {
             <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
                 <FormControl sx={{m: 1, minWidth: "120px"}}>
                     <Select
-                        value={currentSprintTitle}
+                        value={currentSprint || ""}
                         onChange={handleSprintChange}
                         displayEmpty
                         sx={{ backgroundColor: 'white'}}
                     >
-                        {titles?.map((title, index) => (
-                            <MenuItem key={index} value={title}>{title}</MenuItem>
+                        {sprints?.map((sprint, index) => (
+                            <MenuItem key={index} value={sprint.sprintEntityId}>{sprint.sprintEntityId}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -78,13 +55,13 @@ export default function SprintView() {
             <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
                 <FormControl sx={{m: '5px', minWidth: "120px"}}>
                     <Select
-                        value={currentSprintTitle}
+                        value={currentSprint || ""}
                         onChange={handleSprintChange}
                         displayEmpty
                         sx={{ backgroundColor: 'white'}}
                     >
-                        {titles?.map((title, index) => (
-                            <MenuItem key={index} value={title}>{title}</MenuItem>
+                        {sprints?.map((sprint, index) => (
+                            <MenuItem key={index} value={sprint.sprintEntityId}>{sprint.sprintEntityId}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -97,17 +74,17 @@ export default function SprintView() {
 
                 >
                 <Grid item xs={4} justifyContent="center" sx={{borderRadius:'5px'}} marginRight='20px'>
-                    <TaskColumnView stateTitle={"New"} tasks={tasks?.filter((task) => {
+                    <TaskColumnView stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 0;
                     }) || []} />
                 </Grid>  
                 <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}} marginRight='20px'>
-                    <TaskColumnView stateTitle={"Active"} tasks={tasks?.filter((task) => {
+                    <TaskColumnView stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 1;
                     }) || []} />
                 </Grid>
                 <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}}>
-                    <TaskColumnView stateTitle={"Completed"} tasks={tasks?.filter((task) => {
+                    <TaskColumnView stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 2;
                     }) || []} />
                 </Grid>

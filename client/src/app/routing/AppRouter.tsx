@@ -1,36 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import SettingsView from "../../features/SettingsView/SettingsView";
+import { setCurrentSprint } from "../../features/SprintView/sprintSlice";
 import SprintView from "../../features/SprintView/SprintView";
 import TodayView from "../../features/TodayView/TodayView";
 import agent from "../api/agent";
-import { useAppContext } from "../context/AppContext";
 import NotFound from "../errors/NotFound";
 import ServerError from "../errors/ServerError";
 import LoadingComponent from "../layout/LoadingComponent";
+import { setLoading, setUser } from "../state/userSlice";
+import { useAppDispatch, useAppSelector } from "../store/configureStore";
 
 export default function AppRouter() {
 
-    const {setSprints, setTitles} = useAppContext();
-    const [loading, setLoading] = useState(true);
+    const dispatch = useAppDispatch();
+    const { loading } = useAppSelector(state => state.user)
 
     useEffect(() => {
 
-        agent.Sprints.titles("USER_ID_1")
-        .then(titles => setTitles(titles))
-        .catch(error => console.log(error));
-        
+        dispatch(setLoading(true));
 
-        agent.Sprints.getSprints("USER_ID_1")
-            .then(sprints => setSprints(sprints))
+        agent.Sprints.getUser("USER_ID_1")
+            .then(user => {
+                if(user != null) {
+                    dispatch(setUser(user));
+                    if(user.sprints !== null || user.sprints.length !== 0) {
+                        dispatch(setCurrentSprint(user.sprints[0].sprintEntityId))
+                    }
+                }
+                
+            })
             .catch(error => console.log(error))
             .finally(() => {
-                setLoading(false);
+                dispatch(setLoading(false));
             });
 
-        
-            
-    }, [setSprints, setTitles])
+    }, [setUser])
 
     if(loading) return <LoadingComponent message="Initializing app..." />
 

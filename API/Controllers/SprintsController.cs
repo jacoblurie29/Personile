@@ -24,6 +24,12 @@ namespace API.Controllers
             
         }
 
+        [HttpGet("user/{userId}", Name = "GetUser")]
+        public async Task<ActionResult<UserDto>> GetUser(string userId) {
+            var userEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            return userEntity.mapUserToDto();
+        }
+
         [HttpGet("user/{userId}/sprints", Name = "GetAllSprints")]
         public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId) {
 
@@ -97,7 +103,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) {
-                return CreatedAtRoute("GetAllSprints", new { UserId = userId }, CurrentUser.mapUserToDto());
+                return CreatedAtRoute("GetUser", new { UserId = userId }, CurrentUser.mapUserToDto());
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem creating new sprint"});
@@ -123,7 +129,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetAllSprints", new { UserId = userId }, CurrentUser.mapUserToDto());
+                return CreatedAtRoute("GetUser", new { UserId = userId }, CurrentUser.mapUserToDto());
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
@@ -151,7 +157,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetAllSprints", new { UserId = userId }, CurrentUser.mapUserToDto());
+                return CreatedAtRoute("GetUser", new { UserId = userId }, CurrentUser.mapUserToDto());
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});

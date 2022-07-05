@@ -4,6 +4,9 @@ import { Task } from "../../app/models/task";
 import StateToggleButton from "./StateToggleButton";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TaskMoreDetails from "./TaskMoreDetails";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { addToIsExpanded, removeFromIsExpanded } from "./sprintSlice";
+import NewTaskButton from "./NewTaskButton";
 
 
 interface Props {
@@ -13,11 +16,20 @@ interface Props {
 
 export default function TaskColumnView({tasks, stateTitle}: Props) {
 
-    const [expanded, setExpanded] = useState<string | false>(false);
+    const {currentSprint, isExpanded: expanded } = useAppSelector(state => state.sprintView);
+    const dispatch = useAppDispatch();
+
+    function handleNewTask() {
+        return null;
+    }
 
     const handleChange =
       (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-        setExpanded(isExpanded ? panel : false);
+         if(expanded?.includes(panel)) {
+            dispatch(removeFromIsExpanded(panel));
+         } else {
+            dispatch(addToIsExpanded(panel));
+         }
       };
 
     function chooseColor(title: String) {
@@ -34,7 +46,7 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
             { /* Might want to abstract the card in the future */ }
             <Typography variant='h4' sx={{fontWeight: '700', color: 'white'}}>{stateTitle}</Typography>
             {tasks.map((task, index) => (
-                <Accordion sx={{background: chooseColor(stateTitle), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded === 'panel' + index}  onChange={handleChange('panel' + index)} key={index}>
+                <Accordion sx={{background: chooseColor(stateTitle), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded?.includes((currentSprint || "") + "|" + index + "|" + stateTitle)}  onChange={handleChange((currentSprint || "") + "|" + index + "|" + stateTitle)} key={index}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Box flexGrow={1}>
                             <CardHeader title = {task.name} sx={{color: 'white'}} titleTypographyProps={{variant: 'h5', fontFamily:'Open Sans', fontWeight:'700'}}/>
@@ -62,6 +74,7 @@ export default function TaskColumnView({tasks, stateTitle}: Props) {
                 </Accordion>
                 
             ))}
+            {stateTitle == "New" && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
         </Box>
     )
 }

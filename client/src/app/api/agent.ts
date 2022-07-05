@@ -60,6 +60,7 @@ const requests = {
 const Sprints = {
     getSprints: (userId: string) => requests.get(`Sprints/user/${userId}/sprints`),
     getSprint: (userId: string, sprintId: string) => requests.get(`Sprints/user/${userId}/sprints/${sprintId}`),
+    getUser: (userId: string) => requests.get(`Sprints/user/${userId}`),
     titles: (userId: string) => requests.get(`sprints/user/${userId}/sprints/titles`)
 }
 
