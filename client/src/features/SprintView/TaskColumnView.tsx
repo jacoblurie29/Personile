@@ -1,8 +1,6 @@
 import { Box, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Task } from "../../app/models/task";
-import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { addToIsExpanded, removeFromIsExpanded } from "./sprintSlice";
 import NewTaskButton from "./NewTaskButton";
 import TaskCardView from "./TaskCardView";
 import NewTaskCardView from "./NewTaskCardView";
@@ -26,9 +24,9 @@ export default function TaskColumnView({tasks, stateTitle, sprintId}: Props) {
         setNewTask(true)
     }
 
-    const handleCloseNewTask = () => {
-        setNewTask(false)
-    }
+    // const handleCloseNewTask = () => {
+    //     setNewTask(false)
+    // }
 
     return (
         <Box sx={{height: '100%', pr: '10px'}} margin='5px'>
@@ -39,7 +37,7 @@ export default function TaskColumnView({tasks, stateTitle, sprintId}: Props) {
                 <TaskCardView task={task} key={task.taskEntityId + index} />
             ))}
             {newTask && <NewTaskCardView />}
-            {stateTitle == "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
+            {stateTitle === "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
             </>
         </Box>
     )

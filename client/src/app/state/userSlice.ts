@@ -1,4 +1,3 @@
-import { useRadioGroup } from "@mui/material";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import agent from "../api/agent";
 import { Sprint } from "../models/sprint";
@@ -22,7 +21,7 @@ export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, sp
     'sprint/addTaskToSprintAsync',
     async ({userId, sprintId, task}, thunkAPI) => {
         try {
-            return await agent.Sprints.addTask(userId, sprintId, task);
+            return await agent.UserData.addTask(userId, sprintId, task);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -33,7 +32,7 @@ export const removeTaskFromSprintAsync = createAsyncThunk<void, {userId: string,
     'sprint/removeTaskFromSprintAsync',
     async ({userId, sprintId, taskId}, thunkAPI) => {
         try {
-            return await agent.Sprints.removeTask(userId, sprintId, taskId);
+            return await agent.UserData.removeTask(userId, sprintId, taskId);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -53,7 +52,7 @@ export const userSlice = createSlice({
             
             const currentSprintIndex = state.userData?.sprints.findIndex(sprint => sprint.sprintEntityId === sprintId);
 
-            if (currentSprintIndex == undefined || currentSprintIndex === -1) return;
+            if (currentSprintIndex === undefined || currentSprintIndex === -1) return;
 
             const currentTaskIndex = state.userData?.sprints[currentSprintIndex].tasks.findIndex(task => task.taskEntityId === taskId)
 
@@ -74,11 +73,11 @@ export const userSlice = createSlice({
 
             const { sprintId } = action.meta.arg;
 
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId == sprintId);
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
 
-            if (sprintIndex == undefined || sprintIndex < 0) return;
+            if (sprintIndex === undefined || sprintIndex < 0) return;
 
-            if(state.userData == null || state.userData == undefined) return;
+            if(state.userData === null || state.userData === undefined) return;
 
             state.userData?.sprints.splice(sprintIndex, 1, action.payload);
 
@@ -93,13 +92,13 @@ export const userSlice = createSlice({
         builder.addCase(removeTaskFromSprintAsync.fulfilled, (state, action) => {
             const {sprintId, taskId} = action.meta.arg;
 
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId == sprintId);
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
 
-            if (sprintIndex == undefined || sprintIndex < 0) return;
+            if (sprintIndex === undefined || sprintIndex < 0) return;
 
-            if(state.userData == null || state.userData == undefined) return;
+            if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId == taskId);
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
 
             state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1);
 

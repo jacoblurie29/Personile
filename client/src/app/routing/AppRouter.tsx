@@ -20,7 +20,7 @@ export default function AppRouter() {
 
         dispatch(setLoading(true));
 
-        agent.Sprints.getUser("USER_ID_1")
+        agent.UserData.getUser("USER_ID_1")
             .then(user => {
                 if(user != null) {
                     dispatch(setUser(user));
@@ -35,7 +35,7 @@ export default function AppRouter() {
                 dispatch(setLoading(false));
             });
 
-    }, [setUser])
+    }, [dispatch])
 
     if(loading) return <LoadingComponent message="Initializing app..." />
 

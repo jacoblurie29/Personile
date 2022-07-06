@@ -1,12 +1,12 @@
-import { Accordion, AccordionSummary, Box, CardHeader, Typography, Divider, AccordionDetails, Grid, Button } from "@mui/material";
+import { Accordion, AccordionSummary, Box, CardHeader, Typography, Divider, AccordionDetails, Grid } from "@mui/material";
 import { LoadingButton } from '@mui/lab';
-import StateToggleButton from "./StateToggleButton";
 import TaskMoreDetails from "./TaskMoreDetails";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Task } from "../../app/models/task";
 import { useAppSelector, useAppDispatch } from "../../app/store/configureStore";
 import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
 import { removeTaskFromSprintAsync } from "../../app/state/userSlice";
+import StateToggleButton from "./StateToggleButton";
 
 interface Props {
     task: Task,
@@ -17,7 +17,6 @@ export default function TaskCardView({task}: Props) {
     const {status} = useAppSelector(state => state.user)
     const {currentSprint, isExpanded: expanded } = useAppSelector(state => state.sprintView);
     const userEntityId = useAppSelector(state => state.user.userData?.userEntityId);
-    const sprints = useAppSelector(state => state.user.userData?.sprints);
     const dispatch = useAppDispatch();
 
 

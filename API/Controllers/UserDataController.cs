@@ -13,25 +13,25 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
 
-    public class SprintsController : BaseApiController
+    public class UserDataController : BaseApiController
     {
         private readonly PersonileContext _context;
         private readonly IMapper _mapper;
 
-        public SprintsController(PersonileContext context, IMapper mapper)
+        public UserDataController(PersonileContext context, IMapper mapper)
         {
             _mapper = mapper;
             _context = context;
             
         }
 
-        [HttpGet("user/{userId}", Name = "GetUser")]
+        [HttpGet("{userId}", Name = "GetUser")]
         public async Task<ActionResult<UserDto>> GetUser(string userId) {
             var userEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
             return userEntity.mapUserToDto();
         }
 
-        [HttpGet("user/{userId}/sprints", Name = "GetAllSprints")]
+        [HttpGet("{userId}/sprints", Name = "GetAllSprints")]
         public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId) {
 
            var CurrentUserEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
@@ -51,7 +51,7 @@ namespace API.Controllers
 
 
         // Gets the sprint structure for a specific sprint id
-        [HttpGet("user/{userId}/sprints/{sprintId}", Name = "GetSprintById")]
+        [HttpGet("{userId}/sprints/{sprintId}", Name = "GetSprintById")]
         public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId, string userId) {
 
             var CurrentUserEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
@@ -63,7 +63,7 @@ namespace API.Controllers
         }
 
         // Gets the tast structure for a specific sprint + task id
-        [HttpGet("user/{userId}/sprints/{sprintId}/getTask/{taskId}", Name = "GetTaskById")]
+        [HttpGet("{userId}/sprints/{sprintId}/getTask/{taskId}", Name = "GetTaskById")]
         public async Task<ActionResult<TaskDto>> GetTaskById(string sprintId, string taskId) {
             
             var CurrentSprint = await RetrieveSprintEntity(sprintId);
@@ -79,7 +79,7 @@ namespace API.Controllers
 
 
         // Gets the titles of all sprints
-        [HttpGet("user/{userId}/sprints/titles", Name = "GetTitles")]
+        [HttpGet("{userId}/sprints/titles", Name = "GetTitles")]
         public async Task<ActionResult<List<string>>> GetSprintTitles(string userId) {
 
             var currentUser = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).FirstOrDefaultAsync();
@@ -94,7 +94,7 @@ namespace API.Controllers
         
 
         // add a new sprint (not sure if I'm going to need this)
-        [HttpPost("user/{userId}/addSprint")]
+        [HttpPost("{userId}/addSprint")]
         public async Task<ActionResult<UserDto>> AddNewSprint(SprintDto sprintDto, string userId) {
 
             var MappedSprint = _mapper.Map<SprintEntity>(sprintDto);
@@ -114,7 +114,7 @@ namespace API.Controllers
 
 
         // Adds a task to a specific sprint
-        [HttpPost("user/{userId}/sprints/{sprintId}/addTask", Name = "AddTaskToSprint")]
+        [HttpPost("{userId}/sprints/{sprintId}/addTask", Name = "AddTaskToSprint")]
         public async Task<ActionResult<SprintDto>> AddTaskToSprint(string sprintId, string userId, TaskDto taskDto) {
 
             var MappedTask = _mapper.Map<TaskEntity>(taskDto);
@@ -141,7 +141,7 @@ namespace API.Controllers
 
 
         // Adds a subtask to a specific task
-        [HttpPost("user/{userId}/sprints/{sprintId}/tasks/{taskId}/addSubTask", Name = "AddSubtaskToTask")]
+        [HttpPost("{userId}/sprints/{sprintId}/tasks/{taskId}/addSubTask", Name = "AddSubtaskToTask")]
         public async Task<ActionResult<TaskDto>> AddNewSubtask(string sprintId, string taskId, SubTaskDto subTaskDto, string userId) {
             var MappedSubtask = _mapper.Map<SubTaskEntity>(subTaskDto);
 
@@ -166,7 +166,7 @@ namespace API.Controllers
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
         }
 
-        [HttpDelete("user/{userId}/sprints/{sprintId}/tasks/{taskId}/deleteTask", Name = "DeleteTaskFromSprint")]
+        [HttpDelete("{userId}/sprints/{sprintId}/tasks/{taskId}/deleteTask", Name = "DeleteTaskFromSprint")]
         public async Task<ActionResult> DeleteTaskFromSprint(string userId, string sprintId, string taskId) {
             var CurrentUser = await RetrieveUserEntity(userId);
 

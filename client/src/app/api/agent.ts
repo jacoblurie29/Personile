@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { request } from "http";
 import { toast } from "react-toastify";
 import { history } from "../..";
 
@@ -58,17 +57,17 @@ const requests = {
 }
 
 // Futute: edit the tasks to have a sprint id
-const Sprints = {
-    getSprints: (userId: string) => requests.get(`Sprints/user/${userId}/sprints`),
-    getSprint: (userId: string, sprintId: string) => requests.get(`Sprints/user/${userId}/sprints/${sprintId}`),
-    getUser: (userId: string) => requests.get(`Sprints/user/${userId}`),
-    titles: (userId: string) => requests.get(`sprints/user/${userId}/sprints/titles`),
-    addTask: (userId: string, sprintId: string, body: {}) => requests.post(`Sprints/user/${userId}/sprints/${sprintId}/addTask`, body),
-    removeTask: (userId: string, sprintId: string, taskId: string) => requests.delete(`Sprints/user/${userId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`)
+const UserData = {
+    getSprints: (userId: string) => requests.get(`userdata/${userId}/sprints`),
+    getSprint: (userId: string, sprintId: string) => requests.get(`userdata/${userId}/sprints/${sprintId}`),
+    getUser: (userId: string) => requests.get(`userdata/${userId}`),
+    titles: (userId: string) => requests.get(`userdata/${userId}/sprints/titles`),
+    addTask: (userId: string, sprintId: string, body: {}) => requests.post(`userdata/${userId}/sprints/${sprintId}/addTask`, body),
+    removeTask: (userId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`)
 }
 
 const agent = {
-    Sprints,
+    UserData,
     TestErrors
 }
 
