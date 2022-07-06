@@ -1,6 +1,8 @@
 import { ToastContainer } from 'react-toastify';
 import Navigation from "./Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material';
 
 
 /*
@@ -13,6 +15,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
   App (Contains body) -> SprintView -> TaskStateColumn
 */
+
+const theme = createTheme({
+  palette: {
+    secondary: {
+      main: '#FFFFFF'
+    }
+  }
+});
 
 function App() {
 
@@ -30,7 +40,10 @@ function App() {
                         pauseOnFocusLoss
                         draggable
                         pauseOnHover/>
-        <Navigation />
+        <ThemeProvider theme={theme}>
+          <Navigation />
+        </ThemeProvider>
+       
     </>
   );
 }

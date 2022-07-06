@@ -10,7 +10,7 @@ import TaskColumnView from "./TaskColumnView";
 export default function SprintView() {
 
         const sprints = useAppSelector(state => state.user.userData?.sprints);
-        const { currentSprint, loading, isExpanded } = useAppSelector(state => state.sprintView);
+        const { currentSprint, loading } = useAppSelector(state => state.sprintView);
         const dispatch = useAppDispatch();
 ;
 
@@ -25,30 +25,6 @@ export default function SprintView() {
             if(sprints != undefined)
                 dispatch(setCurrentSprint(sprints[0].sprintEntityId));
         }, [])
-      
-      
-
-    if(loading) return (
-
-        <Box marginTop='20px'>
-            <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', verticalAlign: "middle", mr: '20px'}}>
-                <FormControl sx={{m: 1, minWidth: "120px"}}>
-                    <Select
-                        value={currentSprint || ""}
-                        onChange={handleSprintChange}
-                        displayEmpty
-                        sx={{ backgroundColor: 'white'}}
-                    >
-                        {sprints?.map((sprint, index) => (
-                            <MenuItem key={index} value={sprint.sprintEntityId}>{sprint.sprintEntityId}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Typography>
-            <LoadingComponent />
-        </Box>
-
-    )
     
     return (
         <Box marginTop='20px'>
@@ -66,6 +42,7 @@ export default function SprintView() {
                     </Select>
                 </FormControl>
             </Typography>
+            {!loading &&
             <Grid container 
                 spacing={1}
                 columns={12.5}
@@ -74,21 +51,25 @@ export default function SprintView() {
 
                 >
                 <Grid item xs={4} justifyContent="center" sx={{borderRadius:'5px'}} marginRight='20px'>
-                    <TaskColumnView stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+                    <TaskColumnView sprintId={currentSprint || ""} stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 0;
                     }) || []} />
                 </Grid>  
                 <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}} marginRight='20px'>
-                    <TaskColumnView stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+                    <TaskColumnView sprintId={currentSprint || ""} stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 1;
                     }) || []} />
                 </Grid>
                 <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}}>
-                    <TaskColumnView stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+                    <TaskColumnView sprintId={currentSprint || ""} stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 2;
                     }) || []} />
                 </Grid>
             </Grid>
+            }
+            {loading &&
+                <LoadingComponent />
+            }
         </Box>
         
         
