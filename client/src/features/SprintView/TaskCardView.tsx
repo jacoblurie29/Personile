@@ -1,18 +1,23 @@
 import { Accordion, AccordionSummary, Box, CardHeader, Typography, Divider, AccordionDetails, Grid, Button } from "@mui/material";
+import { LoadingButton } from '@mui/lab';
 import StateToggleButton from "./StateToggleButton";
 import TaskMoreDetails from "./TaskMoreDetails";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Task } from "../../app/models/task";
 import { useAppSelector, useAppDispatch } from "../../app/store/configureStore";
 import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
+import { removeTaskFromSprintAsync } from "../../app/state/userSlice";
 
 interface Props {
-    task: Task
+    task: Task,
 }
 
 export default function TaskCardView({task}: Props) {
 
+    const {status} = useAppSelector(state => state.user)
     const {currentSprint, isExpanded: expanded } = useAppSelector(state => state.sprintView);
+    const userEntityId = useAppSelector(state => state.user.userData?.userEntityId);
+    const sprints = useAppSelector(state => state.user.userData?.sprints);
     const dispatch = useAppDispatch();
 
 
@@ -33,10 +38,10 @@ export default function TaskCardView({task}: Props) {
     };
 
 
-    
+
 
     return (
-        <Accordion sx={{background: chooseColor(task.currentState), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded?.includes(task.id + "|" + task.name + "|" + currentSprint)}  onChange={handleChange(task.id + "|" + task.name + "|" + currentSprint)} key={task.id}>
+        <Accordion sx={{background: chooseColor(task.currentState), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded?.includes(task.taskEntityId + "|" + task.name + "|" + currentSprint)}  onChange={handleChange(task.taskEntityId + "|" + task.name + "|" + currentSprint)} key={task.taskEntityId}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Box flexGrow={1}>
                     <CardHeader title = {task.name} sx={{color: 'white'}} titleTypographyProps={{variant: 'h5', fontFamily:'Open Sans', fontWeight:'700'}}/>
@@ -56,7 +61,7 @@ export default function TaskCardView({task}: Props) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                        <Button variant='contained'>Edit task</Button>
+                        <LoadingButton key={task.taskEntityId} loading={status.includes("pending")} variant='contained' color='error' onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}>Delete task</LoadingButton>
                     </Box>
                 </Grid>
             </Grid>

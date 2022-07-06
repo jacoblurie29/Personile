@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { request } from "http";
 import { toast } from "react-toastify";
 import { history } from "../..";
 
@@ -61,7 +62,9 @@ const Sprints = {
     getSprints: (userId: string) => requests.get(`Sprints/user/${userId}/sprints`),
     getSprint: (userId: string, sprintId: string) => requests.get(`Sprints/user/${userId}/sprints/${sprintId}`),
     getUser: (userId: string) => requests.get(`Sprints/user/${userId}`),
-    titles: (userId: string) => requests.get(`sprints/user/${userId}/sprints/titles`)
+    titles: (userId: string) => requests.get(`sprints/user/${userId}/sprints/titles`),
+    addTask: (userId: string, sprintId: string, body: {}) => requests.post(`Sprints/user/${userId}/sprints/${sprintId}/addTask`, body),
+    removeTask: (userId: string, sprintId: string, taskId: string) => requests.delete(`Sprints/user/${userId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`)
 }
 
 const agent = {

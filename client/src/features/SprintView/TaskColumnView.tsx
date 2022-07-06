@@ -32,13 +32,15 @@ export default function TaskColumnView({tasks, stateTitle, sprintId}: Props) {
 
     return (
         <Box sx={{height: '100%', pr: '10px'}} margin='5px'>
+            <>
             { /* Might want to abstract the card in the future */ }
             <Typography variant='h4' sx={{fontWeight: '700', color: 'white'}}>{stateTitle}</Typography>
             {tasks.map((task, index) => (
-                <TaskCardView task={task} />
+                <TaskCardView task={task} key={task.taskEntityId + index} />
             ))}
             {newTask && <NewTaskCardView />}
             {stateTitle == "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
+            </>
         </Box>
     )
 }

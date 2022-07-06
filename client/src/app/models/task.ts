@@ -1,7 +1,7 @@
 import { SubTask } from "./subTask";
 
 export interface Task {
-    id: string;
+    taskEntityId: string;
     userId: string;
     name: string;
     description: string;
