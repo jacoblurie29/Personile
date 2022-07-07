@@ -2,7 +2,7 @@ import { ToastContainer } from 'react-toastify';
 import Navigation from "./Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@emotion/react';
-import { createTheme } from '@mui/material';
+import { createTheme, responsiveFontSizes } from '@mui/material';
 
 
 /*
@@ -16,17 +16,24 @@ import { createTheme } from '@mui/material';
   App (Contains body) -> SprintView -> TaskStateColumn
 */
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
+    primary: {
+      main: '#FFFFFF'
+    },
     secondary: {
       main: '#FFFFFF'
     }
   }
 });
 
-function App() {
 
+
+
+
+function App() {
   
+  theme = responsiveFontSizes(theme);
   
   return (
     <>

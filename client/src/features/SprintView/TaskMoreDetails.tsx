@@ -22,8 +22,8 @@ export default function TaskMoreDetails({ focusedTask }: Props) {
 
 
     return (
-        <Box margin='10px'>
-            <Typography variant="caption">Tags</Typography>
+        <Box>
+            <Typography variant="caption" sx={{color: 'white'}}>Tags</Typography>
             <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
                 <Grid item xs={12} justifyContent='center' display='flex'>
                 {focusedTask?.tags.split('|').map((tag, index) => (
@@ -31,11 +31,11 @@ export default function TaskMoreDetails({ focusedTask }: Props) {
                 ))}
                 </Grid>
             </Grid>
-            <Typography variant="caption">Estimated effort</Typography>
+            <Typography variant="caption" sx={{color: 'white'}}>Estimated effort</Typography>
             <Tooltip title={focusedTask.effort} arrow>
             <BorderLinearProgress sx={{mt: '2px', mb: '12px', boxShadow: '1px 2px 7px #777777' }} variant="determinate" value={focusedTask.effort * 10} />
             </Tooltip>
-            <Typography variant="caption">Subtasks&nbsp;({focusedTask.subTasks.length})</Typography>
+            <Typography variant="caption" sx={{color: 'white'}}>Subtasks&nbsp;({focusedTask.subTasks.length})</Typography>
             {focusedTask.subTasks.length > 0 && <SubTasksView task={focusedTask} isDialog={true} />}            
         </Box>
     )

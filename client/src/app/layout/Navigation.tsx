@@ -107,7 +107,7 @@ export default function Navigation() {
 
 
   return (
-    <Box sx={{ display: 'flex', background: 'linear-gradient(352deg, rgba(7,20,22,1) 0%, rgba(13,37,41,1) 100%)' }}>
+    <Box  overflow='auto' height='100vh' sx={{ display: 'flex', background: 'linear-gradient(352deg, rgba(7,20,22,1) 0%, rgba(13,37,41,1) 100%)' }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open} >
         <DrawerHeader>

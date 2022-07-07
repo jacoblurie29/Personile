@@ -13,6 +13,8 @@ export const history = createBrowserHistory();
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+
 root.render(
   <Router history={history}>
     <React.StrictMode>

@@ -36,7 +36,7 @@ export default function TaskColumnView({tasks, stateTitle, sprintId}: Props) {
             {tasks.map((task, index) => (
                 <TaskCardView task={task} key={task.taskEntityId + index + sprintId} />
             ))}
-            {newTask && <NewTaskCardView />}
+            {newTask && <NewTaskCardView setNewTask={setNewTask} />}
             {stateTitle === "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
             </>
         </Box>

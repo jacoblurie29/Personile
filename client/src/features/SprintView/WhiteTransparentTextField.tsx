@@ -1,24 +1,48 @@
 import { TextField } from "@mui/material";
+import { useController, UseControllerProps } from "react-hook-form";
 
-interface Props {
-    lines?: number
+
+interface formProps extends UseControllerProps {
     label: string
+    lines?: number
 }
 
-export default function WhiteTransparentTextField({lines, label}: Props) {
+export default function WhiteTransparentTextFieldprops(props: formProps) {
+
+    const {fieldState, field} = useController({...props, defaultValue: ''})
 
     return (
-        <TextField multiline={lines != null} rows={lines} fullWidth variant="outlined" label={label} color="secondary" id="outlined-size-small" size="small" 
-                    sx={{
-                        "& .MuiInputLabel-root": {color: 'white'},
-                        "& .MuiOutlinedInput-root": {
-                          "& > fieldset": { borderColor: "white" },
-                        },
-                        "& .MuiOutlinedInput-root:hover": {
-                            "& > fieldset": {
-                              borderColor: "white"
-                            }
-                        },
-        color: 'white', textArea: {color: 'white'}, input: {color: 'white'}, marginLeft: '10px', borderRadius: '5px', marginBottom: '15px'}} />
+        <TextField 
+            {...props}
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            multiline={props.lines != null} 
+            rows={props.lines}
+            fullWidth
+            variant="outlined"
+            label={props.label}
+            color="secondary"
+            id="outlined-size-small"
+            size="small" 
+            sx={{
+                "& .MuiInputLabel-root": {color: 'white'},
+                "& .MuiOutlinedInput-root": {
+                    "& > fieldset": { borderColor: "white" },
+                },
+                "& .MuiOutlinedInput-root:hover": {
+                    "& > fieldset": {
+                        borderColor: "white"
+                    }
+                },
+                color: 'white',
+                textArea: 
+                    {color: 'white'},
+                input:
+                    {color: 'white'},
+                marginLeft: '10px',
+                borderRadius: '5px',
+                marginBottom: '15px'
+        }} />
     )
 }
