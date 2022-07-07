@@ -16,6 +16,7 @@ namespace API.RequestHelpers
             CreateMap<SprintDto, SprintEntity>();
             CreateMap<TaskDto, TaskEntity>();
             CreateMap<SubTaskDto, SubTaskEntity>();
+            CreateMap<UpdateTaskDto, TaskEntity>();
             
         }
     }

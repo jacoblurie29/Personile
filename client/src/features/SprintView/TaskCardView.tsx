@@ -5,8 +5,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Task } from "../../app/models/task";
 import { useAppSelector, useAppDispatch } from "../../app/store/configureStore";
 import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
-import { removeTaskFromSprintAsync } from "../../app/state/userSlice";
+import { removeTaskFromSprintAsync, updateTaskStateAsync } from "../../app/state/userSlice";
 import StateToggleButton from "./StateToggleButton";
+import { mapTaskToUpdateTask } from "app/models/updateTask";
+import { useEffect } from "react";
 
 interface Props {
     task: Task,
@@ -36,11 +38,32 @@ export default function TaskCardView({task}: Props) {
        }
     };
 
+    const handleStateChange = (currentTask: Task, currentState: number, newState: number) => {
+        
+        if(currentState != newState) {
+
+            var newTask = {...currentTask};
+            var prevState  = newTask.currentState;
+            newTask.currentState = newState;
+            var newUpdateTask = mapTaskToUpdateTask(newTask);
+            var currentTaskId = newTask.taskEntityId;
+            var currentUserId = userEntityId;
+            var currentSprintId = currentSprint;
+
+            if (currentUserId == undefined || currentSprintId == null ) return;
+
+            dispatch(updateTaskStateAsync({userId: currentUserId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, updatedTask: newTask, previousState: prevState}));
+            
+            dispatch(removeFromIsExpanded(currentTaskId));
+        }
+    }
+
+
 
 
 
     return (
-        <Accordion sx={{background: chooseColor(task.currentState), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded?.includes(task.taskEntityId + "|" + task.name + "|" + currentSprint)}  onChange={handleChange(task.taskEntityId + "|" + task.name + "|" + currentSprint)} key={task.taskEntityId}>
+        <Accordion sx={{background: chooseColor(task.currentState), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Box flexGrow={1}>
                     <CardHeader title = {task.name} sx={{color: 'white'}} titleTypographyProps={{variant: 'h5', fontFamily:'Open Sans', fontWeight:'700'}}/>
@@ -55,7 +78,7 @@ export default function TaskCardView({task}: Props) {
             <Grid container sx={{display: 'flex', width: 'auto'}}>
                 <Grid item xs={6}>
                     <Box sx={{flexGrow: 1, textAlign: 'left'}}>
-                        <StateToggleButton startingState={task.currentState}/>
+                        <StateToggleButton startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
                     </Box>
                 </Grid>
                 <Grid item xs={6}>

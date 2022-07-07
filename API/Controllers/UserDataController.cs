@@ -184,6 +184,32 @@ namespace API.Controllers
             
         }
 
+        [HttpPut("{userId}/sprints/{sprintId}/tasks/{taskId}/updateTask", Name = "UpdateTask")]
+        public async Task<ActionResult<UpdateTaskDto>> UpdateTask(string userId, string sprintId, string taskId, UpdateTaskDto updateTaskDto) {
+
+            var currentUser = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).FirstOrDefaultAsync();
+
+            if(currentUser == null) return NotFound();
+
+            var currentSprint = currentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            if(currentSprint == null) return NotFound();
+
+            var currentTask = currentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if(currentTask == null) return NotFound();
+
+            _mapper.Map(updateTaskDto, currentTask);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) return Ok(updateTaskDto);
+
+            return BadRequest(new ProblemDetails { Title = "Problem updating task" });
+
+        }
+
+
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
                 return await _context.Users
                         .Where(u => u.UserEntityId == userEntityId)

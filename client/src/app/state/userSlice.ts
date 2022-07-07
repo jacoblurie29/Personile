@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { UpdateTask } from "app/models/updateTask";
+import { toast } from "react-toastify";
 import agent from "../api/agent";
 import { Sprint } from "../models/sprint";
 import { Task } from "../models/task";
@@ -17,6 +19,8 @@ const initialState : UserState = {
 }
 
 
+
+
 export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, sprintId: string, task: Task}>(
     'sprint/addTaskToSprintAsync',
     async ({userId, sprintId, task}, thunkAPI) => {
@@ -33,6 +37,17 @@ export const removeTaskFromSprintAsync = createAsyncThunk<void, {userId: string,
     async ({userId, sprintId, taskId}, thunkAPI) => {
         try {
             return await agent.UserData.removeTask(userId, sprintId, taskId);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+export const updateTaskStateAsync = createAsyncThunk<Task, {userId: string, sprintId: string, taskId: string, updatedTaskDto: UpdateTask, updatedTask: Task, previousState: number}>(
+    'sprint/updateTaskState',
+    async ({userId, sprintId, taskId, updatedTask}, thunkAPI) => {
+        try {
+            return await agent.UserData.updateTaskState(userId, sprintId, taskId, updatedTask);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -106,7 +121,60 @@ export const userSlice = createSlice({
         });
         builder.addCase(removeTaskFromSprintAsync.rejected, (state, action) => {
             state.status = 'idle';
-        })
+        });
+        builder.addCase(updateTaskStateAsync.pending, (state, action) => {
+            const {sprintId, taskId} = action.meta.arg;
+
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, action.meta.arg.updatedTask);
+
+            state.status = 'pendingUpdateTask';
+
+            
+        });
+        builder.addCase(updateTaskStateAsync.fulfilled, (state, action) => {
+
+            state.status = 'idle';
+
+            toast.success('Task updated!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+        });
+        builder.addCase(updateTaskStateAsync.rejected, (state, action) => {
+            const {sprintId, taskId} = action.meta.arg;
+
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            var revertedTask = action.meta.arg.updatedTask;
+            revertedTask.currentState = action.meta.arg.previousState;
+
+            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, revertedTask);
+
+            toast.error("Failed to update task state!");
+
+            state.status = 'idle';
+        });
     })
 })
 
