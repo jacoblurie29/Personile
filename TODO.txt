@@ -2,12 +2,21 @@
 
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
 
+TODO 7/7/2022
+-Slider Input
+-Add task action
+-Add subtask UI
+-Add subtask functionality
+-Edit task button logic
+-Modify new task to become task add and update component
+-ADD ID GENERATION WITH UUID (tasks AND subtasks)
+-Brain storm some UI stuff and look at modifying the global font sizes
+-CLEAN UP CODE
+
+
 TODO CURRENT LIST:
-Error handling
-Reception delay
 Sprint page date range selector (Selector finished, date parsing needed)
 Today page
-Sprint/Today/Future page add button (animate up cirle)
 Add subtask feature
 Task more pop up (split into two - view and edit, also used for add)
 Page titles
