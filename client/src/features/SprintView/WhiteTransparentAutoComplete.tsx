@@ -16,7 +16,7 @@ export default function WhiteTransparentAutoComplete(props: formProps) {
                 id="tags-filled"
                 options={[]}
                 freeSolo
-                onChange={(event, values) => {field.onChange(values)}}
+                onChange={(_, values) => {field.onChange(values)}}
                 renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                     <Chip
@@ -29,7 +29,6 @@ export default function WhiteTransparentAutoComplete(props: formProps) {
                 }
                 renderInput={(params) => (
                 <TextField
-                    onChange={() => {field.value = 'TEST'}}
                     error={!!fieldState.error?.message}
                     helperText={fieldState.error?.message}
                     {...params}

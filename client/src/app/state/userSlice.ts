@@ -5,6 +5,7 @@ import agent from "../api/agent";
 import { Sprint } from "../models/sprint";
 import { Task } from "../models/task";
 import { User } from "../models/user";
+import { mapUpdateTaskToTask } from "app/models/updateTask";
 
 interface UserState {
     userData: User | null;
@@ -21,7 +22,7 @@ const initialState : UserState = {
 
 
 
-export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, sprintId: string, task: Task}>(
+export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, sprintId: string, task: UpdateTask}>(
     'sprint/addTaskToSprintAsync',
     async ({userId, sprintId, task}, thunkAPI) => {
         try {
@@ -81,11 +82,8 @@ export const userSlice = createSlice({
         }
     },
     extraReducers: (builder => {
+        // ADD TASK TO SPRINT
         builder.addCase(addTaskToSprintAsync.pending, (state, action) => {
-            state.status = 'pendingAddTask';
-        });
-        builder.addCase(addTaskToSprintAsync.fulfilled, (state, action) => {
-
             const { sprintId } = action.meta.arg;
 
             const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
@@ -94,13 +92,31 @@ export const userSlice = createSlice({
 
             if(state.userData === null || state.userData === undefined) return;
 
-            state.userData?.sprints.splice(sprintIndex, 1, action.payload);
+            state.userData?.sprints[sprintIndex].tasks.push(mapUpdateTaskToTask(action.meta.arg.task));
+
+            state.status = 'pendingAddTask';
+        });
+        builder.addCase(addTaskToSprintAsync.fulfilled, (state, action) => {
+
+            toast.success('Task updated!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
 
             state.status = 'idle';
         });
         builder.addCase(addTaskToSprintAsync.rejected, (state, action) => {
+
             state.status = 'idle';
         });
+
+        // REMOVE TASK FROM SPRINT
         builder.addCase(removeTaskFromSprintAsync.pending, (state, action) => {
             state.status = 'pendingRemoveTask';
         });
@@ -122,6 +138,8 @@ export const userSlice = createSlice({
         builder.addCase(removeTaskFromSprintAsync.rejected, (state, action) => {
             state.status = 'idle';
         });
+
+        // UPDATE TASK STATE
         builder.addCase(updateTaskStateAsync.pending, (state, action) => {
             const {sprintId, taskId} = action.meta.arg;
 

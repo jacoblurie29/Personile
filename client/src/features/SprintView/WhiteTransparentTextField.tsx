@@ -15,7 +15,6 @@ export default function WhiteTransparentTextFieldprops(props: formProps) {
         <TextField 
             {...props}
             {...field}
-            error={!!fieldState.error}
             helperText={fieldState.error?.message}
             multiline={props.lines != null} 
             rows={props.lines}
@@ -26,6 +25,9 @@ export default function WhiteTransparentTextFieldprops(props: formProps) {
             id="outlined-size-small"
             size="small" 
             sx={{
+                "& .MuiFormHelperText-root":{
+                    color: "white"
+                },
                 "& .MuiInputLabel-root": {color: 'white'},
                 "& .MuiOutlinedInput-root": {
                     "& > fieldset": { borderColor: "white" },

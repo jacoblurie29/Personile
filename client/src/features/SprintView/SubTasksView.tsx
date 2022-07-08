@@ -1,6 +1,10 @@
-import { Checkbox, Divider, List, ListItem, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
+import { Box, Button, Checkbox, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, ListSubheader, TextField, Typography } from "@mui/material";
 import { Task } from "../../app/models/task";
 import CircleIcon from '@mui/icons-material/Circle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import AddSubtaskTextField from "./AddSubtaskTextField";
 
 interface Props {
     task: Task,
@@ -9,12 +13,17 @@ interface Props {
 
 export default function SubTasksView({task, isDialog}: Props) {
 
+    const methods = useForm();
 
+    const { control, handleSubmit } = useForm();
+
+    const [newSubTask, setNewSubTask] = useState<boolean>(false);
 
     const handleToggle = (value: number) => () => {
         // Update redux and database to reflect checked state
     };
 
+    const addTaskBorders = task.subTasks.length > 0 ? '0 0 5px 5px' : '5px';
 
     return (
         <>
@@ -25,7 +34,7 @@ export default function SubTasksView({task, isDialog}: Props) {
                 <div key={index + 'div'}>
                     <ListItem
                         key={subTask.subTaskEntityId}
-                        sx={{backgroundColor: 'rgba(256, 256, 256, 1)', borderRadius: task.subTasks.length === 1 ? '5px 5px 5px 5px' : index === 0 ? '5px 5px 0 0' : index === task.subTasks.length - 1 ? '0 0 5px 5px' : ''}}
+                        sx={{backgroundColor: 'rgba(256, 256, 256, 1)', borderRadius: task.subTasks.length === 1 ? '5px 5px 5px 5px' : index === 0 ? '5px 5px 0 0'  : ''}}
                         secondaryAction={
                         <Checkbox
                             key={subTask.subTaskEntityId + '-checkbox'}
@@ -47,7 +56,30 @@ export default function SubTasksView({task, isDialog}: Props) {
                 </div>
                 );
             })}
-            </List> 
+            <>
+            {newSubTask && 
+            <FormProvider {...methods}>
+                <form onSubmit={handleSubmit((data) => console.log(data))}>
+                    <ListItem
+                            sx={{backgroundColor: 'rgba(256, 256, 256, 0.4)', borderRadius: addTaskBorders}}
+                            disablePadding
+                        >
+                        <CircleIcon sx={{fontSize: '10px', ml: "10px", color: '#888888'}}/>
+                        <AddSubtaskTextField control={control} name="newSubtask"/>
+                        <IconButton type="submit" sx={{margin: 'auto', padding: '1px', marginRight:'14px', marginLeft:'14px'}} size="small" onClick={() => setNewSubTask(false)}><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>
+                    </ListItem>
+                </form>
+            </FormProvider>
+            }
+            {!newSubTask &&
+            <ListItem sx={{backgroundColor: 'rgba(256, 256, 256, 0.4)', borderRadius: addTaskBorders}}>
+                <Box sx={{ marginRight: '5px', textAlign:'center'}} flexGrow={1} >
+                        <IconButton type="button" sx={{margin: 'auto', padding: '1px'}} size="small" onClick={() => setNewSubTask(true)}><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>   
+                </Box>
+            </ListItem>
+            }
+            </>
+        </List> 
         </>
 
     )

@@ -11,9 +11,9 @@ namespace API.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public string Links { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime? DateFinished { get; set; }
-        public DateTime? DueDate { get; set; }
+        public string DateCreated { get; set; }
+        public string DateFinished { get; set; }
+        public string DueDate { get; set; }
         public int CurrentState { get; set; }
         public string Tags { get; set; }
         public int Effort { get; set; }

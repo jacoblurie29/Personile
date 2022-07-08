@@ -9,30 +9,34 @@ interface formProps extends UseControllerProps {
 }
 export default function WhiteTransparentDatePicker(props: formProps) {
 
-    const {fieldState, field} = useController({...props, defaultValue: ""});
-    const [value, setValue] = useState<Date | null>(null);
+    const {fieldState, field} = useController({...props, defaultValue: new Date()});
+
+    const [value, setValue] = useState<string | undefined>("");
 
     useEffect(() => {
         if(props.disabled) {
-            field.onChange(null)
+            field.onChange("")
+        } else {
+            field.onChange(new Date().toString())
         }
     }, [props.disabled])
+    
 
     if(!props.disabled) {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
+            minDate={new Date()}
             disabled={props.disabled}
             openTo="year"
             views={['year', 'month', 'day']}
-            label="Year, month and date"
+            label="Year, month, and date"
             value={value}
             onChange={(newValue) => {
-                setValue(newValue);
+                setValue(newValue?.toString());
             }}
             renderInput={(params) => <TextField 
                 {...props}
-                {...field}
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 color="secondary" fullWidth {...params} label="Due date" placeholder="(Optional)" variant="outlined"
@@ -62,7 +66,7 @@ export default function WhiteTransparentDatePicker(props: formProps) {
             views={['year', 'month', 'day']}
             label="Year, month and date"
             onChange={(newValue) => {
-                setValue(null);
+                setValue("");
             }}
             renderInput={(params) => <TextField 
                 {...props}

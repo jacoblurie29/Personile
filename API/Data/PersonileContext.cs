@@ -16,5 +16,15 @@ namespace API.Data
         public DbSet<TaskEntity> Tasks { get; set; }
 
         public DbSet<SubTaskEntity> SubTasks { get; set; }
+
+        // The following is necessary for cascade deleting (EF Core orphans rows and does not support true cascading)
+        // Will have to implement for ANY deleted object with a parent or child
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TaskEntity>()
+            .HasKey(k => new {k.TaskEntityId, k.SprintId});
+
+        }
+
     }
 }

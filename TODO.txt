@@ -3,7 +3,7 @@
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
 
 TODO 7/7/2022
--Slider Input
+-Slider Input DONE
 -Add task action
 -Add subtask UI
 -Add subtask functionality

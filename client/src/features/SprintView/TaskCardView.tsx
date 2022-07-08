@@ -8,7 +8,6 @@ import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
 import { removeTaskFromSprintAsync, updateTaskStateAsync } from "../../app/state/userSlice";
 import StateToggleButton from "./StateToggleButton";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
-import { useEffect } from "react";
 
 interface Props {
     task: Task,

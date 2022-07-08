@@ -65,7 +65,7 @@ const UserData = {
     titles: (userId: string) => requests.get(`userdata/${userId}/sprints/titles`),
     addTask: (userId: string, sprintId: string, body: {}) => requests.post(`userdata/${userId}/sprints/${sprintId}/addTask`, body),
     removeTask: (userId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`),
-    updateTaskState: (userId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body)
+    updateTaskState: (userId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
 }
 
 const agent = {

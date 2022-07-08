@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace API.Data.Migrations
 {
-    public partial class UsersAdded : Migration
+    public partial class DatesToStrings : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,8 +27,8 @@ namespace API.Data.Migrations
                 columns: table => new
                 {
                     SprintEntityId = table.Column<string>(type: "TEXT", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    StartDate = table.Column<string>(type: "TEXT", nullable: true),
+                    EndDate = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -47,26 +46,27 @@ namespace API.Data.Migrations
                 columns: table => new
                 {
                     TaskEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    SprintId = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Links = table.Column<string>(type: "TEXT", nullable: true),
-                    DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DateFinished = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    DueDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DateCreated = table.Column<string>(type: "TEXT", nullable: true),
+                    DateFinished = table.Column<string>(type: "TEXT", nullable: true),
+                    DueDate = table.Column<string>(type: "TEXT", nullable: true),
                     CurrentState = table.Column<int>(type: "INTEGER", nullable: false),
                     Tags = table.Column<string>(type: "TEXT", nullable: true),
                     Effort = table.Column<int>(type: "INTEGER", nullable: false),
-                    Color = table.Column<int>(type: "INTEGER", nullable: false),
-                    SprintId = table.Column<string>(type: "TEXT", nullable: true)
+                    Color = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.TaskEntityId);
+                    table.PrimaryKey("PK_Tasks", x => new { x.TaskEntityId, x.SprintId });
                     table.ForeignKey(
                         name: "FK_Tasks_Sprints_SprintId",
                         column: x => x.SprintId,
                         principalTable: "Sprints",
-                        principalColumn: "SprintEntityId");
+                        principalColumn: "SprintEntityId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,16 +76,18 @@ namespace API.Data.Migrations
                     SubTaskEntityId = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: true),
                     Details = table.Column<string>(type: "TEXT", nullable: true),
+                    TaskEntityId = table.Column<string>(type: "TEXT", nullable: true),
+                    TaskSprintId = table.Column<string>(type: "TEXT", nullable: true),
                     TaskId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubTasks", x => x.SubTaskEntityId);
                     table.ForeignKey(
-                        name: "FK_SubTasks_Tasks_TaskId",
-                        column: x => x.TaskId,
+                        name: "FK_SubTasks_Tasks_TaskEntityId_TaskSprintId",
+                        columns: x => new { x.TaskEntityId, x.TaskSprintId },
                         principalTable: "Tasks",
-                        principalColumn: "TaskEntityId");
+                        principalColumns: new[] { "TaskEntityId", "SprintId" });
                 });
 
             migrationBuilder.CreateIndex(
@@ -94,9 +96,9 @@ namespace API.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubTasks_TaskId",
+                name: "IX_SubTasks_TaskEntityId_TaskSprintId",
                 table: "SubTasks",
-                column: "TaskId");
+                columns: new[] { "TaskEntityId", "TaskSprintId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_SprintId",
