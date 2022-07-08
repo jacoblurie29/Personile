@@ -1,21 +1,28 @@
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useController, UseControllerProps } from "react-hook-form";
 
-interface Props {
+interface formProps extends UseControllerProps {
     disabled: boolean
 }
+export default function WhiteTransparentDatePicker(props: formProps) {
 
-export default function WhiteTransparentDatePicker({disabled}: Props) {
-
+    const {fieldState, field} = useController({...props, defaultValue: ""});
     const [value, setValue] = useState<Date | null>(null);
 
-    if(!disabled) {
+    useEffect(() => {
+        if(props.disabled) {
+            field.onChange(null)
+        }
+    }, [props.disabled])
+
+    if(!props.disabled) {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
-            disabled={disabled}
+            disabled={props.disabled}
             openTo="year"
             views={['year', 'month', 'day']}
             label="Year, month and date"
@@ -23,7 +30,12 @@ export default function WhiteTransparentDatePicker({disabled}: Props) {
             onChange={(newValue) => {
                 setValue(newValue);
             }}
-            renderInput={(params) => <TextField color="secondary" fullWidth {...params} label="Due date" placeholder="(Optional)" variant="outlined" helperText={null}
+            renderInput={(params) => <TextField 
+                {...props}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                color="secondary" fullWidth {...params} label="Due date" placeholder="(Optional)" variant="outlined"
             sx={{
                 "& .MuiInputLabel-root": {color: 'white'},
                 "& .MuiOutlinedInput-root": {
@@ -44,17 +56,31 @@ export default function WhiteTransparentDatePicker({disabled}: Props) {
         return (
             <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
-            disabled={disabled}
+            value={null}
+            disabled={props.disabled}
             openTo="year"
             views={['year', 'month', 'day']}
             label="Year, month and date"
-            value={value}
             onChange={(newValue) => {
-                setValue(newValue);
+                setValue(null);
             }}
-            renderInput={(params) => <TextField color="secondary" fullWidth {...params} label="Due date" placeholder="(Optional)" variant="outlined" helperText={null}
-            sx={{
-            color: 'white', textArea: {color: 'white'}, input: {color: 'white'}, marginLeft: '10px', borderRadius: '5px'}} />} />
+            renderInput={(params) => <TextField 
+                {...props}
+                {...field}
+                color="secondary"
+                fullWidth {...params}
+                label="Due date (optional)"
+                variant="outlined"
+                helperText={null}
+                sx={{
+                    color: 'white',
+                    textArea: {color: 'white'},
+                    input: {color: 'white'},
+                    marginLeft: '10px',
+                    borderRadius: '5px'
+                    }}
+                    />}
+                />
             </LocalizationProvider>
         )
     }
