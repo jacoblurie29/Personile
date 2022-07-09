@@ -51,9 +51,6 @@ namespace API.Data.Migrations
                     b.Property<string>("TaskEntityId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TaskId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("TaskSprintId")
                         .HasColumnType("TEXT");
 

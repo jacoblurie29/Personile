@@ -4,7 +4,7 @@
 
 namespace API.Data.Migrations
 {
-    public partial class DatesToStrings : Migration
+    public partial class SubtaskUpdate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -77,8 +77,7 @@ namespace API.Data.Migrations
                     Status = table.Column<string>(type: "TEXT", nullable: true),
                     Details = table.Column<string>(type: "TEXT", nullable: true),
                     TaskEntityId = table.Column<string>(type: "TEXT", nullable: true),
-                    TaskSprintId = table.Column<string>(type: "TEXT", nullable: true),
-                    TaskId = table.Column<string>(type: "TEXT", nullable: true)
+                    TaskSprintId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

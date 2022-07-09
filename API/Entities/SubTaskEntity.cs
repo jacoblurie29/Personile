@@ -11,6 +11,5 @@ namespace API.Entities
         public string Status { get; set; }
         public string Details { get; set; }
         public TaskEntity Task { get; set; }
-        public string TaskId { get; set; }
     }
 }

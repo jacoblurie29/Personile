@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220708173451_DatesToStrings")]
-    partial class DatesToStrings
+    [Migration("20220709035534_SubtaskUpdate")]
+    partial class SubtaskUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,9 +51,6 @@ namespace API.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TaskEntityId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TaskId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TaskSprintId")

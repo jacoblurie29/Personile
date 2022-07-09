@@ -82,7 +82,7 @@ export default function TaskCardView({task}: Props) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                        <LoadingButton key={task.taskEntityId} loading={status.includes("pending")} variant='contained' color='error' onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}>Delete task</LoadingButton>
+                        <LoadingButton key={task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' color='error' onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}>Delete task</LoadingButton>
                     </Box>
                 </Grid>
             </Grid>

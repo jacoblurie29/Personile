@@ -149,34 +149,6 @@ namespace API.Data
                 },
         };
 
- 
-
-        var subTasksForTask0 = new List<SubTaskEntity> {
-                        new SubTaskEntity {
-                            SubTaskEntityId = "SUBTASK_ID_1",
-                            Status = "Incomplete",
-                            Details = "Details",
-                        },
-                        new SubTaskEntity {
-                            SubTaskEntityId = "SUBTASK_ID_2",
-                            Status = "Incomplete",
-                            Details = "Details",
-                        },
-                        new SubTaskEntity {
-                            SubTaskEntityId = "SUBTASK_ID_3",
-                            Status = "Complete",
-                            Details = "Details",
-                        },
-                        new SubTaskEntity {
-                            SubTaskEntityId = "SUBTASK_ID_4",
-                            Status = "Complete",
-                            Details = "Details",
-                        }
-                };
-
-        tasksForSprint0[0].SubTasks = subTasksForTask0;
-
-
 
         sprints[0].Tasks = tasksForSprint0;
 

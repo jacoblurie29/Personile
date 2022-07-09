@@ -6,6 +6,7 @@ import { Sprint } from "../models/sprint";
 import { Task } from "../models/task";
 import { User } from "../models/user";
 import { mapUpdateTaskToTask } from "app/models/updateTask";
+import { SubTask } from "app/models/subTask";
 
 interface UserState {
     userData: User | null;
@@ -49,6 +50,28 @@ export const updateTaskStateAsync = createAsyncThunk<Task, {userId: string, spri
     async ({userId, sprintId, taskId, updatedTask}, thunkAPI) => {
         try {
             return await agent.UserData.updateTaskState(userId, sprintId, taskId, updatedTask);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+export const addSubTaskToTaskAsync = createAsyncThunk<SubTask, {userId: string, sprintId: string, taskId: string, newSubtask: SubTask}>(
+    'sprint/addSubtaskToTask',
+    async ({userId, sprintId, taskId, newSubtask}, thunkAPI) => {
+        try {
+            return await agent.UserData.addSubtask(userId, sprintId, taskId, newSubtask)
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+) 
+
+export const updateSubtaskStateAsync = createAsyncThunk<SubTask, {userId: string, sprintId: string, taskId: string, subtaskId: string, updatedSubtask: SubTask}>(
+    'sprints/updateSubtaskState',
+    async ({userId, sprintId, taskId, subtaskId, updatedSubtask}, thunkAPI) => {
+        try {
+            return await agent.UserData.updateSubtaskState(userId, sprintId, taskId, subtaskId, updatedSubtask)
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -118,7 +141,7 @@ export const userSlice = createSlice({
 
         // REMOVE TASK FROM SPRINT
         builder.addCase(removeTaskFromSprintAsync.pending, (state, action) => {
-            state.status = 'pendingRemoveTask';
+            state.status = 'pendingDeleteTask';
         });
         builder.addCase(removeTaskFromSprintAsync.fulfilled, (state, action) => {
             const {sprintId, taskId} = action.meta.arg;
@@ -189,7 +212,151 @@ export const userSlice = createSlice({
 
             state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, revertedTask);
 
-            toast.error("Failed to update task state!");
+            toast.error('Failed to update task state!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+
+        // ADD SUBTASK
+
+        builder.addCase(addSubTaskToTaskAsync.pending, (state, action) => {
+            const {sprintId, taskId} = action.meta.arg;
+
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.push(action.meta.arg.newSubtask)
+
+            state.status = 'pendingUpdateTask';
+
+            
+        });
+        builder.addCase(addSubTaskToTaskAsync.fulfilled, (state, action) => {
+
+            state.status = 'idle';
+
+            toast.success('Subtask added!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+        });
+        builder.addCase(addSubTaskToTaskAsync.rejected, (state, action) => {
+            const {sprintId, taskId} = action.meta.arg;
+
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.pop();
+
+            toast.error('Failed to add subtask!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+
+        // UPDATE SUBTASK
+        builder.addCase(updateSubtaskStateAsync.pending, (state, action) => {
+            const {sprintId, taskId, subtaskId} = action.meta.arg;
+
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            const subtaskIndex = state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
+
+            if (subtaskIndex === undefined || subtaskIndex < 0) return;
+
+            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1, action.meta.arg.updatedSubtask);
+
+            state.status = 'pendingUpdateSubtask';
+
+            
+        });
+        builder.addCase(updateSubtaskStateAsync.fulfilled, (state, action) => {
+
+            state.status = 'idle';
+
+            toast.success('Subtask updated!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+        });
+        builder.addCase(updateSubtaskStateAsync.rejected, (state, action) => {
+            const {sprintId, taskId, subtaskId} = action.meta.arg;
+
+            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            const subtaskIndex = state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
+
+            if (subtaskIndex === undefined || subtaskIndex < 0) return;
+
+            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
+
+            toast.error('Failed to add subtask!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
 
             state.status = 'idle';
         });

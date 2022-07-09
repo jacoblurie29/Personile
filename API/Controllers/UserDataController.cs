@@ -141,7 +141,7 @@ namespace API.Controllers
 
 
         // Adds a subtask to a specific task
-        [HttpPost("{userId}/sprints/{sprintId}/tasks/{taskId}/addSubTask", Name = "AddSubtaskToTask")]
+        [HttpPost("{userId}/sprints/{sprintId}/tasks/{taskId}/addSubtask", Name = "AddSubtaskToTask")]
         public async Task<ActionResult<TaskDto>> AddNewSubtask(string sprintId, string taskId, SubTaskDto subTaskDto, string userId) {
             var MappedSubtask = _mapper.Map<SubTaskEntity>(subTaskDto);
 
@@ -206,6 +206,35 @@ namespace API.Controllers
             if (result) return Ok(updateTaskDto);
 
             return BadRequest(new ProblemDetails { Title = "Problem updating task" });
+
+        }
+
+        [HttpPut("{userId}/sprints/{sprintId}/tasks/{taskId}/subtasks/{subtaskId}/updateSubtask")]
+        public async Task<ActionResult<SubTaskDto>> UpdateSubtask(string userId, string sprintId, string taskId, string subtaskId, SubTaskDto subTaskDto) {
+            var currentUser = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(s => s.SubTasks).FirstOrDefaultAsync();
+
+            if(currentUser == null) return NotFound();
+
+            var currentSprint = currentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            if(currentSprint == null) return NotFound();
+
+            var currentTask = currentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if(currentTask == null) return NotFound();
+
+            var currentSubtask = currentTask.SubTasks.Where(s => s.SubTaskEntityId == subTaskDto.SubTaskEntityId).FirstOrDefault();
+
+            if(currentSubtask == null) return NotFound();
+
+            _mapper.Map(subTaskDto, currentSubtask);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) return Ok(subTaskDto);
+
+            return BadRequest(new ProblemDetails { Title = "Problem updating task" });
+
 
         }
 
