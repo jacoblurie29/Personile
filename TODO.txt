@@ -2,19 +2,17 @@
 
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
 
-TODO 7/7/2022
--Slider Input DONE
--Add task action
--Add subtask UI
--Add subtask functionality
--Edit task button logic
--Modify new task to become task add and update component
--ADD ID GENERATION WITH UUID (tasks AND subtasks)
--Brain storm some UI stuff and look at modifying the global font sizes
--CLEAN UP CODE
+TODO 7/9/2022 + 7/10/2022
+-Edit task functionality
+-After above do code cleanup and reorganization
+-User auth will begin AT WORK on monday
+-Due date UI
 
 
-TODO CURRENT LIST:
+
+
+
+FUTURE TODO CURRENT LIST:
 Sprint page date range selector (Selector finished, date parsing needed)
 Today page
 Add subtask feature
@@ -25,9 +23,6 @@ Sprint data structure
 Dto's
 Widget card implementation
 Widget graphs
-
-
-FUTURE:
 Authorization/Authentication (JWT)
 Roles
 Accounts
