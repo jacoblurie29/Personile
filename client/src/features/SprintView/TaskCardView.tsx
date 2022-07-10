@@ -8,12 +8,15 @@ import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
 import { removeTaskFromSprintAsync, updateTaskStateAsync } from "../../app/state/userSlice";
 import StateToggleButton from "./StateToggleButton";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
     task: Task,
+    toggleEditTask: (taskId: string) => void
 }
 
-export default function TaskCardView({task}: Props) {
+export default function TaskCardView({task, toggleEditTask}: Props) {
 
     const {status} = useAppSelector(state => state.user)
     const {currentSprint, isExpanded: expanded } = useAppSelector(state => state.sprintView);
@@ -82,7 +85,8 @@ export default function TaskCardView({task}: Props) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                        <LoadingButton key={task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' color='error' onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}>Delete task</LoadingButton>
+                        <LoadingButton key={"edit-" + task.taskEntityId} loading={status.includes("pending")} variant='contained' sx={{backgroundColor: "#AAAAAA"}} onClick={() => toggleEditTask(task.taskEntityId)}><EditIcon color="primary" /></LoadingButton>
+                        <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' color='error' onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}><DeleteIcon /></LoadingButton>
                     </Box>
                 </Grid>
             </Grid>

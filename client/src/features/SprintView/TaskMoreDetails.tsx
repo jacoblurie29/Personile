@@ -23,14 +23,20 @@ export default function TaskMoreDetails({ focusedTask }: Props) {
 
     return (
         <Box paddingBottom='10px'>
-            <Typography variant="caption" sx={{color: 'white'}}>Tags</Typography>
-            <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
-                <Grid item justifyContent='center' sx={{margin: 'auto'}}>
-                {focusedTask?.tags.split('|').map((tag, index) => (
-                    <Chip key={tag} label={tag} sx={{margin: '2px', backgroundColor: '#EEEEEE'}} />
-                ))}
+            {focusedTask.tags !== '' && 
+            <>
+                <Typography variant="caption" sx={{color: 'white'}}>Tags&nbsp;({focusedTask.tags !== '' ? focusedTask.tags.split("|").length : 0})</Typography>
+                
+                <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
+                
+                    <Grid item justifyContent='center' sx={{margin: 'auto'}}>
+                    {focusedTask?.tags.split('|').map((tag, index) => (
+                        <Chip key={tag} label={tag} sx={{margin: '2px', backgroundColor: '#EEEEEE'}} />
+                    ))}
+                    </Grid>
                 </Grid>
-            </Grid>
+            </>
+            }
             <Typography variant="caption" sx={{color: 'white'}}>Estimated effort</Typography>
             <Tooltip title={focusedTask.effort} arrow>
             <BorderLinearProgress sx={{mt: '2px', mb: '12px', boxShadow: '1px 2px 7px #777777' }} variant="determinate" value={focusedTask.effort * 10} />

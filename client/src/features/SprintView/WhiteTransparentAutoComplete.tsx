@@ -1,14 +1,17 @@
 import { Autocomplete, Chip, TextField } from "@mui/material";
+import { useEffect } from "react";
 import { useController, UseControllerProps } from "react-hook-form";
 
 interface formProps extends UseControllerProps {
     label: string
     placeholder: string
+    editvalue?: string[]
 }
 
 export default function WhiteTransparentAutoComplete(props: formProps) {
 
-    const {fieldState, field} = useController({...props, defaultValue: []});
+    const {fieldState, field} = useController({...props, defaultValue: props.editvalue || []});
+
 
     return (
             <Autocomplete
@@ -16,6 +19,7 @@ export default function WhiteTransparentAutoComplete(props: formProps) {
                 id="tags-filled"
                 options={[]}
                 freeSolo
+                defaultValue={props.editvalue !== undefined && props.editvalue[0] !== '' ? [...props.editvalue] : undefined}
                 onChange={(_, values) => {field.onChange(values)}}
                 renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (

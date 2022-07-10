@@ -2,12 +2,12 @@ import { Slider } from "@mui/material";
 import { useController, UseControllerProps } from "react-hook-form";
 
 interface formProps extends UseControllerProps {
-
+    editvalue?: string
 }
 
 export default function WhiteTransparentEffortSlider(props: formProps) {
 
-    const {field} = useController({...props, defaultValue: 5 })
+    const {field} = useController({...props, defaultValue: props.editvalue || 5 })
 
     return (
         <Slider

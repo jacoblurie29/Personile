@@ -5,11 +5,12 @@ import { useController, UseControllerProps } from "react-hook-form";
 interface formProps extends UseControllerProps {
     label: string
     lines?: number
+    editvalue?: string
 }
 
 export default function WhiteTransparentTextFieldprops(props: formProps) {
 
-    const {fieldState, field} = useController({...props, defaultValue: ''})
+    const {fieldState, field} = useController({...props, defaultValue: props.editvalue || ""})
 
     return (
         <TextField 
