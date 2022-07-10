@@ -45,11 +45,11 @@ export const removeTaskFromSprintAsync = createAsyncThunk<void, {userId: string,
     }
 )
 
-export const updateTaskStateAsync = createAsyncThunk<Task, {userId: string, sprintId: string, taskId: string, updatedTaskDto: UpdateTask, updatedTask: Task, previousState: number}>(
-    'sprint/updateTaskState',
-    async ({userId, sprintId, taskId, updatedTask}, thunkAPI) => {
+export const updateTaskAsync = createAsyncThunk<Task, {userId: string, sprintId: string, taskId: string, updatedTaskDto: UpdateTask, previousState: Task, futureState: Task}>(
+    'sprint/updateTask',
+    async ({userId, sprintId, taskId, updatedTaskDto}, thunkAPI) => {
         try {
-            return await agent.UserData.updateTaskState(userId, sprintId, taskId, updatedTask);
+            return await agent.UserData.updateTaskState(userId, sprintId, taskId, updatedTaskDto);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -71,7 +71,7 @@ export const updateSubtaskStateAsync = createAsyncThunk<SubTask, {userId: string
     'sprints/updateSubtaskState',
     async ({userId, sprintId, taskId, subtaskId, updatedSubtask}, thunkAPI) => {
         try {
-            return await agent.UserData.updateSubtaskState(userId, sprintId, taskId, subtaskId, updatedSubtask)
+            return await agent.UserData.updateSubtask(userId, sprintId, taskId, subtaskId, updatedSubtask)
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -162,8 +162,8 @@ export const userSlice = createSlice({
             state.status = 'idle';
         });
 
-        // UPDATE TASK STATE
-        builder.addCase(updateTaskStateAsync.pending, (state, action) => {
+        // UPDATE TASK 
+        builder.addCase(updateTaskAsync.pending, (state, action) => {
             const {sprintId, taskId} = action.meta.arg;
 
             const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
@@ -174,13 +174,15 @@ export const userSlice = createSlice({
 
             const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
 
-            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, action.meta.arg.updatedTask);
+            console.log(action.meta.arg.futureState)
+
+            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, action.meta.arg.futureState);
 
             state.status = 'pendingUpdateTask';
 
             
         });
-        builder.addCase(updateTaskStateAsync.fulfilled, (state, action) => {
+        builder.addCase(updateTaskAsync.fulfilled, (state, action) => {
 
             state.status = 'idle';
 
@@ -196,7 +198,7 @@ export const userSlice = createSlice({
                 });
 
         });
-        builder.addCase(updateTaskStateAsync.rejected, (state, action) => {
+        builder.addCase(updateTaskAsync.rejected, (state, action) => {
             const {sprintId, taskId} = action.meta.arg;
 
             const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
@@ -207,8 +209,7 @@ export const userSlice = createSlice({
 
             const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
 
-            var revertedTask = action.meta.arg.updatedTask;
-            revertedTask.currentState = action.meta.arg.previousState;
+            var revertedTask = {...action.meta.arg.previousState};
 
             state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, revertedTask);
 

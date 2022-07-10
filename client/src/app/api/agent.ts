@@ -68,7 +68,7 @@ const UserData = {
     removeTask: (userId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`),
     updateTaskState: (userId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
     addSubtask: (userId: string, sprintId: string, taskId: string, body: {}) => requests.post(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/addSubtask`, body),
-    updateSubtaskState: (userId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body)
+    updateSubtask: (userId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body)
 }
 
 const agent = {

@@ -42,10 +42,10 @@ export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditT
                 !tasksToBeEdited.includes(task.taskEntityId) ? 
                     <TaskCardView task={task} key={task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} />
                         :
-                    <TaskCardViewEditor key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>
+                    <TaskCardViewEditor toggleEditTask={toggleEditTask} key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>
             ))}
 
-            {newTask && <TaskCardViewEditor setNewTask={setNewTask} />}
+            {newTask && <TaskCardViewEditor setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}
 
             {stateTitle === "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
         </Box>

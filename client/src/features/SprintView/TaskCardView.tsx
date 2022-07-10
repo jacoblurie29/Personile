@@ -5,7 +5,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Task } from "../../app/models/task";
 import { useAppSelector, useAppDispatch } from "../../app/store/configureStore";
 import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
-import { removeTaskFromSprintAsync, updateTaskStateAsync } from "../../app/state/userSlice";
+import { removeTaskFromSprintAsync, updateTaskAsync } from "../../app/state/userSlice";
 import StateToggleButton from "./StateToggleButton";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -45,7 +45,7 @@ export default function TaskCardView({task, toggleEditTask}: Props) {
         if(currentState != newState) {
 
             var newTask = {...currentTask};
-            var prevState  = newTask.currentState;
+            var previousState  = {...newTask};
             newTask.currentState = newState;
             var newUpdateTask = mapTaskToUpdateTask(newTask);
             var currentTaskId = newTask.taskEntityId;
@@ -54,7 +54,7 @@ export default function TaskCardView({task, toggleEditTask}: Props) {
 
             if (currentUserId == undefined || currentSprintId == null ) return;
 
-            dispatch(updateTaskStateAsync({userId: currentUserId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, updatedTask: newTask, previousState: prevState}));
+            dispatch(updateTaskAsync({userId: currentUserId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
             
             dispatch(removeFromIsExpanded(currentTaskId));
         }
@@ -85,8 +85,8 @@ export default function TaskCardView({task, toggleEditTask}: Props) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                        <LoadingButton key={"edit-" + task.taskEntityId} loading={status.includes("pending")} variant='contained' sx={{backgroundColor: "#AAAAAA"}} onClick={() => toggleEditTask(task.taskEntityId)}><EditIcon color="primary" /></LoadingButton>
-                        <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' color='error' onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}><DeleteIcon /></LoadingButton>
+                        <LoadingButton key={"edit-" + task.taskEntityId} loading={status.includes("pending")} variant='contained' sx={{backgroundColor: "#AAAAAA", borderRadius:"5px 0 0 5px"}} onClick={() => toggleEditTask(task.taskEntityId)}><EditIcon color="primary" /></LoadingButton>
+                        <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' color='error' sx={{borderRadius:"0 5px 5px 0"}} onClick={() => dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}><DeleteIcon /></LoadingButton>
                     </Box>
                 </Grid>
             </Grid>
