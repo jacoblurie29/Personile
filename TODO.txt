@@ -3,8 +3,10 @@
 NOTES: All operations that can be done with the dummy database should be done before the authorization is added
 
 TODO 7/9/2022 + 7/10/2022
--Edit task functionality
+-Edit task functionality DONE
 -After above do code cleanup and reorganization
+-Due Date UI
+-Sub task edit/delete (thinking a three dot or settings drop down on the right side each task with a delete or edit option... potentially add them to the edit screen as a group of those edit fields without the add button?)
 -User auth will begin AT WORK on monday
 -Due date UI
 
@@ -15,12 +17,12 @@ TODO 7/9/2022 + 7/10/2022
 FUTURE TODO CURRENT LIST:
 Sprint page date range selector (Selector finished, date parsing needed)
 Today page
-Add subtask feature
-Task more pop up (split into two - view and edit, also used for add)
+Add subtask feature DONE
+Task more pop up (split into two - view and edit, also used for add) DONE
 Page titles
-Status posting/updating
-Sprint data structure
-Dto's
+Status posting/updating DONE
+Sprint data structure DONE
+Dto's DONE
 Widget card implementation
 Widget graphs
 Authorization/Authentication (JWT)
