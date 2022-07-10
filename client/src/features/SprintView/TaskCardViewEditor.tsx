@@ -12,12 +12,22 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { addTaskToSprintAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
+import { Task } from "app/models/task";
+import { TagFacesOutlined } from "@mui/icons-material";
 
 interface Props {
     setNewTask: (value: boolean) => void
+    editTask?: Task
 }
 
-export default function NewTaskCardView({setNewTask}: Props) {
+export default function TaskCardViewEditor({setNewTask, editTask}: Props) {
+
+    function chooseColor(title: number) {
+        return title === 0 
+            ? 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)' 
+            : title === 1 ? 'linear-gradient(90deg, rgba(255,209,125,1) 0%, rgba(255,196,54,1) 100%)' 
+            : 'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'
+    }
 
     const methods = useForm({
         mode: 'all',
@@ -29,7 +39,7 @@ export default function NewTaskCardView({setNewTask}: Props) {
         resolver: yupResolver(validationSchema)
     });
     
-    const [disabled, setDisabled] = useState<boolean>(false);
+    const [disabled, setDisabled] = useState<boolean>(editTask?.dueDate != "" || false);
 
     const currentEffort = watch("effort", 5);
 
@@ -44,44 +54,50 @@ export default function NewTaskCardView({setNewTask}: Props) {
 
         const createdDate = new Date().toString();
 
-        console.log(createdDate)
+        console.log(formData)
+
+        
+        var tags = formData.tags === [] ? "" : formData.taskTags.join("|");
+        var links = formData.links === [] ? "" : formData.taskLinks.join("|");
 
         var newTask = {
            taskEntityId: uuidv4(),
            name: formData.name,
            description: formData.description,
-           links: formData.taskLinks.join("|"),
+           links: links,
            dateCreated: createdDate,
            dateFinished: "",
            dueDate: formData.dueDate.toString(),
            currentState: 0,
-           tags: formData.taskTags.join("|"),
+           tags: tags,
            effort: formData.effort,
            color: 0
         }
+
+        console.log(newTask)
 
         dispatch(addTaskToSprintAsync({userId: userId, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => setNewTask(false));
     }
 
 
     return (
-        <Card elevation={1} sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', marginBottom: '10px'}}>
-            <Typography variant="h6" margin="5% 6% 20px 6%" sx={{color: 'white', fontFamily:'Open Sans', fontWeight:'700', fontSize:'22px'}}>New Task</Typography>
+        <Card elevation={1} sx={{background: chooseColor(editTask?.currentState || 0), marginBottom: '10px'}}>
+            <Typography variant="h6" margin="5% 6% 20px 6%" sx={{color: 'white', fontFamily:'Open Sans', fontWeight:'700', fontSize:'22px'}}>Edit Task</Typography>
             <FormProvider {...methods}>
                 <form onSubmit={handleSubmit((data) => handleAddTask(data))}>
                     <Grid container margin='10px' columns={24}>
                         <Grid item xs={21}>
-                            <WhiteTransparentTextField control={control} label="Task Name" name="name"/>
-                            <WhiteTransparentTextField control={control} label="Description" name="description" lines={3}/>
-                            <WhiteTransparentAutoComplete control={control} label="Tags" placeholder="tags" name="taskTags" />
-                            <WhiteTransparentAutoComplete control={control} label="Links" placeholder="links" name="taskLinks" />
+                            <WhiteTransparentTextField control={control} label="Task Name" name="name" editvalue={editTask?.name}/>
+                            <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
+                            <WhiteTransparentAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
+                            <WhiteTransparentAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
                             <Grid container alignItems="center"
                                     justifyContent="center" sx={{marginBottom: '10px'}}>
                                 <Grid item xs={2}>
-                                    <Switch color="default" defaultChecked={false} onClick={() => setDisabled(!disabled)} />
+                                    <Switch color="default" defaultChecked={editTask?.dueDate != ""} onClick={() => setDisabled(!disabled)} />
                                 </Grid>
                                 <Grid item xs={10}>
-                                    <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" />
+                                    <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>
                                 </Grid>
                             </Grid>
                             <Box width='90%' flexGrow={1} margin='auto'>
