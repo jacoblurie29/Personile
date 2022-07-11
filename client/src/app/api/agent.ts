@@ -71,9 +71,16 @@ const UserData = {
     updateSubtask: (userId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body)
 }
 
+const Account = {
+    login: (values: any) => requests.post('account/login', values),
+    register: (values: any) => requests.post('account/register', values),
+    currentUser: () => requests.get('account/currentUser')
+}
+
 const agent = {
     UserData,
-    TestErrors
+    TestErrors,
+    Account
 }
 
 export default agent;

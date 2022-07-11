@@ -1,3 +1,5 @@
+import LoginView from "features/AccountViews/LoginView";
+import RegisterView from "features/AccountViews/RegisterView";
 import { useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import SettingsView from "../../features/SettingsView/SettingsView";
@@ -16,27 +18,6 @@ export default function AppRouter() {
     const dispatch = useAppDispatch();
     const { loading } = useAppSelector(state => state.user)
 
-    useEffect(() => {
-
-        dispatch(setLoading(true));
-
-        agent.UserData.getUser("USER_ID_1")
-            .then(user => {
-                if(user != null) {
-                    dispatch(setUser(user));
-                    if(user.sprints !== null || user.sprints.length !== 0) {
-                        dispatch(setCurrentSprint(user.sprints[0].sprintEntityId))
-                    }
-                }
-                
-            })
-            .catch(error => console.log(error))
-            .finally(() => {
-                dispatch(setLoading(false));
-            });
-
-    }, [dispatch])
-
     if(loading) return <LoadingComponent message="Initializing app..." />
 
     return(
@@ -52,6 +33,12 @@ export default function AppRouter() {
             </Route>
             <Route path='/settings'>
                 <SettingsView />
+            </Route>
+            <Route path='/login'>
+                <LoginView />
+            </Route>
+            <Route path='/register'>
+                <RegisterView />
             </Route>
             <Route path='/server-error'>
                 <ServerError />

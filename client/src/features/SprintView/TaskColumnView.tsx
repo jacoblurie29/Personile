@@ -39,15 +39,28 @@ export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditT
             <Typography variant='h4' sx={{fontWeight: '700', color: 'white'}}>{stateTitle}</Typography>
 
             {tasks.map((task, index) => (
-                !tasksToBeEdited.includes(task.taskEntityId) ? 
-                    <TaskCardView task={task} key={task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} indexForAnimation={index} />
+                <div key={task.taskEntityId + index + sprintId}>
+                {!tasksToBeEdited.includes(task.taskEntityId) ? 
+                    (<TaskCardView task={task} key={task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} indexForAnimation={index} />)
                         :
-                    <TaskCardViewEditor toggleEditTask={toggleEditTask} key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>
+                    (<TaskCardViewEditor toggleEditTask={toggleEditTask} key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>)}
+
+                    {(index === tasks.length - 1) && stateTitle === "New" && !newTask && <NewTaskButton key={task.taskEntityId + index + sprintId} addNewTaskOnClick={handleNewTask} index={tasks.length}/>} 
+
+                    {(index === tasks.length - 1) && newTask && <TaskCardViewEditor key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}  
+                </div>
+                  
             ))}
 
-            {newTask && <TaskCardViewEditor setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}
+            {/* Below redundancy is for consistency of animation purposes */}
 
-            {stateTitle === "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask}/>}
+            {tasks.length === 0 && stateTitle === "New" && !newTask && <NewTaskButton addNewTaskOnClick={handleNewTask} index={tasks.length}/>}   
+
+            {tasks.length === 0 && newTask && <TaskCardViewEditor setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}  
+            
+            
+
+            
         </Box>
     )
 }

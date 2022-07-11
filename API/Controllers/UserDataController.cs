@@ -25,16 +25,10 @@ namespace API.Controllers
             
         }
 
-        [HttpGet("{userId}", Name = "GetUser")]
-        public async Task<ActionResult<UserDto>> GetUser(string userId) {
-            var userEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
-            return userEntity.mapUserToDto();
-        }
-
         [HttpGet("{userId}/sprints", Name = "GetAllSprints")]
         public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId) {
 
-           var CurrentUserEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+           var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
            var Sprints = CurrentUserEntity.Sprints;
 
@@ -54,7 +48,7 @@ namespace API.Controllers
         [HttpGet("{userId}/sprints/{sprintId}", Name = "GetSprintById")]
         public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId, string userId) {
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
             var CurrentSprintEntity = CurrentUserEntity.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
@@ -82,7 +76,7 @@ namespace API.Controllers
         [HttpGet("{userId}/sprints/titles", Name = "GetTitles")]
         public async Task<ActionResult<List<string>>> GetSprintTitles(string userId) {
 
-            var currentUser = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).FirstOrDefaultAsync();
+            var currentUser = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).FirstOrDefaultAsync();
 
             var currentUserSprints = currentUser.Sprints;
 
@@ -187,7 +181,7 @@ namespace API.Controllers
         [HttpPut("{userId}/sprints/{sprintId}/tasks/{taskId}/updateTask", Name = "UpdateTask")]
         public async Task<ActionResult<UpdateTaskDto>> UpdateTask(string userId, string sprintId, string taskId, UpdateTaskDto updateTaskDto) {
 
-            var currentUser = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).FirstOrDefaultAsync();
+            var currentUser = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).FirstOrDefaultAsync();
 
             if(currentUser == null) return NotFound();
 
@@ -211,7 +205,7 @@ namespace API.Controllers
 
         [HttpPut("{userId}/sprints/{sprintId}/tasks/{taskId}/subtasks/{subtaskId}/updateSubtask")]
         public async Task<ActionResult<SubTaskDto>> UpdateSubtask(string userId, string sprintId, string taskId, string subtaskId, SubTaskDto subTaskDto) {
-            var currentUser = await _context.Users.Where(u => u.UserEntityId == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(s => s.SubTasks).FirstOrDefaultAsync();
+            var currentUser = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(s => s.SubTasks).FirstOrDefaultAsync();
 
             if(currentUser == null) return NotFound();
 
@@ -241,7 +235,7 @@ namespace API.Controllers
 
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
                 return await _context.Users
-                        .Where(u => u.UserEntityId == userEntityId)
+                        .Where(u => u.Id == userEntityId)
                         .Include(s => s.Sprints)
                         .ThenInclude(t => t.Tasks)
                         .ThenInclude(s => s.SubTasks)

@@ -5,32 +5,30 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(PersonileContext context) {
+        public static async Task Initialize(PersonileContext context, UserManager<UserEntity> userManager) {
+
+            
+
             if(context.Sprints.Any()) return;
 
-            var user = new UserEntity {
-                UserEntityId = "USER_ID_1",
-                FirstName = "Jacob",
-                LastName = "Lurie",
-                Email = "jacoblurie29@gmail.com"
-            };
+            
 
             var sprints = new List<SprintEntity>  {
                     new SprintEntity {
                         SprintEntityId = "SPRINT_ID_1",
-                        UserId = "USER_ID_1",
                     },
                     new SprintEntity {
                         SprintEntityId = "SPRINT_ID_2",
-                        UserId = "USER_ID_1",
                     }
                 };
+                
 
             var tasksForSprint0 = new List<TaskEntity> {
                 new TaskEntity {
@@ -154,10 +152,31 @@ namespace API.Data
 
         sprints[1].Tasks = tasksForSprint1;
 
-        user.Sprints = sprints;
+        context.Sprints.Add(sprints[0]);
+        context.Sprints.Add(sprints[1]);
 
+        if (!userManager.Users.Any()) {
+               var userMember = new UserEntity {
+                    UserName = "memberuser@test.com",
+                    FirstName = "Member",
+                    LastName = "User",
+                    Email = "memberuser@test.com",
+                    Sprints = sprints
+                };
+                var userAdmin = new UserEntity {
+                    UserName = "adminuser@test.com",
+                    FirstName = "Admin",
+                    LastName = "User",
+                    Email = "adminuser@test.com",
+                    Sprints = null
+                };
 
-        context.Users.Add(user);
+                await userManager.CreateAsync(userMember, "Pa$$w0rd");
+                await userManager.AddToRoleAsync(userMember, "Member");
+
+                await userManager.CreateAsync(userAdmin, "Pa$$w0rd");
+                await userManager.AddToRolesAsync(userAdmin, new[] {"Member","Admin"});
+            }
 
         context.SaveChanges();
         }

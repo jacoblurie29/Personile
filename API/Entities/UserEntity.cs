@@ -1,13 +1,12 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities
 {
-    public class UserEntity
+    public class UserEntity : IdentityUser
     {
-        public string UserEntityId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Email { get; set; }
         public List<SprintEntity> Sprints { get; set; }
     }
 }

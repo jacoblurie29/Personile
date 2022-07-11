@@ -20,6 +20,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AppRouter from '../routing/AppRouter';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import LoginIcon from '@mui/icons-material/Login';
 
 const drawerWidth = 240;
 
@@ -40,6 +42,8 @@ const sprintLinks = [
 
 const adminLinks = [
   {linkTitle: "Profile", linkRoute: "/profile"},
+  {linkTitle: "Login", linkRoute: "/login"},
+  {linkTitle: "Register", linkRoute: "/register"},
   {linkTitle: "Settings", linkRoute: "/settings"},
   {linkTitle: "Logout", linkRoute: "/logout"}
 ]
@@ -167,7 +171,7 @@ export default function Navigation() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <SettingsIcon /> : <LogoutIcon />}
+                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <LoginIcon /> : index === 2 ? <AddCircleOutlineIcon /> : index === 3 ? <SettingsIcon /> : <LogoutIcon /> }
                 </ListItemIcon>
                 <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>

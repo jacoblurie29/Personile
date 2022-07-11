@@ -5,13 +5,10 @@ using System.Threading.Tasks;
 
 namespace API.DTOs
 {
-    public class UserDto
+    public class RegisterDto : LoginDto
     {
-        public string UserId { get; set; }
-        public string Email { get; set;}
+        public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Token { get; set; }
-        public List<SprintDto> Sprints { get; set; }
     }
 }

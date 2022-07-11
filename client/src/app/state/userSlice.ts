@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { UpdateTask } from "app/models/updateTask";
 import { toast } from "react-toastify";
 import agent from "../api/agent";
@@ -7,6 +7,8 @@ import { Task } from "../models/task";
 import { User } from "../models/user";
 import { mapUpdateTaskToTask } from "app/models/updateTask";
 import { SubTask } from "app/models/subTask";
+import { FieldValues } from "react-hook-form";
+import { history } from "../..";
 
 interface UserState {
     userData: User | null;
@@ -74,6 +76,41 @@ export const updateSubtaskStateAsync = createAsyncThunk<SubTask, {userId: string
             return await agent.UserData.updateSubtask(userId, sprintId, taskId, subtaskId, updatedSubtask)
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+export const signInUser = createAsyncThunk<User, FieldValues>(
+    'account/signInUser',
+    async (data, thunkAPI) => {
+        try {
+            const userDto = await agent.Account.login(data);
+            if (userDto) thunkAPI.dispatch(setUser(userDto));
+            localStorage.setItem('user', JSON.stringify(userDto));
+            return userDto;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data});
+        }
+    }
+)
+
+export const fetchCurrentUser = createAsyncThunk<User>(
+    'account/fetchCurrenUser',
+    async (_, thunkAPI) => {
+        thunkAPI.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)))
+        try {
+            const userDto = await agent.Account.currentUser();
+            if (userDto) thunkAPI.dispatch(setUser(userDto));
+            localStorage.setItem('user', JSON.stringify(userDto));
+            return userDto;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data});
+        }
+    }, {
+        condition: () => {
+            if (!localStorage.getItem('user')) {
+                return false;
+            }
         }
     }
 )
@@ -347,7 +384,32 @@ export const userSlice = createSlice({
 
             state.status = 'idle';
         });
+
+        // LOGIN USER
+
+        builder.addCase(fetchCurrentUser.rejected, (state) => {
+            state.userData = null;
+            localStorage.removeItem('user');
+            toast.error('Session expired! Please login again', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+            history.push('/');
+        })
+        builder.addMatcher(isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled), (state, action) => {
+            state.userData = action.payload
+        });
+        builder.addMatcher(isAnyOf(signInUser.rejected), (state, action) => {
+            throw action.payload;
+        })
     })
+    
 })
 
 export const {setUser, setLoading} = userSlice.actions;
