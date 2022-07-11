@@ -1,4 +1,4 @@
-import { Accordion, AccordionSummary, Box, CardHeader, Typography, Divider, AccordionDetails, Grid } from "@mui/material";
+import { Accordion, AccordionSummary, Box, CardHeader, Typography, Divider, AccordionDetails, Grid, Fade, Grow } from "@mui/material";
 import { LoadingButton } from '@mui/lab';
 import TaskMoreDetails from "./TaskMoreDetails";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -13,10 +13,11 @@ import EditIcon from '@mui/icons-material/Edit';
 
 interface Props {
     task: Task,
-    toggleEditTask: (taskId: string) => void
+    toggleEditTask: (taskId: string) => void,
+    indexForAnimation: number
 }
 
-export default function TaskCardView({task, toggleEditTask}: Props) {
+export default function TaskCardView({task, toggleEditTask, indexForAnimation}: Props) {
 
     const {status} = useAppSelector(state => state.user)
     const {currentSprint, isExpanded: expanded } = useAppSelector(state => state.sprintView);
@@ -65,6 +66,7 @@ export default function TaskCardView({task, toggleEditTask}: Props) {
 
 
     return (
+        <Grow in={true} timeout={(indexForAnimation + 1) * 500}>
         <Accordion sx={{background: chooseColor(task.currentState), marginBottom: '10px', borderRadius: '5px'}} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Box flexGrow={1}>
@@ -92,5 +94,6 @@ export default function TaskCardView({task, toggleEditTask}: Props) {
             </Grid>
             </AccordionDetails>
         </Accordion>
+        </Grow>
     )
 }

@@ -86,20 +86,6 @@ export const userSlice = createSlice({
         setUser: (state, action) => {
             state.userData = action.payload
         },
-        removeTask: (state, action) => {
-            const {taskId, sprintId} = action.payload;
-            
-            const currentSprintIndex = state.userData?.sprints.findIndex(sprint => sprint.sprintEntityId === sprintId);
-
-            if (currentSprintIndex === undefined || currentSprintIndex === -1) return;
-
-            const currentTaskIndex = state.userData?.sprints[currentSprintIndex].tasks.findIndex(task => task.taskEntityId === taskId)
-
-            if(currentTaskIndex === -1 || currentTaskIndex === undefined) return;
-
-            state.userData?.sprints[currentSprintIndex].tasks.splice(currentTaskIndex, 1);
-
-        },
         setLoading: (state, action) => {
             state.loading = action.payload
         }
@@ -364,4 +350,4 @@ export const userSlice = createSlice({
     })
 })
 
-export const {setUser, removeTask, setLoading} = userSlice.actions;
+export const {setUser, setLoading} = userSlice.actions;

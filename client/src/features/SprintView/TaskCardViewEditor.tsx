@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Switch, Typography } from "@mui/material";
+import { Box, Card, Collapse, Grid, Grow, Switch, Typography } from "@mui/material";
 import WhiteTransparentAutoComplete from "./WhiteTransparentAutoComplete";
 import WhiteTransparentTextField from "./WhiteTransparentTextField";
 import { useState } from "react";
@@ -13,8 +13,6 @@ import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { addTaskToSprintAsync, updateTaskAsync as updateTaskAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
 import { Task } from "app/models/task";
-import { TagFacesOutlined } from "@mui/icons-material";
-import { mapTaskToUpdateTask } from "app/models/updateTask";
 
 
 interface Props {
@@ -84,7 +82,9 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
      
              console.log(newTask)
 
-             dispatch(addTaskToSprintAsync({userId: userId, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newTask.taskEntityId!));
+             setNewTask(false);
+
+             dispatch(addTaskToSprintAsync({userId: userId, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")});
         } else {
             if(editTask == undefined) return;
 
@@ -130,40 +130,42 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
 
 
     return (
-        <Card elevation={1} sx={{background: chooseColor(editTask?.currentState || 0), marginBottom: '10px'}}>
-            <Typography variant="h6" margin="5% 6% 20px 6%" sx={{color: 'white', fontFamily:'Open Sans', fontWeight:'700', fontSize:'22px'}}>Edit Task</Typography>
-            <FormProvider {...methods}>
-                <form onSubmit={handleSubmit((data) => handleAddOrUpdateTask(data))}>
-                    <Grid container margin='10px' columns={24}>
-                        <Grid item xs={21}>
-                            <WhiteTransparentTextField control={control} label="Task Name" name="name" editvalue={editTask?.name}/>
-                            <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
-                            <WhiteTransparentAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
-                            <WhiteTransparentAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
-                            <Grid container alignItems="center"
-                                    justifyContent="center" sx={{marginBottom: '10px'}}>
-                                <Grid item xs={2}>
-                                    <Switch color="default" defaultChecked={editTask?.dueDate != ""} onClick={() => setDisabled(!disabled)} />
+        <Grow in={true}>
+            <Card elevation={1} sx={{background: chooseColor(editTask?.currentState || 0), marginBottom: '10px'}}>
+                <Typography variant="h6" margin="5% 6% 20px 6%" sx={{color: 'white', fontFamily:'Open Sans', fontWeight:'700', fontSize:'22px'}}>Edit Task</Typography>
+                <FormProvider {...methods}>
+                    <form onSubmit={handleSubmit((data) => handleAddOrUpdateTask(data))}>
+                        <Grid container margin='10px' columns={24}>
+                            <Grid item xs={21}>
+                                <WhiteTransparentTextField control={control} label="Task Name" name="name" editvalue={editTask?.name}/>
+                                <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
+                                <WhiteTransparentAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
+                                <WhiteTransparentAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
+                                <Grid container alignItems="center"
+                                        justifyContent="center" sx={{marginBottom: '10px'}}>
+                                    <Grid item xs={2}>
+                                        <Switch color="default" defaultChecked={editTask?.dueDate != ""} onClick={() => setDisabled(!disabled)} />
+                                    </Grid>
+                                    <Grid item xs={10}>
+                                        <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={10}>
-                                    <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>
-                                </Grid>
-                            </Grid>
-                            <Box width='90%' flexGrow={1} margin='auto'>
-                            <Typography variant="caption" sx={{color: 'white'}}>Estimated effort &#40;{currentEffort}&#41;</Typography>
-                                <WhiteTransparentEffortSlider name="effort" control={control}/>
-                            </Box>
-                            <Grid container sx={{display: 'flex', width: 'auto', marginLeft: '5px', marginBottom:'10px'}}>
-                                <Grid item xs={12}>
-                                    <Box sx={{flexGrow: 1, textAlign: 'right', marginTop: '5px'}}>
-                                        <AddTaskOptionsButton setNewTask={setNewTask} isEdit={editTask === undefined} toggleEditTask={toggleEditTask} task={editTask}/>
-                                    </Box>
+                                <Box width='90%' flexGrow={1} margin='auto'>
+                                <Typography variant="caption" sx={{color: 'white'}}>Estimated effort &#40;{currentEffort}&#41;</Typography>
+                                    <WhiteTransparentEffortSlider name="effort" control={control}/>
+                                </Box>
+                                <Grid container sx={{display: 'flex', width: 'auto', marginLeft: '5px', marginBottom:'10px'}}>
+                                    <Grid item xs={12}>
+                                        <Box sx={{flexGrow: 1, textAlign: 'right', marginTop: '5px'}}>
+                                            <AddTaskOptionsButton setNewTask={setNewTask} isEdit={editTask === undefined} toggleEditTask={toggleEditTask} task={editTask}/>
+                                        </Box>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </form>
-            </FormProvider>
-        </Card>
+                    </form>
+                </FormProvider>
+            </Card>
+        </Grow>
     )
 }
