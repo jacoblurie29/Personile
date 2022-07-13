@@ -89,14 +89,14 @@ export default function SubTasksView({task, isDialog}: Props) {
 
     return (
         <>
-            <List dense sx={{ width: '100%', borderRadius: '5px' }} subheader={!isDialog && <ListSubheader sx={{backgroundColor: 'rgba(256, 256, 256, 0)'}}>Subtasks</ListSubheader>}>  
+            <List dense sx={{ width: '100%', borderRadius: '5px', }} subheader={!isDialog && <ListSubheader sx={{backgroundColor: 'rgba(256, 256, 256, 0)'}}>Subtasks</ListSubheader>}>  
             {task.subTasks.map((subTask, index) => {
                 const labelId = `checkbox-list-secondary-label-${index}`;
                 return (
                 <div key={index + 'div'}>
                     <ListItem
                         key={subTask.subTaskEntityId}
-                        sx={{backgroundColor: 'rgba(256, 256, 256, 1)', borderRadius: task.subTasks.length === 1 ? '5px 5px 0px 0px' : index === 0 ? '5px 5px 0 0'  : ''}}
+                        sx={{backgroundColor: subTask.status === "Completed" ? 'success.light' : 'error.light', borderRadius: task.subTasks.length === 1 ? '5px 5px 0px 0px' : index === 0 ? '5px 5px 0 0'  : ''}}
                         secondaryAction={
                         <Checkbox
                             key={subTask.subTaskEntityId + '-checkbox'}
@@ -119,7 +119,7 @@ export default function SubTasksView({task, isDialog}: Props) {
                         </ListItemButton>
                     </ListItem>
                     {index !== task.subTasks.length - 1 &&
-                        <Divider sx={{backgroundColor: '#DDDDDD'}} key={subTask.subTaskEntityId + '-divider'} />
+                        <Divider sx={{backgroundColor: 'grey.50'}} key={subTask.subTaskEntityId + '-divider'} />
                     }
                 </div>
                 );
@@ -128,7 +128,7 @@ export default function SubTasksView({task, isDialog}: Props) {
                 <form onSubmit={handleSubmit((data) => {handleNewSubtask(data)})}>
                     {newSubTask && 
                     <ListItem
-                            sx={{backgroundColor: 'rgba(256, 256, 256, 0.4)', borderRadius: addTaskBorders}}
+                            sx={{backgroundColor: 'grey.50', borderRadius: addTaskBorders}}
                             disablePadding
                         >
                         <CircleIcon sx={{fontSize: '10px', ml: "10px", color: '#888888'}}/>
@@ -137,7 +137,7 @@ export default function SubTasksView({task, isDialog}: Props) {
                     </ListItem>
                     }
                     {!newSubTask && 
-                        <ListItem sx={{backgroundColor: 'rgba(256, 256, 256, 0.4)', borderRadius: addTaskBorders}}>
+                        <ListItem sx={{backgroundColor: 'grey.50', borderRadius: addTaskBorders}}>
                             <Box sx={{ marginRight: '5px', textAlign:'center'}} flexGrow={1} >
                                     <IconButton sx={{margin: 'auto', padding: '1px'}} size="small" onClick={(event) => {setNewSubTask(true)}}><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>   
                             </Box>

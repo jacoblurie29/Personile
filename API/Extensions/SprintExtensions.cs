@@ -14,7 +14,7 @@ namespace API.Extensions
 
         public static UserDto mapUserToDto(this UserEntity userEntity) {
             return new UserDto {
-                UserId = userEntity.Id,
+                UserEntityId = userEntity.Id,
                 FirstName = userEntity.FirstName,
                 LastName = userEntity.LastName,
                 Email = userEntity.Email,

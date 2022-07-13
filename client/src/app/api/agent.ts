@@ -1,14 +1,23 @@
+import { store } from "app/store/configureStore";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { request } from "http";
+import { config } from "process";
 import { toast } from "react-toastify";
 import { history } from "../..";
 import { Task } from "../models/task";
 
-const sleep = () => new Promise(resolve => setTimeout(resolve, 500));
+const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
 
 axios.defaults.baseURL = 'http://localhost:5000/api/'
 
 const responseBody = (response: AxiosResponse) => response.data;
+
+axios.interceptors.request.use(config => {
+    config.headers = config.headers ?? {};
+    const token = store.getState().user.userData?.token;
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})
 
 axios.interceptors.response.use(async response => {
     await sleep();

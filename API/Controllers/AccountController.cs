@@ -41,7 +41,7 @@ namespace API.Controllers
             var mappedUser = userEntity.mapUserToDto();
 
             return new UserDto {
-                UserId = user.Id,
+                UserEntityId = user.Id,
                 Email = user.Email,
                 Token = await _tokenService.GenerateToken(user),
                 Sprints = mappedUser.Sprints,
@@ -52,6 +52,7 @@ namespace API.Controllers
 
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterDto registerDto) {
+
             var user = new UserEntity{UserName = registerDto.Username, Email = registerDto.Email, FirstName = registerDto.FirstName, LastName = registerDto.LastName};
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
@@ -77,6 +78,20 @@ namespace API.Controllers
                  
             */
 
+            SprintEntity defaultSprint = new SprintEntity{
+                SprintEntityId = Guid.NewGuid().ToString(),
+                StartDate = null,
+                EndDate = null,
+                Tasks = null,
+            };
+
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+
+            CurrentUserEntity.Sprints.Add(defaultSprint);
+            
+            await _context.SaveChangesAsync();
+
+
             return StatusCode(201);
         }
 
@@ -90,7 +105,7 @@ namespace API.Controllers
             var mappedUser = userEntity.mapUserToDto();
 
             return new UserDto {
-                UserId = user.Id,
+                UserEntityId = user.Id,
                 Email = user.Email,
                 Token = await _tokenService.GenerateToken(user),
                 Sprints = mappedUser.Sprints,

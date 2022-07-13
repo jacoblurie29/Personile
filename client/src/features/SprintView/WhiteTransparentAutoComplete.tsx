@@ -24,8 +24,8 @@ export default function WhiteTransparentAutoComplete(props: formProps) {
                 renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                     <Chip
-                    sx={{backgroundColor: 'white'}}
-                    variant="outlined"
+                    sx={{backgroundColor: 'primary.light'}}
+                    variant="filled"
                     label={option}
                     {...getTagProps({ index })}
                     />
@@ -43,19 +43,15 @@ export default function WhiteTransparentAutoComplete(props: formProps) {
                     label={props.label}
                     variant="outlined"
                     placeholder={props.placeholder}
-                    color="secondary"
                     sx={{
-                        "& .MuiInputLabel-root": {color: 'white'},
+                        "& .MuiInputLabel-root": {color: 'grey.500'},
                         "& .MuiOutlinedInput-root": {
-                        "& > fieldset": { borderColor: "white", color: "white" },
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused": {
-                            "& > fieldset": { borderColor: "white", color: "white" },
+                        "& > fieldset": { borderColor: 'grey.500' },
                         },
                         "& .MuiOutlinedInput-root:hover": {
-                            "& > fieldset": { borderColor: "white", color: "white" },
+                            "& > fieldset": { borderColor: 'primary.main'},
                         },
-                        color: 'white', textArea: {color: 'white'}, input: {color: 'white'}, marginLeft: '10px', borderColor: "white", borderRadius: '5px', marginBottom: '15px'}}
+                        color: 'primary.main', textArea: {color: 'grey.500'}, input: {color: 'grey.500'}, marginLeft: '10px', borderColor: 'grey.500', borderRadius: '5px', marginBottom: '15px'}}
                 />
             )}
         />

@@ -1,4 +1,4 @@
-import { Box, Card, Collapse, Grid, Grow, Switch, Typography } from "@mui/material";
+import { Box, Card, Collapse, Grid, Grow, Switch, Typography, Zoom } from "@mui/material";
 import WhiteTransparentAutoComplete from "./WhiteTransparentAutoComplete";
 import WhiteTransparentTextField from "./WhiteTransparentTextField";
 import { useState } from "react";
@@ -50,6 +50,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
 
     const handleAddOrUpdateTask = async (formData: FieldValues) => {
 
+        console.log(userId)
 
         if(userId == null) return;
         if(currentSprint == null) return;
@@ -130,9 +131,9 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
 
 
     return (
-        <Grow in={true}>
-            <Card elevation={1} sx={{background: chooseColor(editTask?.currentState || 0), marginBottom: '10px'}}>
-                <Typography variant="h6" margin="5% 6% 20px 6%" sx={{color: 'white', fontFamily:'Open Sans', fontWeight:'700', fontSize:'22px'}}>Edit Task</Typography>
+        <Zoom in={true} timeout={800}>
+            <Card elevation={1} sx={{background: "background.paper", marginBottom: '10px', marginTop: '10px'}}>
+                <Typography margin="5% 10% 3% 4%" sx={{color: 'grey.800', fontSize: '20px'}}>{editTask === undefined ? "Add Task" : "Edit Task"}</Typography>
                 <FormProvider {...methods}>
                     <form onSubmit={handleSubmit((data) => handleAddOrUpdateTask(data))}>
                         <Grid container margin='10px' columns={24}>
@@ -141,10 +142,10 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                                 <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
                                 <WhiteTransparentAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
                                 <WhiteTransparentAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
-                                <Grid container alignItems="center"
+                                <Grid container alignItems="center" display='flex'
                                         justifyContent="center" sx={{marginBottom: '10px'}}>
-                                    <Grid item xs={2}>
-                                        <Switch color="default" defaultChecked={editTask?.dueDate != ""} onClick={() => setDisabled(!disabled)} />
+                                    <Grid item xs={2} display= 'flex' justifyContent='center'>
+                                        <Switch sx={{ml: '10px', color: 'primary.light'}} defaultChecked={editTask?.dueDate != ""} onClick={() => setDisabled(!disabled)} />
                                     </Grid>
                                     <Grid item xs={10}>
                                         <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>
@@ -166,6 +167,6 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                     </form>
                 </FormProvider>
             </Card>
-        </Grow>
+        </Zoom>
     )
 }

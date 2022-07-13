@@ -10,22 +10,14 @@ import TaskColumnView from "./TaskColumnView";
 export default function SprintView() {
 
         const sprints = useAppSelector(state => state.user.userData?.sprints);
-        const { currentSprint, loading } = useAppSelector(state => state.sprintView);
+        const { currentSprint } = useAppSelector(state => state.sprintView);
         const [taskToBeEditedId, setTaskToBeEditedId] = useState<string[]>([]);
         const dispatch = useAppDispatch();
 ;
 
         const handleSprintChange = (event: SelectChangeEvent) => {
-            dispatch(setLoading(true));
             dispatch(setCurrentSprint(event.target.value));
-            dispatch(setLoading(false));
         }
-
-        // sets the initial sprint upon load (will use date time later)
-        useEffect(() => {
-            if(sprints != undefined)
-                dispatch(setCurrentSprint(sprints[0].sprintEntityId));
-        }, [])
 
         const toggleEditTask = (taskId: string) => {
 
@@ -35,7 +27,6 @@ export default function SprintView() {
                 taskToBeEditedIdCopy.splice(taskIndex, 1);
                 setTaskToBeEditedId(taskToBeEditedIdCopy);
             } else {
-                console.log('YES')
                 var taskToBeEditedIdCopy = [...taskToBeEditedId];
                 taskToBeEditedIdCopy.push(taskId);
                 console.log(taskToBeEditedIdCopy)
@@ -59,34 +50,27 @@ export default function SprintView() {
                     </Select>
                 </FormControl>
             </Typography>
-            {!loading &&
             <Grid container 
-                spacing={1}
-                columns={12.5}
-                display='flex'
+                columns={13}
                 justifyContent='center'
-
+                display='flex'
                 >
-                <Grid item xs={4} justifyContent="center" sx={{borderRadius:'5px'}} marginRight='20px'>
+                <Grid item lg={4} md={4} sm={12} xs={12} justifyContent="center" sx={{borderRadius:'5px'}} marginRight='20px'>
                     <TaskColumnView sprintId={currentSprint || ""} stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 0;
                     }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId} />
                 </Grid>  
-                <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}} marginRight='20px'>
+                <Grid item lg={4} md={4}  sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} marginRight='20px'>
                     <TaskColumnView sprintId={currentSprint || ""} stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 1;
                     }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                 </Grid>
-                <Grid item xs={4} justifyContent="center" sx={{ borderRadius:'5px'}}>
+                <Grid item lg={4} md={4}  sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} marginRight='20px'>
                     <TaskColumnView sprintId={currentSprint || ""} stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                         return task.currentState === 2;
                     }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                 </Grid>
             </Grid>
-            }
-            {loading &&
-                <LoadingComponent />
-            }
         </Box>
         
         

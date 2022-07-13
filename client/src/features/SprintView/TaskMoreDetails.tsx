@@ -25,23 +25,37 @@ export default function TaskMoreDetails({ focusedTask }: Props) {
         <Box paddingBottom='10px'>
             {focusedTask.tags !== '' && 
             <>
-                <Typography variant="caption" sx={{color: 'white'}}>Tags&nbsp;({focusedTask.tags !== '' ? focusedTask.tags.split("|").length : 0})</Typography>
+                <Typography variant="caption" sx={{color: 'grey.600'}}>Tags&nbsp;({focusedTask.tags !== '' ? focusedTask.tags.split("|").length : 0})</Typography>
                 
                 <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
                 
                     <Grid item justifyContent='center' sx={{margin: 'auto'}}>
                     {focusedTask?.tags.split('|').map((tag, index) => (
-                        <Chip key={tag} label={tag} sx={{margin: '2px', backgroundColor: '#EEEEEE'}} />
+                        <Chip key={tag} label={tag} sx={{margin: '2px', backgroundColor: 'primary.light'}} />
                     ))}
                     </Grid>
                 </Grid>
             </>
             }
-            <Typography variant="caption" sx={{color: 'white'}}>Estimated effort</Typography>
+            {focusedTask.links !== '' && 
+            <Box sx={{paddingBottom: '5px'}}>
+                <Typography variant="caption" sx={{color: 'grey.600'}}>Links&nbsp;({focusedTask.links !== '' ? focusedTask.links.split("|").length : 0})</Typography>
+                
+                <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
+                
+                    <Grid item justifyContent='center' sx={{margin: 'auto'}}>
+                    {focusedTask?.links.split('|').map((tag, index) => (
+                        <Chip key={tag} label={tag} onClick={()=> window.open(tag, "_blank")} sx={{margin: '2px', backgroundColor: 'primary.light'}} />
+                    ))}
+                    </Grid>
+                </Grid>
+            </Box>
+            }
+            <Typography variant="caption" sx={{color: 'grey.600'}}>Estimated effort</Typography>
             <Tooltip title={focusedTask.effort} arrow>
             <BorderLinearProgress sx={{mt: '2px', mb: '12px', boxShadow: '1px 2px 7px #777777' }} variant="determinate" value={focusedTask.effort * 10} />
             </Tooltip>
-            <Typography variant="caption" sx={{color: 'white'}}>Subtasks&nbsp;({focusedTask.subTasks.length})</Typography>
+            <Typography variant="caption" sx={{color: 'grey.600'}}>Subtasks&nbsp;({focusedTask.subTasks.length})</Typography>
             <SubTasksView task={focusedTask} isDialog={true} />         
         </Box>
     )

@@ -1,7 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import agent from "../../app/api/agent";
-import { Sprint } from "../../app/models/sprint";
-import { Task } from "../../app/models/task";
+import { createSlice } from "@reduxjs/toolkit";
 
 interface SprintState {
     currentSprint: string | null;
@@ -20,11 +17,11 @@ export const sprintSlice = createSlice({
     initialState,
     reducers: {
         setCurrentSprint: (state, action) => {
-            state.isExpanded = []
-            state.currentSprint = action.payload
+            state.isExpanded = [];
+            state.currentSprint = action.payload;
         },
         setLoading: (state, action) => {
-            state.loading = action.payload
+            state.loading = action.payload;
         },
         addToIsExpanded: (state, action) => {
             state.isExpanded?.push(action.payload);

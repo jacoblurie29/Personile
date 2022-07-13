@@ -34,15 +34,15 @@ export default function AddTaskOptionsButton({setNewTask, isEdit, task, toggleEd
         aria-label="text alignment"
       >
         {isEdit ?
-            <ToggleButton value="new" aria-label="left aligned" onClick={() => setNewTask(false)}>
-              <DeleteIcon color="error"/>
+            <ToggleButton value="new" sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', ":hover": {background: "error.dark"}}} aria-label="left aligned" onClick={() => setNewTask(false)}>
+              <DeleteIcon sx={{color:"background.paper"}}/>
             </ToggleButton> :
-            <ToggleButton value="new" aria-label="left aligned" onClick={() => toggleEditTask(task?.taskEntityId!)}>
-             <ArrowBackIcon color="error" />
+            <ToggleButton value="new" sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', ":hover": {background: "error.dark"}}} aria-label="left aligned" onClick={() => toggleEditTask(task?.taskEntityId!)}>
+             <ArrowBackIcon sx={{color:"background.paper"}} />
             </ToggleButton>
           } 
-            <ToggleButton value="active" aria-label="centered" type="submit">
-            {isEdit ? <AddCircleIcon color="success"/> : <CheckCircleIcon color="success" />}
+            <ToggleButton value="active" aria-label="centered" type="submit" sx={{background: 'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)', ":hover": {backgroundColor: "success.dark"}}}>
+            {isEdit ? <AddCircleIcon sx={{color:"background.paper"}}/> : <CheckCircleIcon sx={{color:"background.paper"}} />}
             </ToggleButton>
       </ToggleButtonGroup>
     )

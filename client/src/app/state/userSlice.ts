@@ -9,6 +9,8 @@ import { mapUpdateTaskToTask } from "app/models/updateTask";
 import { SubTask } from "app/models/subTask";
 import { FieldValues } from "react-hook-form";
 import { history } from "../..";
+import { store } from "app/store/configureStore";
+import { setCurrentSprint } from "features/SprintView/sprintSlice";
 
 interface UserState {
     userData: User | null;
@@ -87,6 +89,8 @@ export const signInUser = createAsyncThunk<User, FieldValues>(
             const userDto = await agent.Account.login(data);
             if (userDto) thunkAPI.dispatch(setUser(userDto));
             localStorage.setItem('user', JSON.stringify(userDto));
+
+            store.dispatch(setCurrentSprint(userDto.sprints[0].sprintEntityId));
             return userDto;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data});
@@ -102,6 +106,10 @@ export const fetchCurrentUser = createAsyncThunk<User>(
             const userDto = await agent.Account.currentUser();
             if (userDto) thunkAPI.dispatch(setUser(userDto));
             localStorage.setItem('user', JSON.stringify(userDto));
+            
+            store.dispatch(setCurrentSprint(userDto.sprints[0].sprintEntityId));
+        
+
             return userDto;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data});
@@ -407,7 +415,8 @@ export const userSlice = createSlice({
         });
         builder.addMatcher(isAnyOf(signInUser.rejected), (state, action) => {
             throw action.payload;
-        })
+        });
+        
     })
     
 })

@@ -7,12 +7,14 @@ using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
 
+    [Authorize]
     public class UserDataController : BaseApiController
     {
         private readonly PersonileContext _context;
@@ -105,7 +107,6 @@ namespace API.Controllers
 
             return BadRequest(new ProblemDetails{Title = "Problem creating new sprint"});
         }   
-
 
         // Adds a task to a specific sprint
         [HttpPost("{userId}/sprints/{sprintId}/addTask", Name = "AddTaskToSprint")]

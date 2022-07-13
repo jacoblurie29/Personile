@@ -23,14 +23,18 @@ import { useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LoginIcon from '@mui/icons-material/Login';
 
-const drawerWidth = 240;
+const drawerWidth = 230;
 
 const navButtonStyles = {
   display: 'block',
   color: 'inherit',
-  typography: 'h6',
+  borderRadius: '16px',
+  width: '80%',
+  marginLeft: '10px',
+  typography: 'h4',
   '&.active': {
-    backgroundColor: '#CCCCCC'
+    color: "primary.dark",
+    backgroundColor: 'primary.light'
   }
 }
 
@@ -65,7 +69,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 5px)`,
   },
 });
 
@@ -111,7 +115,7 @@ export default function Navigation() {
 
 
   return (
-    <Box  overflow='auto' height='100vh' sx={{ display: 'flex', background: 'linear-gradient(352deg, rgba(7,20,22,1) 0%, rgba(13,37,41,1) 100%)' }}>
+    <Box overflow='auto' height='100vh' sx={{ display: 'flex', backgroundColor: 'background' }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open} >
         <DrawerHeader>
@@ -126,19 +130,20 @@ export default function Navigation() {
                       disablePadding 
                       sx={navButtonStyles}
                       component={NavLink}
-                      to={linkRoute}>
+                      to={linkRoute}
+                      >
                       
               <ListItemButton
                 sx={{
-                  minHeight: 48,
+                  minHeight: 24,
                   justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
+                  borderRadius: '16px'
                 }}         
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: open ? 5 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
@@ -159,15 +164,15 @@ export default function Navigation() {
                       sx={navButtonStyles}>
               <ListItemButton
                 sx={{
-                  minHeight: 48,
+                  minHeight: 24,
                   justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
+                  borderRadius: '16px'
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: open ? 5 : 'auto',
                     justifyContent: 'center',
                   }}
                 >

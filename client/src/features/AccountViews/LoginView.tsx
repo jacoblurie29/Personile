@@ -1,6 +1,4 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -9,13 +7,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link, useHistory } from 'react-router-dom';
-import { useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
-import agent from 'app/api/agent';
 import { LoadingButton } from '@mui/lab';
-import { ErrorSharp } from '@mui/icons-material';
-import { useAppDispatch } from 'app/store/configureStore';
+import { useAppDispatch, } from 'app/store/configureStore';
 import { signInUser } from 'app/state/userSlice';
+import { setCurrentSprint } from 'features/SprintView/sprintSlice';
 const theme = createTheme();
 
 export default function LoginView() {
@@ -23,7 +19,7 @@ export default function LoginView() {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const {register, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
-      mode: 'onTouched'
+      mode: 'all'
   });
 
   async function submitForm(data: FieldValues) {
@@ -101,7 +97,7 @@ export default function LoginView() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Login
               </LoadingButton>
               <Grid container>
                 {/* 

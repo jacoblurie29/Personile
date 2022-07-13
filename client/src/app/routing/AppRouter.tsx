@@ -1,24 +1,20 @@
 import LoginView from "features/AccountViews/LoginView";
 import RegisterView from "features/AccountViews/RegisterView";
-import { useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import SettingsView from "../../features/SettingsView/SettingsView";
-import { setCurrentSprint } from "../../features/SprintView/sprintSlice";
 import SprintView from "../../features/SprintView/SprintView";
 import TodayView from "../../features/TodayView/TodayView";
-import agent from "../api/agent";
 import NotFound from "../errors/NotFound";
 import ServerError from "../errors/ServerError";
 import LoadingComponent from "../layout/LoadingComponent";
-import { setLoading, setUser } from "../state/userSlice";
-import { useAppDispatch, useAppSelector } from "../store/configureStore";
+import { useAppSelector } from "../store/configureStore";
 
 export default function AppRouter() {
 
-    const dispatch = useAppDispatch();
-    const { loading } = useAppSelector(state => state.user)
+    const loading = useAppSelector(state => state.sprintView.loading)
 
-    if(loading) return <LoadingComponent message="Initializing app..." />
+
+    if(loading) return <LoadingComponent message="Loading sprints..." />
 
     return(
         <Switch>

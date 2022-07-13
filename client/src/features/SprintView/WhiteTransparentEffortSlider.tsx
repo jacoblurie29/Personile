@@ -19,11 +19,9 @@ export default function WhiteTransparentEffortSlider(props: formProps) {
             defaultValue={5}
             valueLabelDisplay="auto"
             step={1}
-            marks
             min={1}
             max={10}
-            color="secondary"
-            sx={{paddingLeft: '5px'}}
+            sx={{paddingLeft: '5px', color: 'primary'}}
         />   
 )
 }

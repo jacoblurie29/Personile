@@ -1,5 +1,5 @@
-import { Box, Fade, Grow, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Card, Fade, Grow, Typography, useTheme } from "@mui/material";
+import { Fragment, useEffect, useState } from "react";
 import { Task } from "../../app/models/task";
 import NewTaskButton from "./NewTaskButton";
 import TaskCardView from "./TaskCardView";
@@ -17,7 +17,7 @@ interface Props {
 export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditTask, tasksToBeEdited}: Props) {
 
     const [newTask, setNewTask] = useState<boolean>(false);
-
+    const theme = useTheme();
 
     useEffect(() => {
         setNewTask(false)
@@ -35,20 +35,21 @@ export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditT
     return (
         <Box sx={{height: '100%', pr: '10px'}} margin='5px'>
 
-            
-            <Typography variant='h4' sx={{fontWeight: '700', color: 'white'}}>{stateTitle}</Typography>
+            <Card sx={{borderRadius: '5px 5px 0 0', background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
+            <Typography variant='h2' sx={{fontWeight: '700', color: 'white', padding: '15px'}}>{stateTitle}</Typography>
+            </Card>
 
             {tasks.map((task, index) => (
-                <div key={task.taskEntityId + index + sprintId}>
+                <Fragment key={"Fragment" + task.taskEntityId + index + sprintId}>
                 {!tasksToBeEdited.includes(task.taskEntityId) ? 
-                    (<TaskCardView task={task} key={task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} indexForAnimation={index} />)
+                    (<TaskCardView task={task} key={"Task" + task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} indexForAnimation={index} />)
                         :
-                    (<TaskCardViewEditor toggleEditTask={toggleEditTask} key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>)}
+                    (<TaskCardViewEditor toggleEditTask={toggleEditTask} key={"Editor" + task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>)}
 
-                    {(index === tasks.length - 1) && stateTitle === "New" && !newTask && <NewTaskButton key={task.taskEntityId + index + sprintId} addNewTaskOnClick={handleNewTask} index={tasks.length}/>} 
+                    {(index === tasks.length - 1) && stateTitle === "New" && !newTask && <NewTaskButton key={"NewTaskButton" + task.taskEntityId + index + sprintId} addNewTaskOnClick={handleNewTask} index={tasks.length}/>} 
 
-                    {(index === tasks.length - 1) && newTask && <TaskCardViewEditor key={task.taskEntityId + index + sprintId} setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}  
-                </div>
+                    {(index === tasks.length - 1) && newTask && <TaskCardViewEditor key={"NewTask" + task.taskEntityId + index + sprintId} setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}  
+                </Fragment>
                   
             ))}
 

@@ -29,7 +29,7 @@ export default function WhiteTransparentDatePicker(props: formProps) {
             value={value || null}
             InputProps={{ sx: {
                 "& .MuiOutlinedInput-root": {
-                    border: "1px solid white",
+                    border: "1px solid grey.500",
                   }
             }}}
             onChange={(newValue) => {
@@ -44,21 +44,21 @@ export default function WhiteTransparentDatePicker(props: formProps) {
             }}
             renderInput={(params) => <TextField 
                 sx={{ 
-                    "& .MuiInputLabel-root": {color: 'white'},
+                    "& .MuiInputLabel-root": {color: 'grey.500'},
                     "& .MuiOutlinedInput-root": {
-                        "& > fieldset": { borderColor: "white" },
+                        "& > fieldset": { borderColor: 'grey.500' },
                     },
                     "& .MuiOutlinedInput-root:hover": {
                         "& > fieldset": {
-                            borderColor: "white"
+                            borderColor: 'primary.main'
                         }
                     },
                     "& .MuiSvgIcon-root": { 
-                        color: 'white'
+                        color: 'grey.500'
                     },
-                    color: 'white',
-                    textArea: {color: 'white'},
-                    input: {color: 'white'},
+                    color: 'primary.main',
+                    textArea: {color: 'grey.800'},
+                    input: {color: 'grey.800'},
                     marginLeft: '10px',
                     borderRadius: '5px'
                   }}
@@ -93,16 +93,15 @@ export default function WhiteTransparentDatePicker(props: formProps) {
             }}
             renderInput={(params) => <TextField 
                 {...props}
-                color="secondary"
                 fullWidth
                 {...params}
                 label="Due date (optional)"
                 variant="outlined"
                 helperText={null}
                 sx={{ 
-                    color: 'white',
-                    textArea: {color: 'white'},
-                    input: {color: 'white'},
+                    color: 'grey.200',
+                    textArea: {color: 'grey.200'},
+                    input: {color: 'grey.200'},
                     marginLeft: '10px',
                     borderRadius: '5px'
                   }}

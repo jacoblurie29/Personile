@@ -22,28 +22,28 @@ export default function WhiteTransparentTextFieldprops(props: formProps) {
             fullWidth
             variant="outlined"
             label={props.label}
-            color="secondary"
             id="outlined-size-small"
             size="small" 
             sx={{
                 "& .MuiFormHelperText-root":{
-                    color: "white"
+                    color: 'grey.500'
                 },
-                "& .MuiInputLabel-root": {color: 'white'},
+                "& .MuiInputLabel-root": { color: 'grey.500' },
                 "& .MuiOutlinedInput-root": {
-                    "& > fieldset": { borderColor: "white" },
+                    "& > fieldset": { borderColor: 'grey.500' },
                 },
                 "& .MuiOutlinedInput-root:hover": {
                     "& > fieldset": {
-                        borderColor: "white"
+                        borderColor: 'primary.main'
                     }
                 },
-                color: 'white',
+                color: 'grey.800',
                 textArea: 
-                    {color: 'white'},
+                    {color: 'grey.800'},
                 input:
-                    {color: 'white'},
+                    {color: 'grey.800'},
                 marginLeft: '10px',
+                borderColor: 'grey.500',
                 borderRadius: '5px',
                 marginBottom: '15px'
         }} />
