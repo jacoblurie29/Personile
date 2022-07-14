@@ -33,7 +33,7 @@ export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditT
     // }
 
     return (
-        <Box sx={{height: '100%', pr: '10px'}} margin='5px'>
+        <>
 
             <Card sx={{borderRadius: '5px 5px 0 0', background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
             <Typography variant='h2' sx={{fontWeight: '700', color: 'white', padding: '15px'}}>{stateTitle}</Typography>
@@ -59,9 +59,6 @@ export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditT
 
             {tasks.length === 0 && newTask && <TaskCardViewEditor setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}  
             
-            
-
-            
-        </Box>
+        </>
     )
 }
