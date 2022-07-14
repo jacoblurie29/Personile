@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.DTOs
 {
-    public class BoardDto
+    public class SprintDto
     {
         public string SprintEntityId { get; set; }
         public string StartDate { get; set; }

@@ -28,13 +28,13 @@ namespace API.Controllers
         }
 
         [HttpGet("{userId}/sprints", Name = "GetAllSprints")]
-        public async Task<ActionResult<List<BoardDto>>> GetAllSprints(string userId) {
+        public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId) {
 
            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
            var Sprints = CurrentUserEntity.Sprints;
 
-           var mappedSprintList = new List<BoardDto>(); 
+           var mappedSprintList = new List<SprintDto>(); 
 
            foreach (var sprint in Sprints)
            {
@@ -48,7 +48,7 @@ namespace API.Controllers
 
         // Gets the sprint structure for a specific sprint id
         [HttpGet("{userId}/sprints/{sprintId}", Name = "GetSprintById")]
-        public async Task<ActionResult<BoardDto>> GetSprintById(string sprintId, string userId) {
+        public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId, string userId) {
 
             var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
@@ -91,7 +91,7 @@ namespace API.Controllers
 
         // add a new sprint (not sure if I'm going to need this)
         [HttpPost("{userId}/addSprint")]
-        public async Task<ActionResult<UserDto>> AddNewSprint(BoardDto sprintDto, string userId) {
+        public async Task<ActionResult<UserDto>> AddNewSprint(SprintDto sprintDto, string userId) {
 
             var MappedSprint = _mapper.Map<SprintEntity>(sprintDto);
 
@@ -110,7 +110,7 @@ namespace API.Controllers
 
         // Adds a task to a specific sprint
         [HttpPost("{userId}/sprints/{sprintId}/addTask", Name = "AddTaskToSprint")]
-        public async Task<ActionResult<BoardDto>> AddTaskToSprint(string sprintId, string userId, TaskDto taskDto) {
+        public async Task<ActionResult<SprintDto>> AddTaskToSprint(string sprintId, string userId, TaskDto taskDto) {
 
             var MappedTask = _mapper.Map<TaskEntity>(taskDto);
 

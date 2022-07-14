@@ -1,7 +1,10 @@
-import { SelectChangeEvent, Typography, FormControl, Select, MenuItem, Card, Grid, useTheme, Box, styled } from "@mui/material";
+import { SelectChangeEvent, Typography, FormControl, Select, MenuItem, Card, Grid, useTheme, Box, styled, IconButton } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { setCurrentSprint } from "./sprintSlice";
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { formatDateString, formatDateStringNoYear } from "app/util/dateUtil";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export default function SprintTopCardView() {
 
@@ -56,37 +59,60 @@ export default function SprintTopCardView() {
 
     return (
         <Card sx={{background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
-            <Grid container direction="row" alignItems="center" padding='10px' columns={20}>
-                <Grid item xs={7}>
-                    <Typography variant="h1" color='background.paper' sx={{paddingLeft: '10px'}}>
-                        Current Sprint
+            <Grid container alignItems = "center">
+                <Grid item xs={8}>
+                    <Grid container direction="row" alignItems="center" padding='10px' paddingBottom={0} paddingRight='10px' columns={10}>
+                        <Grid item xs={4}>
+                            <Typography variant="h1" color='background.paper' sx={{paddingLeft: '10px'}}>
+                                Current Sprint
+                            </Typography>
+                        </Grid>
+                    <Grid item xs={1}>
+                        
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="caption" color='background.default' sx={{paddingBottom: '5px'}}>
+                                Progress&nbsp;<Box component='span' sx={{color: 'error.light'}}>&#40;{calculateNewTaskNumber()}&#41;</Box>&nbsp;<Box component='span' sx={{color: 'warning.light'}}>&#40;{calculateTodayTaskNumber()}&#41;</Box>&nbsp;<Box component='span' sx={{color: 'success.light'}}>&#40;{calculateCompletedTaskNumber()}&#41;</Box>
+                            </Typography>
+                            <BorderLinearProgress variant="determinate" value={calculateProgress()} />
+                        </Box>
+                    </Grid>
+                    <Grid item xs={1}>
+                        
+                    </Grid>
+                </Grid>
+                    <Typography variant="caption" color='background.default' sx={{paddingBottom: '5px'}}>
+                        <>
+                        Start Date: {formatDateString(sprints?.find(s => s.sprintEntityId == currentSprint)?.startDate || "")}
+                        </>
+                    </Typography>
+                    <br />
+                    <Typography variant="caption" color='background.default' sx={{paddingBottom: '5px'}}>
+                        End Date: {formatDateString(sprints?.find(s => s.sprintEntityId == currentSprint)?.endDate || "")}
                     </Typography>
                 </Grid>
-                <Grid item xs={2}>
-                    
-                </Grid>
-                <Grid item xs={5}>
-                    <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="caption" color='background.default' sx={{paddingBottom: '5px'}}>
-                            Progress&nbsp;<Box component='span' sx={{color: 'error.light'}}>&#40;{calculateNewTaskNumber()}&#41;</Box>&nbsp;<Box component='span' sx={{color: 'warning.light'}}>&#40;{calculateTodayTaskNumber()}&#41;</Box>&nbsp;<Box component='span' sx={{color: 'success.light'}}>&#40;{calculateCompletedTaskNumber()}&#41;</Box>
-                        </Typography>
-                        <BorderLinearProgress variant="determinate" value={calculateProgress()} />
-                    </Box>
-                </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'right', mr: '20px'}}>
-                        <FormControl sx={{m: '5px', minWidth: "120px"}}>
-                            <Select
-                                value={currentSprint || ""}
-                                onChange={handleSprintChange}
-                                sx={{ backgroundColor: 'white'}}
-                                >
-                                {sprints?.map((sprint, index) => (
-                                    <MenuItem key={index} value={sprint.sprintEntityId}>{sprint.sprintEntityId}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Typography>
+                <Grid item xs={4} flexGrow={1} >
+                        <Box sx={{padding: '5px', borderRadius: '8px',textAlign: 'right', mr: '20px', backgroundColor: 'primary.light', width: '200px'}} flexGrow={1} justifyContent='flex-end'>
+                            <Grid container flexGrow={1} alignItems='center' textAlign='center' columns={14} justifyContent='flex-end'>
+                                <Grid item xs={3} style={{textAlign: "left"}}>
+                                    <IconButton>
+                                        <ChevronLeftIcon />
+                                    </IconButton>
+                                </Grid>
+                                <Grid item xs={8} style={{textAlign: "center"}}>
+                                    <Typography variant="h6" sx={{color: 'background.paper', textAlign:'center'}}>
+                                        {formatDateStringNoYear(sprints?.find(s => s.sprintEntityId == currentSprint)?.startDate || "") + " - " + formatDateStringNoYear(sprints?.find(s => s.sprintEntityId == currentSprint)?.endDate || "")}
+                                    </Typography>
+                                    
+                                </Grid>
+                                <Grid item xs={3} style={{textAlign: "right"}}>
+                                    <IconButton>
+                                        <ChevronRightIcon />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
+                        </Box>
                 </Grid>
             </Grid>
         </Card>

@@ -18,7 +18,7 @@ namespace API.Extensions
                 FirstName = userEntity.FirstName,
                 LastName = userEntity.LastName,
                 Email = userEntity.Email,
-                Sprints = userEntity.Sprints.Select(sprint => new BoardDto {
+                Sprints = userEntity.Sprints.Select(sprint => new SprintDto {
                     SprintEntityId = sprint.SprintEntityId,
                     StartDate = sprint.StartDate,
                     EndDate = sprint.EndDate,
@@ -44,8 +44,8 @@ namespace API.Extensions
             };
         }
 
-        public static BoardDto mapSprintToDto(this SprintEntity sprintEntity) {
-            return new BoardDto {
+        public static SprintDto mapSprintToDto(this SprintEntity sprintEntity) {
+            return new SprintDto {
                 SprintEntityId = sprintEntity.SprintEntityId,
                 StartDate = sprintEntity.StartDate,
                 EndDate = sprintEntity.EndDate,

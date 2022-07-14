@@ -22,13 +22,15 @@ namespace API.Data
 
             var sprints = new List<SprintEntity>  {
                     new SprintEntity {
-                        SprintEntityId = "SPRINT_ID_1",
-                        StartDate="Fri Jul 08 2022 12:40:27 GMT-0400 (Eastern Daylight Time)",
-                        EndDate="Fri Jul 08 2022 12:40:27 GMT-0400 (Eastern Daylight Time)	"
+                        SprintEntityId = Guid.NewGuid().ToString(),
+                        StartDate="Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                        EndDate="Sat Jul 23 2022 00:00:00 GMT-0400 (Eastern Daylight Time)"
 
                     },
                     new SprintEntity {
-                        SprintEntityId = "SPRINT_ID_2",
+                        SprintEntityId = Guid.NewGuid().ToString(),
+                        StartDate="Sun Jul 24 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                        EndDate="Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)"
                     }
                 };
                 
