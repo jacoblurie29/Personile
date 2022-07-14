@@ -12,6 +12,6 @@ namespace API.DTOs
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Token { get; set; }
-        public List<SprintDto> Sprints { get; set; }
+        public List<BoardDto> Sprints { get; set; }
     }
 }

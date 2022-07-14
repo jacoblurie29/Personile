@@ -12,9 +12,9 @@ import { LoadingButton } from '@mui/lab';
 import agent from 'app/api/agent';
 const theme = createTheme();
 
-export default function LoginView() {
+export default function RegisterView() {
 
-  const history = useHistory();
+  
   const {register, watch, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
       mode: 'all'
   });

@@ -23,6 +23,9 @@ namespace API.Data
             var sprints = new List<SprintEntity>  {
                     new SprintEntity {
                         SprintEntityId = "SPRINT_ID_1",
+                        StartDate="Fri Jul 08 2022 12:40:27 GMT-0400 (Eastern Daylight Time)",
+                        EndDate="Fri Jul 08 2022 12:40:27 GMT-0400 (Eastern Daylight Time)	"
+
                     },
                     new SprintEntity {
                         SprintEntityId = "SPRINT_ID_2",

@@ -1,12 +1,17 @@
 import { ToastContainer } from 'react-toastify';
-import Navigation from "./Navigation";
+import DashboardNavigation from "./DashboardNavigation";
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@emotion/react';
-import { createTheme, responsiveFontSizes } from '@mui/material';
+import { createTheme, CssBaseline} from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import { useEffect } from 'react';
 import { fetchCurrentUser } from 'app/state/userSlice';
-import { setCurrentSprint, setLoading } from 'features/SprintView/sprintSlice';
+import { setLoading } from 'features/SprintView/sprintSlice';
+import HomeView from 'features/HomeView/HomeView';
+import LoginView from 'features/AccountViews/LoginView';
+import RegisterView from 'features/AccountViews/RegisterView';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import NotFound from 'app/errors/NotFound';
 
 
 /*
@@ -150,6 +155,7 @@ function App() {
   
   return (
     <>
+        <CssBaseline />
         <ToastContainer position="bottom-left"
                         autoClose={3000}
                         hideProgressBar={false}
@@ -162,9 +168,41 @@ function App() {
                         pauseOnHover/>
         <ThemeProvider theme={theme}>
 
-          {/* THIS IS WHERE YOU DECIDE BETWEEN HOME PAGE AND DASHBOARD */}
-          {userData !== null && <Navigation />} 
-          
+        <Switch>
+            <Route exact path='/'>
+                {userData !== null ? <Redirect to="/sprint" /> : <Redirect to="/home" />} 
+            </Route>
+            <Route exact path='/home'>
+                <HomeView />
+            </Route>
+            <Route path='/login'>
+                <LoginView />
+            </Route>
+            <Route path='/register'>
+                <RegisterView />
+            </Route>
+            <Route path='/sprint'>
+                {userData == null && <Redirect to="/" />}
+                <DashboardNavigation component='sprint' />
+            </Route>
+            <Route path='/today'>
+                {userData == null && <Redirect to="/" />}
+                <DashboardNavigation component='today' />
+            </Route>
+            <Route path='/settings'>
+                {userData == null && <Redirect to="/" />}
+                <DashboardNavigation component='settings' />
+            </Route>
+            <Route path='/serverError'>
+                <DashboardNavigation component='serverError' />
+            </Route>
+            <Route path='/notFound'>
+                <DashboardNavigation component='notFound' />
+            </Route>
+            <Route>
+                <NotFound />
+            </Route>
+        </Switch>
         </ThemeProvider>
        
     </>

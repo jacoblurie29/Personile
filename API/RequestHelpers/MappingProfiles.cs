@@ -13,7 +13,7 @@ namespace API.RequestHelpers
     {
         public MappingProfiles()
         {
-            CreateMap<SprintDto, SprintEntity>();
+            CreateMap<BoardDto, SprintEntity>();
             CreateMap<TaskDto, TaskEntity>();
             CreateMap<SubTaskDto, SubTaskEntity>();
             CreateMap<UpdateTaskDto, TaskEntity>();

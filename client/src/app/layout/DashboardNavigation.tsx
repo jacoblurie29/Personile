@@ -17,11 +17,17 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import AppRouter from '../routing/AppRouter';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LoginIcon from '@mui/icons-material/Login';
+import SprintView from 'features/SprintView/SprintView';
+import TodayView from 'features/TodayView/TodayView';
+import NotFound from 'app/errors/NotFound';
+import ServerError from 'app/errors/ServerError';
+import SettingsView from 'features/SettingsView/SettingsView';
+import { useAppSelector } from 'app/store/configureStore';
+import LoadingComponent from './LoadingComponent';
 
 const drawerWidth = 230;
 
@@ -46,8 +52,6 @@ const sprintLinks = [
 
 const adminLinks = [
   {linkTitle: "Profile", linkRoute: "/profile"},
-  {linkTitle: "Login", linkRoute: "/login"},
-  {linkTitle: "Register", linkRoute: "/register"},
   {linkTitle: "Settings", linkRoute: "/settings"},
   {linkTitle: "Logout", linkRoute: "/logout"}
 ]
@@ -100,8 +104,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+interface Props {
+  component: string
+}
 
-export default function Navigation() {
+export default function DashboardNavigation({component}: Props) {
 
   const [open, setOpen] = useState(false); 
 
@@ -112,6 +119,8 @@ export default function Navigation() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const {loading} = useAppSelector(state => state.sprintView);
 
 
   return (
@@ -176,7 +185,7 @@ export default function Navigation() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <LoginIcon /> : index === 2 ? <AddCircleOutlineIcon /> : index === 3 ? <SettingsIcon /> : <LogoutIcon /> }
+                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <SettingsIcon /> : <LogoutIcon /> }
                 </ListItemIcon>
                 <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -186,7 +195,12 @@ export default function Navigation() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh' }}>
         {/* Below handles the routing */}
-          <AppRouter />         
+          {loading && <LoadingComponent />}       
+          {!loading && component === "sprint" && <SprintView />}
+          {!loading && component === "today" && <TodayView />}
+          {!loading && component === "settings" && <SettingsView />}
+          {!loading && component === "serverError" && <ServerError />}
+          {!loading && component === "notFound" && <NotFound />} 
       </Box>
     </Box>
   );
