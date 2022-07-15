@@ -13,6 +13,7 @@ namespace API.Data
         {
         }
         
+        public DbSet<BoardEntity> Boards { get; set; }
         public DbSet<SprintEntity> Sprints { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<SubTaskEntity> SubTasks { get; set; }
@@ -23,8 +24,31 @@ namespace API.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // modelBuilder.Entity<TaskEntity>()
-            // .HasKey(k => new {k.TaskEntityId, k.SprintId});
+            /* For anyone reading this, you have no idea how long it took me to figure out the code below XD */
+
+            modelBuilder
+            .Entity<SubTaskEntity>()
+            .HasOne(t => t.TaskEntity)
+            .WithMany(s => s.SubTasks)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder
+            .Entity<TaskEntity>()
+            .HasOne(s => s.SprintEntity)
+            .WithMany(t => t.Tasks)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder
+            .Entity<SprintEntity>()
+            .HasOne(b => b.BoardEntity)
+            .WithMany(s => s.Sprints)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder
+            .Entity<BoardEntity>()
+            .HasOne(u => u.UserEntity)
+            .WithMany(b => b.Boards)
+            .OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<IdentityRole>()
                 .HasData(

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class IdentityAdded : Migration
+    public partial class BoardsAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -157,22 +157,41 @@ namespace API.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Boards",
+                columns: table => new
+                {
+                    BoardEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    StartDate = table.Column<string>(type: "TEXT", nullable: true),
+                    EndDate = table.Column<string>(type: "TEXT", nullable: true),
+                    UserEntityId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Boards", x => x.BoardEntityId);
+                    table.ForeignKey(
+                        name: "FK_Boards_AspNetUsers_UserEntityId",
+                        column: x => x.UserEntityId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sprints",
                 columns: table => new
                 {
                     SprintEntityId = table.Column<string>(type: "TEXT", nullable: false),
                     StartDate = table.Column<string>(type: "TEXT", nullable: true),
                     EndDate = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true)
+                    BoardEntityId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sprints", x => x.SprintEntityId);
                     table.ForeignKey(
-                        name: "FK_Sprints_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        name: "FK_Sprints_Boards_BoardEntityId",
+                        column: x => x.BoardEntityId,
+                        principalTable: "Boards",
+                        principalColumn: "BoardEntityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -190,14 +209,14 @@ namespace API.Data.Migrations
                     Tags = table.Column<string>(type: "TEXT", nullable: true),
                     Effort = table.Column<int>(type: "INTEGER", nullable: false),
                     Color = table.Column<int>(type: "INTEGER", nullable: false),
-                    SprintId = table.Column<string>(type: "TEXT", nullable: true)
+                    SprintEntityId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tasks", x => x.TaskEntityId);
                     table.ForeignKey(
-                        name: "FK_Tasks_Sprints_SprintId",
-                        column: x => x.SprintId,
+                        name: "FK_Tasks_Sprints_SprintEntityId",
+                        column: x => x.SprintEntityId,
                         principalTable: "Sprints",
                         principalColumn: "SprintEntityId");
                 });
@@ -224,12 +243,12 @@ namespace API.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "05659ac3-126a-45df-8bd8-2e9955d30ecb", "38030afc-cb2b-4491-8820-7c7ee37d5f44", "Member", "MEMBER" });
+                values: new object[] { "a21f8d95-30e6-404d-a725-3b5cdefbaa24", "0fa23da0-cf2b-469c-a4a3-b6a5d0867f45", "Member", "MEMBER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "f3274cbe-07c4-4399-b02c-048d459e6ddf", "c4652991-a3ed-4665-a97e-6df88e3fcad9", "Admin", "ADMIN" });
+                values: new object[] { "bd628e03-5ee8-479e-86ba-5c42c0570bd7", "09f533cd-5694-47a3-8dea-c6337ac2dee7", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -269,9 +288,14 @@ namespace API.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sprints_UserId",
+                name: "IX_Boards_UserEntityId",
+                table: "Boards",
+                column: "UserEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sprints_BoardEntityId",
                 table: "Sprints",
-                column: "UserId");
+                column: "BoardEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubTasks_TaskEntityId",
@@ -279,9 +303,9 @@ namespace API.Data.Migrations
                 column: "TaskEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_SprintId",
+                name: "IX_Tasks_SprintEntityId",
                 table: "Tasks",
-                column: "SprintId");
+                column: "SprintEntityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -312,6 +336,9 @@ namespace API.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sprints");
+
+            migrationBuilder.DropTable(
+                name: "Boards");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

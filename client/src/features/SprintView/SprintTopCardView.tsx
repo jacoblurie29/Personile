@@ -1,24 +1,22 @@
-import { SelectChangeEvent, Typography, FormControl, Select, MenuItem, Card, Grid, useTheme, Box, styled, IconButton, ToggleButtonGroup, ToggleButton, Stack } from "@mui/material";
+import { Typography, Card, Grid, useTheme, Box, IconButton, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { setCurrentSprint } from "./sprintSlice";
-import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { formatDateString, formatDateStringNoYear } from "app/util/dateUtil";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { margin } from "@mui/system";
 
 export default function SprintTopCardView() {
 
     const dispatch = useAppDispatch();
-    const { currentSprint } = useAppSelector(state => state.sprintView);
-    const sprints = useAppSelector(state => state.user.userData?.sprints);
+    const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
+    const sprints = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId === currentBoard)?.sprints);
     const theme = useTheme();
 
 
 
     const handleSprintChangeBackwards = () => {
         
-        var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId == currentSprint)?.startDate || "");
+        var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "");
         var newApproximateSprintStartTime = currentSprintStartTime - 1209600000;
         var newSprintId = sprints?.filter(s => Date.parse(s.startDate) > newApproximateSprintStartTime - 194800000 && Date.parse(s.startDate) < newApproximateSprintStartTime + 194800000);
         
@@ -32,7 +30,7 @@ export default function SprintTopCardView() {
 
     const handleSprintChangeForwards = () => {
 
-        var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId == currentSprint)?.startDate || "");
+        var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "");
         var newApproximateSprintStartTime = currentSprintStartTime + 1209600000;
         var newSprintId = sprints?.filter(s => Date.parse(s.startDate) > newApproximateSprintStartTime - 194800000 && Date.parse(s.startDate) < newApproximateSprintStartTime + 194800000);
         
@@ -77,35 +75,22 @@ export default function SprintTopCardView() {
     }
 
     const calculateNewTaskNumber = () => {
-        return sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+        return sprints?.find(s => s.sprintEntityId === currentSprint)?.tasks.filter((task) => {
             return task.currentState === 0;
         }).length || 0;
     }
 
     const calculateTodayTaskNumber = () => {
-        return sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+        return sprints?.find(s => s.sprintEntityId === currentSprint)?.tasks.filter((task) => {
             return task.currentState === 1;
         }).length || 0;
     }
 
     const calculateCompletedTaskNumber = () => {
-        return sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+        return sprints?.find(s => s.sprintEntityId === currentSprint)?.tasks.filter((task) => {
             return task.currentState === 2;
         }).length || 0;
     }
-
-    const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-        height: 10,
-        borderRadius: 5,
-        paddingBottom: '10px',
-        [`&.${linearProgressClasses.colorPrimary}`]: {
-          backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
-        },
-        [`& .${linearProgressClasses.bar}`]: {
-          borderRadius: 5,
-          backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
-        },
-    }));
 
     return (
         <Card sx={{background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
@@ -119,11 +104,11 @@ export default function SprintTopCardView() {
                                 </Typography>
                                 <Typography variant="caption" color='background.default' sx={{paddingLeft: '10px'}}>
                                     <>
-                                    Start Date: {formatDateString(sprints?.find(s => s.sprintEntityId == currentSprint)?.startDate || "")}
+                                    Start Date: {formatDateString(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "")}
                                     </>
                                 </Typography>
                                 <Typography variant="caption" color='background.default' sx={{paddingBottom: '5px', paddingLeft: '10px'}}>
-                                    End Date: {formatDateString(sprints?.find(s => s.sprintEntityId == currentSprint)?.endDate || "")}
+                                    End Date: {formatDateString(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "")}
                                 </Typography>
                             </Stack>
                         </Grid>
@@ -161,7 +146,7 @@ export default function SprintTopCardView() {
                             <ChevronLeftIcon />
                         </IconButton>
                         <Typography variant="h6" sx={{color: 'background.paper', textAlign:'center'}} margin='auto'>
-                            {formatDateStringNoYear(sprints?.find(s => s.sprintEntityId == currentSprint)?.startDate || "") + " - " + formatDateStringNoYear(sprints?.find(s => s.sprintEntityId == currentSprint)?.endDate || "")}
+                            {formatDateStringNoYear(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "") + " - " + formatDateStringNoYear(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "")}
                         </Typography>
                         <IconButton onClick={() => handleSprintChangeForwards()}>
                             <ChevronRightIcon />

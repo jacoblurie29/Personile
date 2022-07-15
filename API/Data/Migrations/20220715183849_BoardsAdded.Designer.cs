@@ -11,17 +11,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220711132522_IdentityAdded")]
-    partial class IdentityAdded
+    [Migration("20220715183849_BoardsAdded")]
+    partial class BoardsAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
 
-            modelBuilder.Entity("API.Entities.SprintEntity", b =>
+            modelBuilder.Entity("API.Entities.BoardEntity", b =>
                 {
-                    b.Property<string>("SprintEntityId")
+                    b.Property<string>("BoardEntityId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EndDate")
@@ -30,12 +30,33 @@ namespace API.Data.Migrations
                     b.Property<string>("StartDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BoardEntityId");
+
+                    b.HasIndex("UserEntityId");
+
+                    b.ToTable("Boards");
+                });
+
+            modelBuilder.Entity("API.Entities.SprintEntity", b =>
+                {
+                    b.Property<string>("SprintEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BoardEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StartDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("SprintEntityId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("BoardEntityId");
 
                     b.ToTable("Sprints");
                 });
@@ -93,7 +114,7 @@ namespace API.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SprintId")
+                    b.Property<string>("SprintEntityId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Tags")
@@ -101,7 +122,7 @@ namespace API.Data.Migrations
 
                     b.HasKey("TaskEntityId");
 
-                    b.HasIndex("SprintId");
+                    b.HasIndex("SprintEntityId");
 
                     b.ToTable("Tasks");
                 });
@@ -204,15 +225,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "05659ac3-126a-45df-8bd8-2e9955d30ecb",
-                            ConcurrencyStamp = "38030afc-cb2b-4491-8820-7c7ee37d5f44",
+                            Id = "a21f8d95-30e6-404d-a725-3b5cdefbaa24",
+                            ConcurrencyStamp = "0fa23da0-cf2b-469c-a4a3-b6a5d0867f45",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "f3274cbe-07c4-4399-b02c-048d459e6ddf",
-                            ConcurrencyStamp = "c4652991-a3ed-4665-a97e-6df88e3fcad9",
+                            Id = "bd628e03-5ee8-479e-86ba-5c42c0570bd7",
+                            ConcurrencyStamp = "09f533cd-5694-47a3-8dea-c6337ac2dee7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -320,31 +341,44 @@ namespace API.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("API.Entities.BoardEntity", b =>
+                {
+                    b.HasOne("API.Entities.UserEntity", "UserEntity")
+                        .WithMany("Boards")
+                        .HasForeignKey("UserEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("UserEntity");
+                });
+
             modelBuilder.Entity("API.Entities.SprintEntity", b =>
                 {
-                    b.HasOne("API.Entities.UserEntity", "User")
+                    b.HasOne("API.Entities.BoardEntity", "BoardEntity")
                         .WithMany("Sprints")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("BoardEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
-                    b.Navigation("User");
+                    b.Navigation("BoardEntity");
                 });
 
             modelBuilder.Entity("API.Entities.SubTaskEntity", b =>
                 {
-                    b.HasOne("API.Entities.TaskEntity", "Task")
+                    b.HasOne("API.Entities.TaskEntity", "TaskEntity")
                         .WithMany("SubTasks")
-                        .HasForeignKey("TaskEntityId");
+                        .HasForeignKey("TaskEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
-                    b.Navigation("Task");
+                    b.Navigation("TaskEntity");
                 });
 
             modelBuilder.Entity("API.Entities.TaskEntity", b =>
                 {
-                    b.HasOne("API.Entities.SprintEntity", "Sprint")
+                    b.HasOne("API.Entities.SprintEntity", "SprintEntity")
                         .WithMany("Tasks")
-                        .HasForeignKey("SprintId");
+                        .HasForeignKey("SprintEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
-                    b.Navigation("Sprint");
+                    b.Navigation("SprintEntity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -398,6 +432,11 @@ namespace API.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Entities.BoardEntity", b =>
+                {
+                    b.Navigation("Sprints");
+                });
+
             modelBuilder.Entity("API.Entities.SprintEntity", b =>
                 {
                     b.Navigation("Tasks");
@@ -410,7 +449,7 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.UserEntity", b =>
                 {
-                    b.Navigation("Sprints");
+                    b.Navigation("Boards");
                 });
 #pragma warning restore 612, 618
         }

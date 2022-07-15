@@ -16,9 +16,17 @@ namespace API.Data
 
             
 
-            if(context.Sprints.Any()) return;
+            if(context.Users.Any()) return;
 
-            
+
+            var board = new List<BoardEntity> {
+                new BoardEntity {
+                    BoardEntityId = Guid.NewGuid().ToString(),
+                    StartDate="Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    EndDate="Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    Sprints= new List<SprintEntity> {}
+                }
+            };
 
             var sprints = new List<SprintEntity>  {
                     new SprintEntity {
@@ -157,8 +165,8 @@ namespace API.Data
 
         sprints[1].Tasks = tasksForSprint1;
 
-        context.Sprints.Add(sprints[0]);
-        context.Sprints.Add(sprints[1]);
+        board[0].Sprints.Add(sprints[0]);
+        board[0].Sprints.Add(sprints[1]);
 
         if (!userManager.Users.Any()) {
                var userMember = new UserEntity {
@@ -166,14 +174,14 @@ namespace API.Data
                     FirstName = "Member",
                     LastName = "User",
                     Email = "memberuser@test.com",
-                    Sprints = sprints
+                    Boards = board
                 };
                 var userAdmin = new UserEntity {
                     UserName = "adminuser@test.com",
                     FirstName = "Admin",
                     LastName = "User",
                     Email = "adminuser@test.com",
-                    Sprints = null
+                    Boards = {}
                 };
 
                 await userManager.CreateAsync(userMember, "Pa$$w0rd");

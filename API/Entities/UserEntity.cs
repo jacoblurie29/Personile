@@ -7,6 +7,6 @@ namespace API.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public List<SprintEntity> Sprints { get; set; }
+        public List<BoardEntity> Boards { get; set; }
     }
 }

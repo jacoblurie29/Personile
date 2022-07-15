@@ -2,7 +2,6 @@ import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useState } from "react";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import NewTaskButton from "./NewTaskButton";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Task } from "app/models/task";

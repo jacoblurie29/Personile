@@ -1,8 +1,6 @@
-import { Box, FormControl, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import LoadingComponent from "../../app/layout/LoadingComponent";
-import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import { setCurrentSprint, setLoading } from "./sprintSlice";
+import { Box, Grid } from "@mui/material";
+import { useState } from "react";
+import { useAppSelector } from "../../app/store/configureStore";
 import SprintTopCardView from "./SprintTopCardView";
 import TaskColumnView from "./TaskColumnView";
 
@@ -10,9 +8,9 @@ import TaskColumnView from "./TaskColumnView";
 // "{tasks}: Props" destructures the props for the fields inside
 export default function SprintView() {
 
-        const sprints = useAppSelector(state => state.user.userData?.sprints);
-        const { currentSprint } = useAppSelector(state => state.sprintView);
-        const [taskToBeEditedId, setTaskToBeEditedId] = useState<string[]>([]);
+    const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
+    const sprints = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId == currentBoard)?.sprints);
+    const [taskToBeEditedId, setTaskToBeEditedId] = useState<string[]>([]);
         
 ;
 

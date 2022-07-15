@@ -36,15 +36,15 @@ namespace API.Controllers
                 return Unauthorized();
             }
 
-            var userEntity = await _context.Users.Where(u => u.Email == loginDto.Username).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            var mappedUser = userEntity.mapUserToDto();
+            var mappedUser = CurrentUserEntity.mapUserToDto();
 
             return new UserDto {
                 UserEntityId = user.Id,
                 Email = user.Email,
                 Token = await _tokenService.GenerateToken(user),
-                Sprints = mappedUser.Sprints,
+                Boards = mappedUser.Boards,
                 FirstName = user.FirstName,
                 LastName = user.LastName
             };
@@ -78,6 +78,13 @@ namespace API.Controllers
                  
             */
 
+            BoardEntity defaultBoard = new BoardEntity{
+                BoardEntityId = Guid.NewGuid().ToString(),
+                StartDate = null,
+                EndDate = null,
+                Sprints = null,
+            };
+
             SprintEntity defaultSprint = new SprintEntity{
                 SprintEntityId = Guid.NewGuid().ToString(),
                 StartDate = null,
@@ -85,9 +92,11 @@ namespace API.Controllers
                 Tasks = null,
             };
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            CurrentUserEntity.Sprints.Add(defaultSprint);
+            defaultBoard.Sprints.Add(defaultSprint);
+            CurrentUserEntity.Boards.Add(defaultBoard);
+            
             
             await _context.SaveChangesAsync();
 
@@ -100,15 +109,15 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser() {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             
-            var userEntity = await _context.Users.Where(u => u.Id == user.Id).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            var mappedUser = userEntity.mapUserToDto();
+            var mappedUser = CurrentUserEntity.mapUserToDto();
 
             return new UserDto {
                 UserEntityId = user.Id,
                 Email = user.Email,
                 Token = await _tokenService.GenerateToken(user),
-                Sprints = mappedUser.Sprints,
+                Boards = mappedUser.Boards,
                 FirstName = user.FirstName,
                 LastName = user.LastName
             };

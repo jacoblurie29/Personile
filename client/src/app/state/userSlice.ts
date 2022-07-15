@@ -10,7 +10,7 @@ import { SubTask } from "app/models/subTask";
 import { FieldValues } from "react-hook-form";
 import { history } from "../..";
 import { store } from "app/store/configureStore";
-import { setCurrentSprint } from "features/SprintView/sprintSlice";
+import { setCurrentBoard, setCurrentSprint } from "features/SprintView/sprintSlice";
 
 interface UserState {
     userData: User | null;
@@ -27,55 +27,66 @@ const initialState : UserState = {
 
 
 
-export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, sprintId: string, task: UpdateTask}>(
+export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, boardId: string, sprintId: string, task: UpdateTask}>(
     'sprint/addTaskToSprintAsync',
-    async ({userId, sprintId, task}, thunkAPI) => {
+    async ({userId, boardId, sprintId, task}, thunkAPI) => {
         try {
-            return await agent.UserData.addTask(userId, sprintId, task);
+            return await agent.UserData.addTask(userId, boardId, sprintId, task);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
     }
 )
 
-export const removeTaskFromSprintAsync = createAsyncThunk<void, {userId: string, sprintId: string, taskId: string}>(
+export const removeTaskFromSprintAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string}>(
     'sprint/removeTaskFromSprintAsync',
-    async ({userId, sprintId, taskId}, thunkAPI) => {
+    async ({userId, boardId, sprintId, taskId}, thunkAPI) => {
         try {
-            return await agent.UserData.removeTask(userId, sprintId, taskId);
+            return await agent.UserData.removeTask(userId, boardId, sprintId, taskId);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
     }
 )
 
-export const updateTaskAsync = createAsyncThunk<Task, {userId: string, sprintId: string, taskId: string, updatedTaskDto: UpdateTask, previousState: Task, futureState: Task}>(
+export const updateTaskAsync = createAsyncThunk<Task, {userId: string, boardId: string, sprintId: string, taskId: string, updatedTaskDto: UpdateTask, previousState: Task, futureState: Task}>(
     'sprint/updateTask',
-    async ({userId, sprintId, taskId, updatedTaskDto}, thunkAPI) => {
+    async ({userId, boardId, sprintId, taskId, updatedTaskDto}, thunkAPI) => {
         try {
-            return await agent.UserData.updateTaskState(userId, sprintId, taskId, updatedTaskDto);
+            return await agent.UserData.updateTaskState(userId, boardId, sprintId, taskId, updatedTaskDto);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
     }
 )
 
-export const addSubTaskToTaskAsync = createAsyncThunk<SubTask, {userId: string, sprintId: string, taskId: string, newSubtask: SubTask}>(
+export const addSubTaskToTaskAsync = createAsyncThunk<SubTask, {userId: string, boardId: string, sprintId: string, taskId: string, newSubtask: SubTask}>(
     'sprint/addSubtaskToTask',
-    async ({userId, sprintId, taskId, newSubtask}, thunkAPI) => {
+    async ({userId, boardId, sprintId, taskId, newSubtask}, thunkAPI) => {
         try {
-            return await agent.UserData.addSubtask(userId, sprintId, taskId, newSubtask)
+            return await agent.UserData.addSubtask(userId, boardId, sprintId, taskId, newSubtask)
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
     }
 ) 
 
-export const updateSubtaskStateAsync = createAsyncThunk<SubTask, {userId: string, sprintId: string, taskId: string, subtaskId: string, updatedSubtask: SubTask}>(
-    'sprints/updateSubtaskState',
-    async ({userId, sprintId, taskId, subtaskId, updatedSubtask}, thunkAPI) => {
+export const updateSubtaskAsync = createAsyncThunk<SubTask, {userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string, updatedSubtask: SubTask}>(
+    'sprints/updateSubtaskAsync',
+    async ({userId, boardId, sprintId, taskId, subtaskId, updatedSubtask}, thunkAPI) => {
         try {
-            return await agent.UserData.updateSubtask(userId, sprintId, taskId, subtaskId, updatedSubtask)
+            return await agent.UserData.updateSubtask(userId, boardId, sprintId, taskId, subtaskId, updatedSubtask)
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+export const removeSubtaskFromTaskAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string}>(
+    'sprints/removeSubtaskFromTaskAsync',
+    async ({userId, boardId, sprintId, taskId, subtaskId}, thunkAPI) => {
+        try {
+            return await agent.UserData.removeSubtask(userId, boardId, sprintId, taskId, subtaskId)
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -90,7 +101,9 @@ export const signInUser = createAsyncThunk<User, FieldValues>(
             if (userDto) thunkAPI.dispatch(setUser(userDto));
             localStorage.setItem('user', JSON.stringify(userDto));
 
-            store.dispatch(setCurrentSprint(userDto.sprints[0].sprintEntityId));
+            console.log(userDto.boards[0])
+            store.dispatch(setCurrentBoard(userDto.boards[0].boardEntityId))
+            store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
             return userDto;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data});
@@ -107,8 +120,8 @@ export const fetchCurrentUser = createAsyncThunk<User>(
             if (userDto) thunkAPI.dispatch(setUser(userDto));
             localStorage.setItem('user', JSON.stringify(userDto));
             
-            store.dispatch(setCurrentSprint(userDto.sprints[0].sprintEntityId));
-        
+            store.dispatch(setCurrentBoard(userDto.boards[0].boardEntityId))
+            store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
 
             return userDto;
         } catch (error: any) {
@@ -133,20 +146,29 @@ export const userSlice = createSlice({
         },
         setLoading: (state, action) => {
             state.loading = action.payload
-        }
+        },
+        signOut: (state) => {
+            state.userData = null;
+            localStorage.removeItem('user');
+            history.push('/');
+        },
     },
     extraReducers: (builder => {
         // ADD TASK TO SPRINT
         builder.addCase(addTaskToSprintAsync.pending, (state, action) => {
-            const { sprintId } = action.meta.arg;
+            const { sprintId, boardId } = action.meta.arg;
 
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
 
             if (sprintIndex === undefined || sprintIndex < 0) return;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            state.userData?.sprints[sprintIndex].tasks.push(mapUpdateTaskToTask(action.meta.arg.task));
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.push(mapUpdateTaskToTask(action.meta.arg.task));
 
             state.status = 'pendingAddTask';
         });
@@ -175,17 +197,23 @@ export const userSlice = createSlice({
             state.status = 'pendingDeleteTask';
         });
         builder.addCase(removeTaskFromSprintAsync.fulfilled, (state, action) => {
-            const {sprintId, taskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+            const {sprintId, taskId, boardId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
 
-            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1);
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.splice(taskIndex, 1);
 
             state.status = 'idle';
         });
@@ -195,19 +223,23 @@ export const userSlice = createSlice({
 
         // UPDATE TASK 
         builder.addCase(updateTaskAsync.pending, (state, action) => {
-            const {sprintId, taskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+            const {sprintId, taskId, boardId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
 
-            console.log(action.meta.arg.futureState)
+            if (boardIndex === undefined || boardIndex < 0) return;
 
-            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, action.meta.arg.futureState);
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.splice(taskIndex, 1, action.meta.arg.futureState);
 
             state.status = 'pendingUpdateTask';
 
@@ -230,19 +262,25 @@ export const userSlice = createSlice({
 
         });
         builder.addCase(updateTaskAsync.rejected, (state, action) => {
-            const {sprintId, taskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+            const {sprintId, taskId, boardId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
 
             var revertedTask = {...action.meta.arg.previousState};
 
-            state.userData?.sprints[sprintIndex].tasks.splice(taskIndex, 1, revertedTask);
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.splice(taskIndex, 1, revertedTask);
 
             toast.error('Failed to update task state!', {
                 position: "bottom-right",
@@ -261,17 +299,23 @@ export const userSlice = createSlice({
         // ADD SUBTASK
 
         builder.addCase(addSubTaskToTaskAsync.pending, (state, action) => {
-            const {sprintId, taskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+            const {sprintId, taskId, boardId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
 
-            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.push(action.meta.arg.newSubtask)
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.push(action.meta.arg.newSubtask)
 
             state.status = 'pendingUpdateTask';
 
@@ -294,17 +338,23 @@ export const userSlice = createSlice({
 
         });
         builder.addCase(addSubTaskToTaskAsync.rejected, (state, action) => {
-            const {sprintId, taskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+            const {sprintId, taskId, boardId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
 
-            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.pop();
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.pop();
 
             toast.error('Failed to add subtask!', {
                 position: "bottom-right",
@@ -321,30 +371,34 @@ export const userSlice = createSlice({
         });
 
         // UPDATE SUBTASK
-        builder.addCase(updateSubtaskStateAsync.pending, (state, action) => {
-            const {sprintId, taskId, subtaskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+        builder.addCase(updateSubtaskAsync.pending, (state, action) => {
+            const {boardId, sprintId, taskId, subtaskId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
 
             if (taskIndex === undefined || taskIndex < 0) return;
 
-            const subtaskIndex = state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
+            const subtaskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
 
             if (subtaskIndex === undefined || subtaskIndex < 0) return;
 
-            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1, action.meta.arg.updatedSubtask);
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1, action.meta.arg.updatedSubtask);
 
             state.status = 'pendingUpdateSubtask';
 
             
         });
-        builder.addCase(updateSubtaskStateAsync.fulfilled, (state, action) => {
+        builder.addCase(updateSubtaskAsync.fulfilled, (state, action) => {
 
             state.status = 'idle';
 
@@ -360,24 +414,28 @@ export const userSlice = createSlice({
                 });
 
         });
-        builder.addCase(updateSubtaskStateAsync.rejected, (state, action) => {
-            const {sprintId, taskId, subtaskId} = action.meta.arg;
-
-            const sprintIndex = state.userData?.sprints.findIndex(s => s.sprintEntityId === sprintId);
-
-            if (sprintIndex === undefined || sprintIndex < 0) return;
+        builder.addCase(updateSubtaskAsync.rejected, (state, action) => {
+            const {boardId, sprintId, taskId, subtaskId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
 
-            const taskIndex = state.userData?.sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
 
             if (taskIndex === undefined || taskIndex < 0) return;
 
-            const subtaskIndex = state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
+            const subtaskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
 
             if (subtaskIndex === undefined || subtaskIndex < 0) return;
 
-            state.userData?.sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
 
             toast.error('Failed to add subtask!', {
                 position: "bottom-right",
@@ -392,6 +450,63 @@ export const userSlice = createSlice({
 
             state.status = 'idle';
         });
+
+        // REMOVE SUBTASK FROM TASK
+        builder.addCase(removeSubtaskFromTaskAsync.pending, (state, action) => {
+            state.status = 'pendingDeleteSubtask';
+        });
+        builder.addCase(removeSubtaskFromTaskAsync.fulfilled, (state, action) => {
+            const {sprintId, taskId, boardId, subtaskId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            const subtaskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.findIndex(s => s.subTaskEntityId === subtaskId);
+
+            if (subtaskIndex === undefined || subtaskIndex < 0) return;
+
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
+
+            toast.success('Subtask deleted!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+        builder.addCase(removeSubtaskFromTaskAsync.rejected, (state, action) => {
+
+            toast.error('Failed to delete subtask!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+
 
         // LOGIN USER
 
@@ -416,9 +531,11 @@ export const userSlice = createSlice({
         builder.addMatcher(isAnyOf(signInUser.rejected), (state, action) => {
             throw action.payload;
         });
+
+        
         
     })
     
 })
 
-export const {setUser, setLoading} = userSlice.actions;
+export const {setUser, setLoading, signOut} = userSlice.actions;

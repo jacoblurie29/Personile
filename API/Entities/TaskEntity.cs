@@ -19,8 +19,8 @@ namespace API.Entities
         public int Effort { get; set; }
         public int Color { get; set; }
         public List<SubTaskEntity> SubTasks { get; set; }
-        public SprintEntity Sprint { get; set; }
-        public string SprintId { get; set; }
+        public SprintEntity SprintEntity { get; set; }
+        public string SprintEntityId { get; set; }
 
         public void AddSubtask(SubTaskEntity subTaskEntity) {
             if (SubTasks.All(subTask => subTask.SubTaskEntityId != subTaskEntity.SubTaskEntityId)) {
