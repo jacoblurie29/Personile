@@ -19,15 +19,14 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import LoginIcon from '@mui/icons-material/Login';
 import SprintView from 'features/SprintView/SprintView';
 import TodayView from 'features/TodayView/TodayView';
 import NotFound from 'app/errors/NotFound';
 import ServerError from 'app/errors/ServerError';
 import SettingsView from 'features/SettingsView/SettingsView';
-import { useAppSelector } from 'app/store/configureStore';
+import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import LoadingComponent from './LoadingComponent';
+import { signOut } from 'app/state/userSlice';
 
 const drawerWidth = 230;
 
@@ -53,7 +52,6 @@ const sprintLinks = [
 const adminLinks = [
   {linkTitle: "Profile", linkRoute: "/profile"},
   {linkTitle: "Settings", linkRoute: "/settings"},
-  {linkTitle: "Logout", linkRoute: "/logout"}
 ]
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -120,6 +118,8 @@ export default function DashboardNavigation({component}: Props) {
     setOpen(false);
   };
 
+  const dispatch = useAppDispatch();
+
   const {loading} = useAppSelector(state => state.sprintView);
 
 
@@ -185,12 +185,35 @@ export default function DashboardNavigation({component}: Props) {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <SettingsIcon /> : <LogoutIcon /> }
+                  {index === 0 ? <AccountBoxIcon /> : <SettingsIcon /> }
                 </ListItemIcon>
                 <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
+          <ListItem key={'logout'} 
+                      disablePadding
+                      sx={navButtonStyles}>
+              <ListItemButton
+                sx={{
+                  minHeight: 24,
+                  justifyContent: open ? 'initial' : 'center',
+                  borderRadius: '16px'
+                }}
+                onClick={() => dispatch(signOut())}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 5 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh' }}>

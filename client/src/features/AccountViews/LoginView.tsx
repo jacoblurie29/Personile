@@ -11,7 +11,6 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { useAppDispatch, } from 'app/store/configureStore';
 import { signInUser } from 'app/state/userSlice';
-import { setCurrentSprint } from 'features/SprintView/sprintSlice';
 const theme = createTheme();
 
 export default function LoginView() {

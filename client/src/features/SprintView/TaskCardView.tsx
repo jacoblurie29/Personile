@@ -23,7 +23,7 @@ interface Props {
 export default function TaskCardView({task, toggleEditTask, indexForAnimation}: Props) {
 
     const {status} = useAppSelector(state => state.user)
-    const {currentSprint, isExpanded: expanded } = useAppSelector(state => state.sprintView);
+    const {currentSprint, isExpanded: expanded, currentBoard } = useAppSelector(state => state.sprintView);
     const userEntityId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
     const [zoom, setZoom] = useState<boolean>(true);
@@ -48,10 +48,11 @@ export default function TaskCardView({task, toggleEditTask, indexForAnimation}: 
             var currentTaskId = newTask.taskEntityId;
             var currentUserId = userEntityId;
             var currentSprintId = currentSprint;
+            var currentBoardId = currentBoard;
 
-            if (currentUserId == undefined || currentSprintId == null ) return;
+            if (currentUserId == undefined || currentSprintId == null || currentBoardId == null ) return;
 
-            dispatch(updateTaskAsync({userId: currentUserId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
+            dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
             
             dispatch(removeFromIsExpanded(currentTaskId));
         }
@@ -80,8 +81,8 @@ export default function TaskCardView({task, toggleEditTask, indexForAnimation}: 
                     </Grid>
                     <Grid item xs={6}>
                         <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                            <LoadingButton key={"edit-" + task.taskEntityId} loading={status.includes("pending")} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={async () => {setZoom(false); await new Promise<void>(done => setTimeout(() => done(), 300)); toggleEditTask(task.taskEntityId)}}><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
-                            <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)'}} onClick={() => {dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                            <LoadingButton key={"edit-" + task.taskEntityId} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={async () => {setZoom(false); await new Promise<void>(done => setTimeout(() => done(), 300)); toggleEditTask(task.taskEntityId)}}><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
+                            <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)'}} onClick={() => {dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", boardId: currentBoard || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
                         </Box>
                     </Grid>
                 </Grid>

@@ -69,15 +69,16 @@ const requests = {
 
 // Futute: edit the tasks to have a sprint id
 const UserData = {
-    getSprints: (userId: string) => requests.get(`userdata/${userId}/sprints`),
-    getSprint: (userId: string, sprintId: string) => requests.get(`userdata/${userId}/sprints/${sprintId}`),
-    getUser: (userId: string) => requests.get(`userdata/${userId}`),
-    titles: (userId: string) => requests.get(`userdata/${userId}/sprints/titles`),
-    addTask: (userId: string, sprintId: string, body: {}) => requests.post(`userdata/${userId}/sprints/${sprintId}/addTask`, body),
-    removeTask: (userId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`),
-    updateTaskState: (userId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
-    addSubtask: (userId: string, sprintId: string, taskId: string, body: {}) => requests.post(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/addSubtask`, body),
-    updateSubtask: (userId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body)
+    getSprints: (userId: string, boardId: string) => requests.get(`userdata/${userId}/boards/${boardId}/sprints`),
+    getSprint: (userId: string, boardId: string, sprintId: string) => requests.get(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}`),
+    getUser: (userId: string, boardId: string) => requests.get(`userdata/${userId}/boards/${boardId}`),
+    titles: (userId: string, boardId: string) => requests.get(`userdata/${userId}/boards/${boardId}/sprints/titles`),
+    addTask: (userId: string, boardId: string, sprintId: string, body: {}) => requests.post(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/addTask`, body),
+    removeTask: (userId: string, boardId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`),
+    updateTaskState: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
+    addSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.post(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/addSubtask`, body),
+    updateSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body),
+    removeSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/deleteSubtask`)
 }
 
 const Account = {

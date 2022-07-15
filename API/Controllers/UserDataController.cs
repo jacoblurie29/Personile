@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
 
-    [Authorize]
+
     public class UserDataController : BaseApiController
     {
         private readonly PersonileContext _context;
@@ -27,16 +27,33 @@ namespace API.Controllers
             
         }
 
-        [HttpGet("{userId}/sprints", Name = "GetAllSprints")]
-        public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId) {
+        [HttpGet("{userId}/boards/{boardId}", Name = "GetBoard")]
+        public async Task<ActionResult<BoardDto>> GetBoardById(string userId, string boardId) {
 
-           var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+           var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-           var Sprints = CurrentUserEntity.Sprints;
+            if(CurrentUserEntity == null) return NotFound();
+
+           var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+           if(CurrentBoardEntity == null) return NotFound();
+
+           return CurrentBoardEntity.mapBoardToDto();
+
+        }
+
+        [HttpGet("{userId}/boards/{boardId}/sprints", Name = "GetAllSprints")]
+        public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId, string boardId) {
+
+           var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+
+           var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+           var CurrentSprints = CurrentBoardEntity.Sprints;
 
            var mappedSprintList = new List<SprintDto>(); 
 
-           foreach (var sprint in Sprints)
+           foreach (var sprint in CurrentSprints)
            {
                mappedSprintList.Add(sprint.mapSprintToDto());
            }
@@ -47,42 +64,51 @@ namespace API.Controllers
 
 
         // Gets the sprint structure for a specific sprint id
-        [HttpGet("{userId}/sprints/{sprintId}", Name = "GetSprintById")]
-        public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId, string userId) {
+        [HttpGet("{userId}/boards/{boardId}/sprints/{sprintId}", Name = "GetSprintById")]
+        public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId, string boardId, string userId) {
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            var CurrentSprintEntity = CurrentUserEntity.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+            var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprintEntity = CurrentBoardEntity.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
             return CurrentSprintEntity.mapSprintToDto();
 
         }
 
         // Gets the tast structure for a specific sprint + task id
-        [HttpGet("{userId}/sprints/{sprintId}/getTask/{taskId}", Name = "GetTaskById")]
-        public async Task<ActionResult<TaskDto>> GetTaskById(string sprintId, string taskId) {
+        [HttpGet("{userId}/boards/{boardId}/sprints/{sprintId}/getTask/{taskId}", Name = "GetTaskById")]
+        public async Task<ActionResult<TaskDto>> GetTaskById(string sprintId, string taskId, string userId, string boardId) {
             
-            var CurrentSprint = await RetrieveSprintEntity(sprintId);
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            var CurrentTaskEntity = CurrentSprint.Tasks.Where(x => x.TaskEntityId == taskId).FirstOrDefault();
+            var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprintEntity = CurrentBoardEntity.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            var CurrentTaskEntity = CurrentSprintEntity.Tasks.Where(x => x.TaskEntityId == taskId).FirstOrDefault();
 
             if(CurrentTaskEntity == null) {
                 return BadRequest(new ProblemDetails{Title = "Task not found"});
             }
+
             return CurrentTaskEntity.mapTaskToDto();
 
         }
 
 
-        // Gets the titles of all sprints
-        [HttpGet("{userId}/sprints/titles", Name = "GetTitles")]
-        public async Task<ActionResult<List<string>>> GetSprintTitles(string userId) {
+        // Gets the titles of all sprints for a specific board
+        [HttpGet("{userId}/boards/{boardId}/sprints/titles", Name = "GetTitles")]
+        public async Task<ActionResult<List<string>>> GetSprintTitles(string userId, string boardId) {
 
-            var currentUser = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
 
-            var currentUserSprints = currentUser.Sprints;
+            var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
-            return currentUserSprints.Select(t => t.SprintEntityId).Distinct().ToList();
+            var currentBoardSprints = CurrentBoardEntity.Sprints;
+
+            return currentBoardSprints.Select(t => t.SprintEntityId).Distinct().ToList();
 
         }
 
@@ -90,33 +116,37 @@ namespace API.Controllers
         
 
         // add a new sprint (not sure if I'm going to need this)
-        [HttpPost("{userId}/addSprint")]
-        public async Task<ActionResult<UserDto>> AddNewSprint(SprintDto sprintDto, string userId) {
+        [HttpPost("{userId}/boards/{boardId}/addSprint")]
+        public async Task<ActionResult<UserDto>> AddNewSprint(SprintDto sprintDto, string userId, string boardId) {
 
             var MappedSprint = _mapper.Map<SprintEntity>(sprintDto);
 
             var CurrentUser = await RetrieveUserEntity(userId);
 
-            CurrentUser.Sprints.Add(MappedSprint); 
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            CurrentBoard.Sprints.Add(MappedSprint); 
 
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) {
-                return CreatedAtRoute("GetUser", new { UserId = userId }, CurrentUser.mapUserToDto());
+                return CreatedAtRoute("GetUser", new { userId = userId }, CurrentUser.mapUserToDto());
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem creating new sprint"});
         }   
 
         // Adds a task to a specific sprint
-        [HttpPost("{userId}/sprints/{sprintId}/addTask", Name = "AddTaskToSprint")]
-        public async Task<ActionResult<SprintDto>> AddTaskToSprint(string sprintId, string userId, TaskDto taskDto) {
+        [HttpPost("{userId}/boards/{boardId}/sprints/{sprintId}/addTask", Name = "AddTaskToSprint")]
+        public async Task<ActionResult<SprintDto>> AddTaskToSprint(string sprintId, string userId, string boardId, TaskDto taskDto) {
 
             var MappedTask = _mapper.Map<TaskEntity>(taskDto);
 
             var CurrentUser = await RetrieveUserEntity(userId);
 
-            var CurrentSprint = CurrentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
             if (CurrentSprint == null) {
                 return BadRequest(new ProblemDetails{Title = "Sprint not found"});
@@ -127,7 +157,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { UserId = userId, SprintId = sprintId }, CurrentSprint.mapSprintToDto());
+                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, CurrentSprint.mapSprintToDto());
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
@@ -136,13 +166,16 @@ namespace API.Controllers
 
 
         // Adds a subtask to a specific task
-        [HttpPost("{userId}/sprints/{sprintId}/tasks/{taskId}/addSubtask", Name = "AddSubtaskToTask")]
-        public async Task<ActionResult<TaskDto>> AddNewSubtask(string sprintId, string taskId, SubTaskDto subTaskDto, string userId) {
+        [HttpPost("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/addSubtask", Name = "AddSubtaskToTask")]
+        public async Task<ActionResult<TaskDto>> AddNewSubtask(string sprintId, string taskId, string boardId, SubTaskDto subTaskDto, string userId) {
+            
             var MappedSubtask = _mapper.Map<SubTaskEntity>(subTaskDto);
 
             var CurrentUser = await RetrieveUserEntity(userId);
 
-            var CurrentSprint = CurrentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
             if (CurrentSprint == null) {
                 return BadRequest(new ProblemDetails{Title = "Sprint not found"});
@@ -155,17 +188,21 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetTaskById", new { UserId = userId, SprintId = sprintId, TaskId = taskId }, CurrentTask.mapTaskToDto());
+                return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, CurrentTask.mapTaskToDto());
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
         }
 
-        [HttpDelete("{userId}/sprints/{sprintId}/tasks/{taskId}/deleteTask", Name = "DeleteTaskFromSprint")]
-        public async Task<ActionResult> DeleteTaskFromSprint(string userId, string sprintId, string taskId) {
+
+
+        [HttpDelete("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/deleteTask", Name = "DeleteTaskFromSprint")]
+        public async Task<ActionResult> DeleteTaskFromSprint(string userId, string sprintId, string taskId, string boardId) {
             var CurrentUser = await RetrieveUserEntity(userId);
 
-            var CurrentSprint = CurrentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault(); 
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
             var TaskToBeDeleted = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
 
@@ -175,26 +212,60 @@ namespace API.Controllers
 
             if (result) return Ok();
 
-            return BadRequest(new ProblemDetails {Title = "Problem adding task"});
+            return BadRequest(new ProblemDetails {Title = "Problem removing task"});
             
         }
 
-        [HttpPut("{userId}/sprints/{sprintId}/tasks/{taskId}/updateTask", Name = "UpdateTask")]
-        public async Task<ActionResult<UpdateTaskDto>> UpdateTask(string userId, string sprintId, string taskId, UpdateTaskDto updateTaskDto) {
+        [HttpDelete("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/subtasks/{subtaskId}/deleteSubtask", Name = "DeleteSubtaskFromTask")]
+        public async Task<ActionResult> DeleteSubtaskFromTask(string userId, string sprintId, string taskId, string boardId, string subtaskId) {
+            var CurrentUser = await RetrieveUserEntity(userId);
 
-            var currentUser = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).FirstOrDefaultAsync();
+            if(CurrentUser == null) return NotFound();
 
-            if(currentUser == null) return NotFound();
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
-            var currentSprint = currentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+            if(CurrentBoard == null) return NotFound();
 
-            if(currentSprint == null) return NotFound();
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
-            var currentTask = currentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+            if(CurrentSprint == null) return NotFound();
 
-            if(currentTask == null) return NotFound();
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
 
-            _mapper.Map(updateTaskDto, currentTask);
+            if(CurrentTask == null) return NotFound();
+
+            var SubtaskToBeDeleted = CurrentTask.SubTasks.Where(s => s.SubTaskEntityId == subtaskId).FirstOrDefault();
+
+            CurrentTask.SubTasks.Remove(SubtaskToBeDeleted);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) return Ok();
+
+            return BadRequest(new ProblemDetails {Title = "Problem removing subtask"});
+            
+        }
+
+        [HttpPut("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/updateTask", Name = "UpdateTask")]
+        public async Task<ActionResult<UpdateTaskDto>> UpdateTask(string userId, string sprintId, string taskId, string boardId, UpdateTaskDto updateTaskDto) {
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            if(CurrentUser == null) return NotFound();
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            if(CurrentBoard == null) return NotFound();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            if(CurrentSprint == null) return NotFound();
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if(CurrentTask == null) return NotFound();
+
+            _mapper.Map(updateTaskDto, CurrentTask);
 
             var result = await _context.SaveChangesAsync() > 0;
 
@@ -204,40 +275,45 @@ namespace API.Controllers
 
         }
 
-        [HttpPut("{userId}/sprints/{sprintId}/tasks/{taskId}/subtasks/{subtaskId}/updateSubtask")]
-        public async Task<ActionResult<SubTaskDto>> UpdateSubtask(string userId, string sprintId, string taskId, string subtaskId, SubTaskDto subTaskDto) {
-            var currentUser = await _context.Users.Where(u => u.Id == userId).Include(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(s => s.SubTasks).FirstOrDefaultAsync();
+        [HttpPut("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/subtasks/{subtaskId}/updateSubtask")]
+        public async Task<ActionResult<SubTaskDto>> UpdateSubtask(string userId, string sprintId, string taskId, string subtaskId, string boardId, SubTaskDto subTaskDto) {
+            var CurrentUser = await RetrieveUserEntity(userId);
 
-            if(currentUser == null) return NotFound();
+            if(CurrentUser == null) return NotFound();
 
-            var currentSprint = currentUser.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
-            if(currentSprint == null) return NotFound();
+            if(CurrentBoard == null) return NotFound();
 
-            var currentTask = currentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
-            if(currentTask == null) return NotFound();
+            if(CurrentSprint == null) return NotFound();
 
-            var currentSubtask = currentTask.SubTasks.Where(s => s.SubTaskEntityId == subTaskDto.SubTaskEntityId).FirstOrDefault();
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
 
-            if(currentSubtask == null) return NotFound();
+            if(CurrentTask == null) return NotFound();
 
-            _mapper.Map(subTaskDto, currentSubtask);
+            var CurrentSubtask = CurrentTask.SubTasks.Where(s => s.SubTaskEntityId == subTaskDto.SubTaskEntityId).FirstOrDefault();
+
+            if(CurrentSubtask == null) return NotFound();
+
+            _mapper.Map(subTaskDto, CurrentSubtask);
 
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) return Ok(subTaskDto);
 
-            return BadRequest(new ProblemDetails { Title = "Problem updating task" });
+            return BadRequest(new ProblemDetails { Title = "Problem updating subtask" });
 
 
         }
 
-
+ 
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
                 return await _context.Users
                         .Where(u => u.Id == userEntityId)
-                        .Include(s => s.Sprints)
+                        .Include(s => s.Boards)
+                        .ThenInclude(s => s.Sprints)
                         .ThenInclude(t => t.Tasks)
                         .ThenInclude(s => s.SubTasks)
                         .FirstOrDefaultAsync();
@@ -259,6 +335,6 @@ namespace API.Controllers
                         
         }
 
- 
+
     }
 }

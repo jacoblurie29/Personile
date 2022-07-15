@@ -1,16 +1,16 @@
-import { Box, Card, Collapse, Grid, Grow, Switch, Typography, Zoom } from "@mui/material";
+import { Box, Card, Grid, Switch, Typography, Zoom } from "@mui/material";
 import WhiteTransparentAutoComplete from "./WhiteTransparentAutoComplete";
 import WhiteTransparentTextField from "./WhiteTransparentTextField";
 import { useState } from "react";
 import AddTaskOptionsButton from "./AddTaskOptionsButton";
-import { FieldValue, FieldValues, FormProvider, useForm } from "react-hook-form";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import WhiteTransparentDatePicker from "./WhiteTransparentDatePicker";
 import WhiteTransparentEffortSlider from "./WhiteTransparentEffortSlider";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from "./newTaskValidation";
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { addTaskToSprintAsync, updateTaskAsync as updateTaskAsync } from "app/state/userSlice";
+import { addTaskToSprintAsync, updateTaskAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
 import { Task } from "app/models/task";
 
@@ -23,28 +23,22 @@ interface Props {
 
 export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask}: Props) {
 
-    function chooseColor(title: number) {
-        return title === 0 
-            ? 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)' 
-            : title === 1 ? 'linear-gradient(90deg, rgba(255,209,125,1) 0%, rgba(255,196,54,1) 100%)' 
-            : 'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'
-    }
 
     const methods = useForm({
         mode: 'all',
         resolver: yupResolver(validationSchema)
     });
 
-    const {control, handleSubmit, watch, formState } = useForm({
+    const {control, handleSubmit, watch } = useForm({
         mode: 'all',
         resolver: yupResolver(validationSchema)
     });
     
-    const [disabled, setDisabled] = useState<boolean>(editTask?.dueDate != "" || false);
+    const [disabled, setDisabled] = useState<boolean>(editTask?.dueDate !== "" || false);
     const currentEffort = watch("effort", 5);
-    const { currentSprint } = useAppSelector(state => state.sprintView);
+    const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
     const userId = useAppSelector(state => state.user.userData?.userEntityId);
-    const sprints = useAppSelector(state => state.user.userData?.sprints);
+    const sprints = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId === currentBoard)?.sprints);
     const dispatch = useAppDispatch();
 
 
@@ -54,6 +48,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
 
         if(userId == null) return;
         if(currentSprint == null) return;
+        if(currentBoard == null) return;
 
         const createdDate = new Date().toString();
 
@@ -62,9 +57,9 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
         var tags = formData.tags === [] ? "" : formData.taskTags.join("|");
         var links = formData.links === [] ? "" : formData.taskLinks.join("|");
 
-        
 
-        if(editTask == undefined) {
+
+        if(editTask === undefined) {
             var newTask = {
                 taskEntityId: uuidv4(),
                 name: formData.name,
@@ -85,14 +80,14 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
 
              setNewTask(false);
 
-             dispatch(addTaskToSprintAsync({userId: userId, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")});
+             dispatch(addTaskToSprintAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")});
         } else {
-            if(editTask == undefined) return;
+            if(editTask === undefined) return;
 
 
             var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString();
 
-            var newTask = {
+            var newEditTask = {
                 taskEntityId: editTask.taskEntityId,
                 name: formData.name,
                 description: formData.description,
@@ -115,17 +110,17 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
 
              if(currentSubtasks === undefined) return;
 
-             var futureTaskEntity = {...newTask, subTasks: currentSubtasks}
+             var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
             
-             console.log(newTask)
+             console.log(newEditTask)
             
-             var currentTaskId = newTask.taskEntityId;
+             var currentTaskId = newEditTask.taskEntityId;
 
              if(futureTaskEntity === undefined) return;
 
              console.log(futureTaskEntity)
 
-            dispatch(updateTaskAsync(({userId: userId, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newTask.taskEntityId!));;
+            dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
         }
     }
 
@@ -145,7 +140,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                                 <Grid container alignItems="center" display='flex'
                                         justifyContent="center" sx={{marginBottom: '10px'}}>
                                     <Grid item xs={2} display= 'flex' justifyContent='center'>
-                                        <Switch sx={{ml: '10px', color: 'primary.light'}} defaultChecked={editTask?.dueDate != ""} onClick={() => setDisabled(!disabled)} />
+                                        <Switch sx={{ml: '10px', color: 'primary.light'}} defaultChecked={editTask?.dueDate !== ""} onClick={() => setDisabled(!disabled)} />
                                     </Grid>
                                     <Grid item xs={10}>
                                         <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>

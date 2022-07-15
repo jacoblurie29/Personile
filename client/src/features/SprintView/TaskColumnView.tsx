@@ -1,4 +1,4 @@
-import { Box, Card, Fade, Grow, Typography, useTheme } from "@mui/material";
+import { Card, Typography, useTheme } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
 import { Task } from "../../app/models/task";
 import NewTaskButton from "./NewTaskButton";
@@ -26,11 +26,6 @@ export default function TaskColumnView({tasks, stateTitle, sprintId, toggleEditT
     const handleNewTask = () => {
         setNewTask(true)
     }
-
-
-    // const handleCloseNewTask = () => {
-    //     setNewTask(false)
-    // }
 
     return (
         <>

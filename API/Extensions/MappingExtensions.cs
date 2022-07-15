@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace API.Extensions
 {
-    public static class SprintExtensions
+    public static class MappingExtensions
     {
 
         public static UserDto mapUserToDto(this UserEntity userEntity) {
@@ -18,7 +18,43 @@ namespace API.Extensions
                 FirstName = userEntity.FirstName,
                 LastName = userEntity.LastName,
                 Email = userEntity.Email,
-                Sprints = userEntity.Sprints.Select(sprint => new SprintDto {
+                Boards = userEntity.Boards.Select(board => new BoardDto {
+                    BoardEntityId = board.BoardEntityId,
+                    StartDate = board.StartDate,
+                    EndDate = board.EndDate,
+                    Sprints = board.Sprints.Select(sprint => new SprintDto {
+                        SprintEntityId = sprint.SprintEntityId,
+                        StartDate = sprint.StartDate,
+                        EndDate = sprint.EndDate,
+                        Tasks = sprint.Tasks.Select(task => new TaskDto {
+                            TaskEntityId = task.TaskEntityId,
+                            Name = task.Name,
+                            Description = task.Description,
+                            Links = task.Links,
+                            DateCreated = task.DateCreated,
+                            DateFinished = task.DateFinished,
+                            DueDate = task.DueDate,
+                            CurrentState = task.CurrentState,
+                            Tags = task.Tags,
+                            Effort = task.Effort,
+                            Color = task.Color,
+                            SubTasks = task.SubTasks.Select(subTask => new SubTaskDto {
+                                SubTaskEntityId = subTask.SubTaskEntityId,
+                                Status = subTask.Status,
+                                Details = subTask.Details
+                            }).ToList()
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
+        }
+
+        public static BoardDto mapBoardToDto(this BoardEntity boardEntity) {
+            return new BoardDto {
+                BoardEntityId = boardEntity.BoardEntityId,
+                StartDate = boardEntity.StartDate,
+                EndDate = boardEntity.EndDate,
+                Sprints = boardEntity.Sprints.Select(sprint => new SprintDto {
                     SprintEntityId = sprint.SprintEntityId,
                     StartDate = sprint.StartDate,
                     EndDate = sprint.EndDate,

@@ -1,4 +1,4 @@
-import { Sprint } from "./sprint";
+import { Board } from "./board";
 
 export interface User {
     userEntityId: string;
@@ -6,5 +6,5 @@ export interface User {
     firstName: string;
     lastName: string;
     email: string;
-    sprints: Sprint[];
+    boards: Board[];
 }
