@@ -36,7 +36,9 @@ namespace API.Controllers
                 return Unauthorized();
             }
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
+                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
+                .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
 
             var mappedUser = CurrentUserEntity.mapUserToDto();
 
@@ -92,7 +94,9 @@ namespace API.Controllers
                 Tasks = null,
             };
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
+                            .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
+                            .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
 
             defaultBoard.Sprints.Add(defaultSprint);
             CurrentUserEntity.Boards.Add(defaultBoard);
@@ -109,7 +113,9 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> GetCurrentUser() {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
+                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
+                .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
 
             var mappedUser = CurrentUserEntity.mapUserToDto();
 

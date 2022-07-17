@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class BoardsAdded : Migration
+    public partial class GoalsAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -161,6 +161,8 @@ namespace API.Data.Migrations
                 columns: table => new
                 {
                     BoardEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
                     StartDate = table.Column<string>(type: "TEXT", nullable: true),
                     EndDate = table.Column<string>(type: "TEXT", nullable: true),
                     UserEntityId = table.Column<string>(type: "TEXT", nullable: true)
@@ -173,6 +175,25 @@ namespace API.Data.Migrations
                         column: x => x.UserEntityId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Goals",
+                columns: table => new
+                {
+                    GoalEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    Details = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<string>(type: "TEXT", nullable: true),
+                    BoardEntityId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Goals", x => x.GoalEntityId);
+                    table.ForeignKey(
+                        name: "FK_Goals_Boards_BoardEntityId",
+                        column: x => x.BoardEntityId,
+                        principalTable: "Boards",
+                        principalColumn: "BoardEntityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -243,12 +264,12 @@ namespace API.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "a21f8d95-30e6-404d-a725-3b5cdefbaa24", "0fa23da0-cf2b-469c-a4a3-b6a5d0867f45", "Member", "MEMBER" });
+                values: new object[] { "5f597b60-4d97-4383-b1a6-3bfd2af30586", "55565c8a-2586-479b-99a0-c087eb01cd67", "Member", "MEMBER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "bd628e03-5ee8-479e-86ba-5c42c0570bd7", "09f533cd-5694-47a3-8dea-c6337ac2dee7", "Admin", "ADMIN" });
+                values: new object[] { "cc8c9997-b3cd-4d2f-a2e3-e9cf69c16ac2", "1c902f0f-47f7-4051-97c5-775522ab3560", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -293,6 +314,11 @@ namespace API.Data.Migrations
                 column: "UserEntityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Goals_BoardEntityId",
+                table: "Goals",
+                column: "BoardEntityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sprints_BoardEntityId",
                 table: "Sprints",
                 column: "BoardEntityId");
@@ -324,6 +350,9 @@ namespace API.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Goals");
 
             migrationBuilder.DropTable(
                 name: "SubTasks");

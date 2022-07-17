@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220715183849_BoardsAdded")]
-    partial class BoardsAdded
+    [Migration("20220717044943_GoalsAdded")]
+    partial class GoalsAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,13 @@ namespace API.Data.Migrations
                     b.Property<string>("BoardEntityId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StartDate")
@@ -38,6 +44,27 @@ namespace API.Data.Migrations
                     b.HasIndex("UserEntityId");
 
                     b.ToTable("Boards");
+                });
+
+            modelBuilder.Entity("API.Entities.GoalEntity", b =>
+                {
+                    b.Property<string>("GoalEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BoardEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("GoalEntityId");
+
+                    b.HasIndex("BoardEntityId");
+
+                    b.ToTable("Goals");
                 });
 
             modelBuilder.Entity("API.Entities.SprintEntity", b =>
@@ -225,15 +252,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a21f8d95-30e6-404d-a725-3b5cdefbaa24",
-                            ConcurrencyStamp = "0fa23da0-cf2b-469c-a4a3-b6a5d0867f45",
+                            Id = "5f597b60-4d97-4383-b1a6-3bfd2af30586",
+                            ConcurrencyStamp = "55565c8a-2586-479b-99a0-c087eb01cd67",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "bd628e03-5ee8-479e-86ba-5c42c0570bd7",
-                            ConcurrencyStamp = "09f533cd-5694-47a3-8dea-c6337ac2dee7",
+                            Id = "cc8c9997-b3cd-4d2f-a2e3-e9cf69c16ac2",
+                            ConcurrencyStamp = "1c902f0f-47f7-4051-97c5-775522ab3560",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -351,6 +378,16 @@ namespace API.Data.Migrations
                     b.Navigation("UserEntity");
                 });
 
+            modelBuilder.Entity("API.Entities.GoalEntity", b =>
+                {
+                    b.HasOne("API.Entities.BoardEntity", "BoardEntity")
+                        .WithMany("Goals")
+                        .HasForeignKey("BoardEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("BoardEntity");
+                });
+
             modelBuilder.Entity("API.Entities.SprintEntity", b =>
                 {
                     b.HasOne("API.Entities.BoardEntity", "BoardEntity")
@@ -434,6 +471,8 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.BoardEntity", b =>
                 {
+                    b.Navigation("Goals");
+
                     b.Navigation("Sprints");
                 });
 

@@ -22,9 +22,30 @@ namespace API.Data
             var board = new List<BoardEntity> {
                 new BoardEntity {
                     BoardEntityId = Guid.NewGuid().ToString(),
+                    Name = "Main board",
+                    Description = "Your main board with all of your tasks!",
                     StartDate="Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
                     EndDate="Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
-                    Sprints= new List<SprintEntity> {}
+                    Sprints= new List<SprintEntity> {},
+                    Goals= new List<GoalEntity> {}
+                }
+            };
+
+            var goals = new List<GoalEntity> {
+                new GoalEntity {
+                    GoalEntityId = Guid.NewGuid().ToString(),
+                    Details = "Complete project on time",
+                    Status = "Incomplete"
+                },
+                new GoalEntity {
+                    GoalEntityId = Guid.NewGuid().ToString(),
+                    Details = "Utilize resources online",
+                    Status = "Incomplete"
+                },
+                new GoalEntity {
+                    GoalEntityId = Guid.NewGuid().ToString(),
+                    Details = "Work with teammates",
+                    Status = "Incomplete"
                 }
             };
 
@@ -162,11 +183,15 @@ namespace API.Data
 
 
         sprints[0].Tasks = tasksForSprint0;
-
         sprints[1].Tasks = tasksForSprint1;
 
         board[0].Sprints.Add(sprints[0]);
         board[0].Sprints.Add(sprints[1]);
+
+        board[0].Goals.Add(goals[0]);
+        board[0].Goals.Add(goals[1]);
+        board[0].Goals.Add(goals[2]);
+
 
         if (!userManager.Users.Any()) {
                var userMember = new UserEntity {

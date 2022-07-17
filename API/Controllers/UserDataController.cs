@@ -30,8 +30,8 @@ namespace API.Controllers
         [HttpGet("{userId}/boards/{boardId}", Name = "GetBoard")]
         public async Task<ActionResult<BoardDto>> GetBoardById(string userId, string boardId) {
 
-           var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
-
+            var CurrentUserEntity = await RetrieveUserEntity(userId);
+            
             if(CurrentUserEntity == null) return NotFound();
 
            var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
@@ -45,7 +45,7 @@ namespace API.Controllers
         [HttpGet("{userId}/boards/{boardId}/sprints", Name = "GetAllSprints")]
         public async Task<ActionResult<List<SprintDto>>> GetAllSprints(string userId, string boardId) {
 
-           var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+           var CurrentUserEntity = await RetrieveUserEntity(userId);
 
            var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
@@ -67,7 +67,7 @@ namespace API.Controllers
         [HttpGet("{userId}/boards/{boardId}/sprints/{sprintId}", Name = "GetSprintById")]
         public async Task<ActionResult<SprintDto>> GetSprintById(string sprintId, string boardId, string userId) {
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await RetrieveUserEntity(userId);
 
             var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
@@ -81,7 +81,7 @@ namespace API.Controllers
         [HttpGet("{userId}/boards/{boardId}/sprints/{sprintId}/getTask/{taskId}", Name = "GetTaskById")]
         public async Task<ActionResult<TaskDto>> GetTaskById(string sprintId, string taskId, string userId, string boardId) {
             
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await RetrieveUserEntity(userId);
 
             var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
@@ -102,7 +102,7 @@ namespace API.Controllers
         [HttpGet("{userId}/boards/{boardId}/sprints/titles", Name = "GetTitles")]
         public async Task<ActionResult<List<string>>> GetSprintTitles(string userId, string boardId) {
 
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == userId).Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks).FirstOrDefaultAsync();
+            var CurrentUserEntity = await RetrieveUserEntity(userId);
 
             var CurrentBoardEntity = CurrentUserEntity.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
@@ -310,13 +310,9 @@ namespace API.Controllers
 
  
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
-                return await _context.Users
-                        .Where(u => u.Id == userEntityId)
-                        .Include(s => s.Boards)
-                        .ThenInclude(s => s.Sprints)
-                        .ThenInclude(t => t.Tasks)
-                        .ThenInclude(s => s.SubTasks)
-                        .FirstOrDefaultAsync();
+                return await _context.Users.Where(u => u.Id == userEntityId)
+                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
+                .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
         }
 
         private async Task<SprintEntity> RetrieveSprintEntity(string sprintEntityId) {

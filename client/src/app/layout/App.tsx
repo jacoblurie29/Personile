@@ -189,6 +189,10 @@ function App() {
                 {userData == null && <Redirect to="/" />}
                 <DashboardNavigation component='today' />
             </Route>
+            <Route path='/boards'>
+                {userData == null && <Redirect to="/" />}
+                <DashboardNavigation component='boards' />
+            </Route>
             <Route path='/settings'>
                 {userData == null && <Redirect to="/" />}
                 <DashboardNavigation component='settings' />

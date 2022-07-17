@@ -27,6 +27,7 @@ import SettingsView from 'features/SettingsView/SettingsView';
 import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import LoadingComponent from './LoadingComponent';
 import { signOut } from 'app/state/userSlice';
+import BoardView from 'features/BoardsView/BoardView';
 
 const drawerWidth = 230;
 
@@ -46,7 +47,7 @@ const navButtonStyles = {
 const sprintLinks = [
   {linkTitle: "Today", linkRoute: '/today'},
   {linkTitle: "Sprint", linkRoute: '/sprint'},
-  {linkTitle: "Future", linkRoute: '/future'}
+  {linkTitle: "Boards", linkRoute: '/boards'}
 ]
 
 const adminLinks = [
@@ -221,6 +222,7 @@ export default function DashboardNavigation({component}: Props) {
           {loading && <LoadingComponent />}       
           {!loading && component === "sprint" && <SprintView />}
           {!loading && component === "today" && <TodayView />}
+          {!loading && component === "boards" && <BoardView />}
           {!loading && component === "settings" && <SettingsView />}
           {!loading && component === "serverError" && <ServerError />}
           {!loading && component === "notFound" && <NotFound />} 

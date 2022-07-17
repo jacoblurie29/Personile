@@ -22,6 +22,11 @@ namespace API.Extensions
                     BoardEntityId = board.BoardEntityId,
                     StartDate = board.StartDate,
                     EndDate = board.EndDate,
+                    Goals = board.Goals.Select(goal => new GoalDto {
+                        GoalEntityId = goal.GoalEntityId,
+                        Details = goal.Details,
+                        Status = goal.Status
+                    }).ToList(),
                     Sprints = board.Sprints.Select(sprint => new SprintDto {
                         SprintEntityId = sprint.SprintEntityId,
                         StartDate = sprint.StartDate,
@@ -54,6 +59,11 @@ namespace API.Extensions
                 BoardEntityId = boardEntity.BoardEntityId,
                 StartDate = boardEntity.StartDate,
                 EndDate = boardEntity.EndDate,
+                Goals = boardEntity.Goals.Select(goal => new GoalDto {
+                        GoalEntityId = goal.GoalEntityId,
+                        Details = goal.Details,
+                        Status = goal.Status
+                }).ToList(),
                 Sprints = boardEntity.Sprints.Select(sprint => new SprintDto {
                     SprintEntityId = sprint.SprintEntityId,
                     StartDate = sprint.StartDate,

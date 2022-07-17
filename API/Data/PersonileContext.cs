@@ -14,6 +14,7 @@ namespace API.Data
         }
         
         public DbSet<BoardEntity> Boards { get; set; }
+        public DbSet<GoalEntity> Goals { get; set; }
         public DbSet<SprintEntity> Sprints { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<SubTaskEntity> SubTasks { get; set; }
@@ -48,6 +49,12 @@ namespace API.Data
             .Entity<BoardEntity>()
             .HasOne(u => u.UserEntity)
             .WithMany(b => b.Boards)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder
+            .Entity<GoalEntity>()
+            .HasOne(b => b.BoardEntity)
+            .WithMany(g => g.Goals)
             .OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder.Entity<IdentityRole>()
