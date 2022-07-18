@@ -21,6 +21,8 @@ namespace API.Extensions
                 Boards = userEntity.Boards.Select(board => new BoardDto {
                     BoardEntityId = board.BoardEntityId,
                     StartDate = board.StartDate,
+                    Name = board.Name,
+                    Description = board.Description,
                     EndDate = board.EndDate,
                     Goals = board.Goals.Select(goal => new GoalDto {
                         GoalEntityId = goal.GoalEntityId,
