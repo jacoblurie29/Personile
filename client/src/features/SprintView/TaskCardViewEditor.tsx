@@ -1,11 +1,11 @@
 import { Box, Card, Grid, Switch, Typography, Zoom } from "@mui/material";
-import WhiteTransparentAutoComplete from "./WhiteTransparentAutoComplete";
-import WhiteTransparentTextField from "./WhiteTransparentTextField";
+import NewEditTaskAutoComplete from "./NewEditTaskAutoComplete";
+import WhiteTransparentTextField from "./NewEditTaskTextField";
 import { useState } from "react";
 import AddTaskOptionsButton from "./AddTaskOptionsButton";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import WhiteTransparentDatePicker from "./WhiteTransparentDatePicker";
-import WhiteTransparentEffortSlider from "./WhiteTransparentEffortSlider";
+import NewEditTaskDatePicker from "./NewEditTaskDatePicker";
+import NewEditTaskEffortSlider from "./NewEditTaskEffortSlider";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from "./newTaskValidation";
 import { v4 as uuidv4 } from 'uuid';
@@ -73,55 +73,44 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 effort: formData.effort,
                 color: 0
              }
-     
-             
-     
              console.log(newTask)
-
              setNewTask(false);
-
              dispatch(addTaskToSprintAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")});
-        } else {
-            if(editTask === undefined) return;
+        
+            } else {
+                if(editTask === undefined) return;
 
 
-            var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString();
+                var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString();
 
-            var newEditTask = {
-                taskEntityId: editTask.taskEntityId,
-                name: formData.name,
-                description: formData.description,
-                links: links,
-                dateCreated: editTask.dateCreated,
-                dateFinished: "",
-                dueDate: dueDate,
-                currentState: editTask.currentState,
-                tags: tags,
-                effort: formData.effort,
-                color: 0
-             }
+                var newEditTask = {
+                    taskEntityId: editTask.taskEntityId,
+                    name: formData.name,
+                    description: formData.description,
+                    links: links,
+                    dateCreated: editTask.dateCreated,
+                    dateFinished: "",
+                    dueDate: dueDate,
+                    currentState: editTask.currentState,
+                    tags: tags,
+                    effort: formData.effort,
+                    color: 0
+                }
 
-             var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
-             var currentTaskEntity = currentSprintEntity?.tasks.find(t => t.taskEntityId === editTask.taskEntityId)
+                var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
 
-             if(currentTaskEntity === undefined) return;
+                var currentTaskEntity = currentSprintEntity?.tasks.find(t => t.taskEntityId === editTask.taskEntityId)
+                if(currentTaskEntity === undefined) return;
 
-             var currentSubtasks = currentTaskEntity?.subTasks;
+                var currentSubtasks = currentTaskEntity?.subTasks;
+                if(currentSubtasks === undefined) return;
 
-             if(currentSubtasks === undefined) return;
+                var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
+                var currentTaskId = newEditTask.taskEntityId;
+                if(futureTaskEntity === undefined) return;
 
-             var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
-            
-             console.log(newEditTask)
-            
-             var currentTaskId = newEditTask.taskEntityId;
-
-             if(futureTaskEntity === undefined) return;
-
-             console.log(futureTaskEntity)
-
-            dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
-        }
+                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
+            }
     }
 
 
@@ -135,20 +124,20 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                             <Grid item xs={21}>
                                 <WhiteTransparentTextField control={control} label="Task Name" name="name" editvalue={editTask?.name}/>
                                 <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
-                                <WhiteTransparentAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
-                                <WhiteTransparentAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
+                                <NewEditTaskAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
+                                <NewEditTaskAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
                                 <Grid container alignItems="center" display='flex'
                                         justifyContent="center" sx={{marginBottom: '10px'}}>
                                     <Grid item xs={2} display= 'flex' justifyContent='center'>
                                         <Switch sx={{ml: '10px', color: 'primary.light'}} defaultChecked={editTask?.dueDate !== ""} onClick={() => setDisabled(!disabled)} />
                                     </Grid>
                                     <Grid item xs={10}>
-                                        <WhiteTransparentDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>
+                                        <NewEditTaskDatePicker disabled={!disabled} control={control} name="dueDate" editvalue={editTask?.dueDate}/>
                                     </Grid>
                                 </Grid>
                                 <Box width='90%' flexGrow={1} margin='auto'>
                                 <Typography variant="caption" sx={{color: 'white'}}>Estimated effort &#40;{currentEffort}&#41;</Typography>
-                                    <WhiteTransparentEffortSlider name="effort" control={control}/>
+                                    <NewEditTaskEffortSlider name="effort" control={control}/>
                                 </Box>
                                 <Grid container sx={{display: 'flex', width: 'auto', marginLeft: '5px', marginBottom:'10px'}}>
                                     <Grid item xs={12}>

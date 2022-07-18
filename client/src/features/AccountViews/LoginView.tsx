@@ -11,7 +11,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { useAppDispatch, } from 'app/store/configureStore';
 import { signInUser } from 'app/state/userSlice';
-const theme = createTheme();
+
 
 export default function LoginView() {
 
@@ -27,7 +27,6 @@ export default function LoginView() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <Grid
           item
@@ -116,6 +115,5 @@ export default function LoginView() {
           </Box>
         </Grid>
       </Grid>
-    </ThemeProvider>
   );
 }

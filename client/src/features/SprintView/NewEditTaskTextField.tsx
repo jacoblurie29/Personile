@@ -8,7 +8,7 @@ interface formProps extends UseControllerProps {
     editvalue?: string
 }
 
-export default function WhiteTransparentTextFieldprops(props: formProps) {
+export default function NewEditTaskTextField(props: formProps) {
 
     const {fieldState, field} = useController({...props, defaultValue: props.editvalue || ""})
 

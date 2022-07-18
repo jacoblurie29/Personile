@@ -29,6 +29,15 @@ namespace API.Extensions
                         Details = goal.Details,
                         Status = goal.Status
                     }).ToList(),
+                    Milestones = board.Milestones.Select(milestone => new MilestoneDto {
+                        MilestoneEntityId = milestone.MilestoneEntityId,
+                        Description = milestone.Description,
+                        Status = milestone.Status,
+                        DueDate = milestone.DueDate,
+                        HardDeadline = milestone.HardDeadline,
+                        AssociatedTaskIds = milestone.AssociatedTaskIds,
+                        CompletedDate = milestone.CompletedDate
+                    }).ToList(),
                     Sprints = board.Sprints.Select(sprint => new SprintDto {
                         SprintEntityId = sprint.SprintEntityId,
                         StartDate = sprint.StartDate,

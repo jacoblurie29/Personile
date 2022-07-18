@@ -5,7 +5,7 @@ interface formProps extends UseControllerProps {
     editvalue?: string
 }
 
-export default function WhiteTransparentEffortSlider(props: formProps) {
+export default function NewEditTaskEffortSlider(props: formProps) {
 
     const {field} = useController({...props, defaultValue: props.editvalue || 5 })
 

@@ -312,6 +312,7 @@ namespace API.Controllers
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
                 return await _context.Users.Where(u => u.Id == userEntityId)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
+                .Include(b => b.Boards).ThenInclude(m => m.Milestones)
                 .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
         }
 

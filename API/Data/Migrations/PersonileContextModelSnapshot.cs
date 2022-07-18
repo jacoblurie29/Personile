@@ -65,6 +65,39 @@ namespace API.Data.Migrations
                     b.ToTable("Goals");
                 });
 
+            modelBuilder.Entity("API.Entities.MilestoneEntity", b =>
+                {
+                    b.Property<string>("MilestoneEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AssociatedTaskIds")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BoardEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CompletedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("HardDeadline")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("MilestoneEntityId");
+
+                    b.HasIndex("BoardEntityId");
+
+                    b.ToTable("Milestones");
+                });
+
             modelBuilder.Entity("API.Entities.SprintEntity", b =>
                 {
                     b.Property<string>("SprintEntityId")
@@ -250,15 +283,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5f597b60-4d97-4383-b1a6-3bfd2af30586",
-                            ConcurrencyStamp = "55565c8a-2586-479b-99a0-c087eb01cd67",
+                            Id = "1153d6e0-205d-4094-85cc-0a14eeb2cf72",
+                            ConcurrencyStamp = "4142eb42-ed16-4b8e-a801-8e4bbe0e9bac",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "cc8c9997-b3cd-4d2f-a2e3-e9cf69c16ac2",
-                            ConcurrencyStamp = "1c902f0f-47f7-4051-97c5-775522ab3560",
+                            Id = "2543f912-d262-4ec3-9358-9962b125d34a",
+                            ConcurrencyStamp = "f87e8a7d-eb53-4e5f-8273-1ca055616c43",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -386,6 +419,16 @@ namespace API.Data.Migrations
                     b.Navigation("BoardEntity");
                 });
 
+            modelBuilder.Entity("API.Entities.MilestoneEntity", b =>
+                {
+                    b.HasOne("API.Entities.BoardEntity", "BoardEntity")
+                        .WithMany("Milestones")
+                        .HasForeignKey("BoardEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("BoardEntity");
+                });
+
             modelBuilder.Entity("API.Entities.SprintEntity", b =>
                 {
                     b.HasOne("API.Entities.BoardEntity", "BoardEntity")
@@ -470,6 +513,8 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.BoardEntity", b =>
                 {
                     b.Navigation("Goals");
+
+                    b.Navigation("Milestones");
 
                     b.Navigation("Sprints");
                 });

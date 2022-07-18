@@ -27,7 +27,8 @@ namespace API.Data
                     StartDate="Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
                     EndDate="Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
                     Sprints= new List<SprintEntity> {},
-                    Goals= new List<GoalEntity> {}
+                    Goals= new List<GoalEntity> {},
+                    Milestones = new List<MilestoneEntity> {}
                 }
             };
 
@@ -46,6 +47,36 @@ namespace API.Data
                     GoalEntityId = Guid.NewGuid().ToString(),
                     Details = "Work with teammates",
                     Status = "Incomplete"
+                }
+            };
+
+            var milestones = new List<MilestoneEntity> {
+                new MilestoneEntity {
+                    MilestoneEntityId = Guid.NewGuid().ToString(),
+                    Description = "Finish Controllers",
+                    Status = "Incomplete",
+                    DueDate = "Sun Jul 27 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    HardDeadline = false,
+                    AssociatedTaskIds = "",
+                    CompletedDate = "",
+                },
+                new MilestoneEntity {
+                    MilestoneEntityId = Guid.NewGuid().ToString(),
+                    Description = "Submit Project",
+                    Status = "Incomplete",
+                    DueDate = "",
+                    HardDeadline = false,
+                    AssociatedTaskIds = "",
+                    CompletedDate = "",
+                },
+                new MilestoneEntity {
+                    MilestoneEntityId = Guid.NewGuid().ToString(),
+                    Description = "Receive good grades",
+                    Status = "Incomplete",
+                    DueDate = "Sun Jul 29 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    HardDeadline = true,
+                    AssociatedTaskIds = "",
+                    CompletedDate = "",
                 }
             };
 
@@ -191,6 +222,10 @@ namespace API.Data
         board[0].Goals.Add(goals[0]);
         board[0].Goals.Add(goals[1]);
         board[0].Goals.Add(goals[2]);
+
+        board[0].Milestones.Add(milestones[0]);
+        board[0].Milestones.Add(milestones[1]);
+        board[0].Milestones.Add(milestones[2]);
 
 
         if (!userManager.Users.Any()) {

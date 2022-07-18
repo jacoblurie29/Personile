@@ -1,4 +1,5 @@
 import { Goal } from "./goal";
+import { Milestone } from "./milestone";
 import { Sprint } from "./sprint";
 
 export interface Board {
@@ -9,4 +10,5 @@ export interface Board {
     endDate: string;
     sprints: Sprint[];
     goals: Goal[];
+    milestones: Milestone[];
 }

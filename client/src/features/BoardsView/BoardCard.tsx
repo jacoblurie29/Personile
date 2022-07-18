@@ -8,6 +8,8 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import { useAppDispatch } from "app/store/configureStore";
 import { setCurrentBoard } from "features/SprintView/sprintSlice";
 import { useHistory } from "react-router-dom";
+import CircleIcon from '@mui/icons-material/Circle';
+import { formatDateString } from "app/util/dateUtil";
 
 interface Props {
     board: Board
@@ -55,15 +57,32 @@ export default function BoardCard({board}: Props) {
             <Divider />
             <br />
             <Typography variant="h5" sx={{paddingLeft: '20px'}}>Goals:</Typography>
-            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px'}}>
+            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', marginLeft: '30px'}}>
               {board.goals.map((goal, index) =>
-                <ListItem key={"listItem-" + index}>
-                  <ListItemIcon>
-                    {goal.status === "Incomplete" ? <TimerIcon sx={{color: 'warning.dark'}} /> : <CheckCircleIcon sx={{color: 'success.main'}}/>}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={goal.details}
-                  />
+                <ListItem key={"listItem-" + index} disablePadding>
+                  <ListItemText>
+                    <CircleIcon sx={{color: 'grey.600', fontSize: '7px', marginRight: '4px'}} />  
+                    {goal.details}
+                  </ListItemText>
+                </ListItem>,
+              )}
+            </List>
+            <Divider />
+            <br />
+            <Typography variant="h5" sx={{paddingLeft: '20px'}}>Milestones:</Typography>
+            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px'}}>
+              {board.milestones.map((milestone, index) =>
+                <ListItem key={"listItem-" + index} sx={{width: '100%'}}>
+                  <Typography variant="body2"
+                  sx={{display: 'flex', marginRight: '10px'}}>
+                    {milestone.status === "Incomplete" ? <TimerIcon sx={{color: 'warning.dark'}} /> : <CheckCircleIcon sx={{color: 'success.main'}}/>}
+                  </Typography>
+                  <Typography variant="body2" sx={{display: 'flex'}}>
+                    {milestone.description}
+                  </Typography>
+                  <Typography variant="caption" marginLeft='auto' marginRight='10px' noWrap>
+                    {milestone.dueDate !== "" ? (milestone.hardDeadline === true ? "Deadline: " : "Goal: ") + formatDateString(milestone.dueDate) : "No Goal"}
+                  </Typography>
                 </ListItem>,
               )}
             </List>

@@ -7,7 +7,7 @@ interface formProps extends UseControllerProps {
     editvalue?: string[]
 }
 
-export default function WhiteTransparentAutoComplete(props: formProps) {
+export default function NewEditTaskAutoComplete(props: formProps) {
 
     const {fieldState, field} = useController({...props, defaultValue: props.editvalue || []});
 
