@@ -114,6 +114,26 @@ namespace API.Controllers
 
         // MARK: - POSTS
         
+        [HttpPost("{userId}/addBoard", Name = "AddBoard")]
+        public async Task<ActionResult<BoardDto>> AddNewBoard(BoardDto boardDto, string userId) {
+
+            var CurrentUserEntity = await RetrieveUserEntity(userId);
+
+            /* TODO: GENERATE SPRINTS BASED ON SPRINT LENGTH SELECTED */
+
+
+            var mappedBoard = _mapper.Map<BoardEntity>(boardDto);
+
+            CurrentUserEntity.Boards.Add(mappedBoard);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) {
+                return CreatedAtRoute("GetBoard", new { userId = userId, boardId = mappedBoard.BoardEntityId }, boardDto);
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem creating new board"});
+        }
 
         // add a new sprint (not sure if I'm going to need this)
         [HttpPost("{userId}/boards/{boardId}/addSprint")]

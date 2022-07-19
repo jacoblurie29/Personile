@@ -8,6 +8,8 @@ interface Props {
     name: string,
     index: number,
     onChange: (index: number, value: string) => void,
+    error?: boolean,
+    helperText?: string,
 }
 
 export default function NewBoardAttributeTextField(formProps: Props) {
@@ -18,8 +20,11 @@ export default function NewBoardAttributeTextField(formProps: Props) {
             value={formProps.value}
             id={formProps.id}
             label={formProps.label}
+            required= {true}
             name={formProps.name}
             onChange={(event) => {formProps.onChange(formProps.index, event.target.value)}}
+            error={!!formProps.error}
+            helperText={formProps.helperText}
             sx={{
             "& .MuiFormHelperText-root":{
                 color: 'grey.500'

@@ -8,10 +8,14 @@ namespace API.RequestHelpers
     {
         public MappingProfiles()
         {
+            CreateMap<BoardDto, BoardEntity>();
+            CreateMap<GoalDto, GoalEntity>();
+            CreateMap<MilestoneDto, MilestoneEntity>();
             CreateMap<SprintDto, SprintEntity>();
             CreateMap<TaskDto, TaskEntity>();
             CreateMap<SubTaskDto, SubTaskEntity>();
             CreateMap<UpdateTaskDto, TaskEntity>();
+            
         }
     }
 }

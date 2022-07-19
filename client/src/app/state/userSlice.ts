@@ -11,6 +11,7 @@ import { FieldValues } from "react-hook-form";
 import { history } from "../..";
 import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/sprintSlice";
+import { Board } from "app/models/board";
 
 interface UserState {
     userData: User | null;
@@ -136,6 +137,17 @@ export const fetchCurrentUser = createAsyncThunk<User>(
     }
 )
 
+export const addBoard = createAsyncThunk<User, {userId: string, board: Board}>(
+    'sprint/addBoard',
+    async ({userId, board}, thunkAPI) => {
+        try {
+            return await agent.UserData.addBoard(userId, board)
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+) 
+
 
 export const userSlice = createSlice({
     name: 'user',
@@ -154,6 +166,46 @@ export const userSlice = createSlice({
         },
     },
     extraReducers: (builder => {
+        // ADD BOARD
+        builder.addCase(addBoard.pending, (state, action) => {
+            const { userId, board } = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            state.userData?.boards.push(board);
+
+            state.status = 'pendingAddBoard';
+        });
+        builder.addCase(addBoard.fulfilled, (state, action) => {
+
+            toast.success('Board added!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+        builder.addCase(addBoard.rejected, (state, action) => {
+            toast.error('Failed to add board!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+
         // ADD TASK TO SPRINT
         builder.addCase(addTaskToSprintAsync.pending, (state, action) => {
             const { sprintId, boardId } = action.meta.arg;

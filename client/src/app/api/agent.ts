@@ -78,7 +78,8 @@ const UserData = {
     updateTaskState: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
     addSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.post(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/addSubtask`, body),
     updateSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body),
-    removeSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/deleteSubtask`)
+    removeSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/deleteSubtask`),
+    addBoard: (userId: string, body: {}) => requests.post(`userdata/${userId}/addBoard`, body)
 }
 
 const Account = {

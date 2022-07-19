@@ -24,8 +24,9 @@ namespace API.Data
                     BoardEntityId = Guid.NewGuid().ToString(),
                     Name = "Main board",
                     Description = "Your main board with all of your tasks!",
-                    StartDate="Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
-                    EndDate="Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    StartDate = "Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    EndDate = "Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
+                    SprintDaysLength = 14,
                     Sprints= new List<SprintEntity> {},
                     Goals= new List<GoalEntity> {},
                     Milestones = new List<MilestoneEntity> {}

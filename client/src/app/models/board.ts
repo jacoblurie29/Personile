@@ -8,6 +8,7 @@ export interface Board {
     description: string;
     startDate: string;
     endDate: string;
+    sprintDaysLength: number;
     sprints: Sprint[];
     goals: Goal[];
     milestones: Milestone[];

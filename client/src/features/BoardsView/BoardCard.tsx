@@ -27,37 +27,37 @@ export default function BoardCard({board}: Props) {
 
     return (
 
-        <Card sx={{width: '90%', margin: 'auto'}}>
-            <Grid container>
+        <Card sx={{width: '90%', margin: 'auto', height: 'fit-content'}}>
+            <Grid container height='80px'>
                 <Grid item xs={8}>
-                    <Typography variant="h2" sx={{paddingTop: '10px', paddingLeft: '10px'}}>{board.name}</Typography>
+                    <Typography variant="h2" sx={{paddingTop: '20px', paddingLeft: '20px'}}>{board.name}</Typography>
                 </Grid>
                 <Grid item xs={4}>
-                    <Grid container width='fit-content' spacing={1} paddingTop='10px'>
+                    <Grid container width='fit-content' spacing={1} paddingTop='10px' margin='auto' flexGrow={1}>
                         <Grid xs={4} item sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                             <Box height='30px' width="30px" borderRadius='30px' sx={{backgroundColor: 'error.light'}}>
-                                <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>4</Typography>
+                                <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints[0]?.tasks.filter(t => t.currentState === 0).length || "0"}</Typography>
                             </Box>
                         </Grid>
                         <Grid xs={4} item sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                             <Box height='30px' width="30px" borderRadius='30px' sx={{backgroundColor: 'warning.light'}} textAlign='center'>
-                                <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>6</Typography>
+                                <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints[0]?.tasks.filter(t => t.currentState === 1).length || "0"}</Typography>
                             </Box>
                         </Grid>
                         <Grid xs={4} item sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                             <Box height='30px' width="30px" borderRadius='30px' sx={{backgroundColor: 'success.light'}}>
-                                <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>3</Typography>
+                                <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints[0]?.tasks.filter(t => t.currentState === 2).length || "0"}</Typography>
                             </Box>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-            <Typography variant="h5" sx={{paddingLeft: '10px', paddingTop:'5px'}}>{board.description}</Typography>
+            <Typography variant="h5" sx={{paddingLeft: '20px'}}>{board.description}</Typography>
             <br />
             <Divider />
             <br />
             <Typography variant="h5" sx={{paddingLeft: '20px'}}>Goals:</Typography>
-            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', marginLeft: '30px'}}>
+            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', marginLeft: '30px', height: '100px'}} >
               {board.goals.map((goal, index) =>
                 <ListItem key={"listItem-" + index} disablePadding>
                   <ListItemText>
@@ -70,7 +70,7 @@ export default function BoardCard({board}: Props) {
             <Divider />
             <br />
             <Typography variant="h5" sx={{paddingLeft: '20px'}}>Milestones:</Typography>
-            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px'}}>
+            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', height: '100px'}}>
               {board.milestones.map((milestone, index) =>
                 <ListItem key={"listItem-" + index} sx={{width: '100%'}}>
                   <Typography variant="body2"

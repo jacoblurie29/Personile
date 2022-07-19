@@ -11,9 +11,7 @@ interface Props {
     name: string,
     value: string,
     index: number,
-    onChange: (index: number, value: string) => void,
-    register: UseFormRegister<FieldValues>,
-    errors: FieldErrorsImpl<DeepRequired<FieldValues>>
+    onChange: (index: number, value: string) => void
 }
 export default function NewEditTaskDatePicker(formProps: Props) {
 
@@ -49,6 +47,7 @@ export default function NewEditTaskDatePicker(formProps: Props) {
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
             disabled={formProps.disabled}
+            minDate={Date.parse(new Date().toString())}
             openTo="year"    
             value={formProps.value || new Date().toString()}
             views={['year', 'month', 'day']}
@@ -58,15 +57,12 @@ export default function NewEditTaskDatePicker(formProps: Props) {
                     border: "1px solid grey.500",
                   }
             }}}
-            onChange={(newValue) => formProps.onChange(formProps.index, newValue || "")}
+            onChange={(newValue) => formProps.onChange(formProps.index, newValue !== null ? new Date(newValue).toString() : new Date().toString())}
             renderInput={(params) => <TextField 
                 sx={ formProps.disabled ? {...disabledStlyes} : {...enabledStyles}}
-                {...formProps.register(formProps.name, {required: formProps.label + ' is required!'})}
-                error={!!formProps.errors.name}
-                helperText={formProps.errors?.name?.message?.toString()}
                 fullWidth
                 {...params}
-                label="Due date"
+                label={formProps.label}
                 placeholder="(Optional)"
                 variant="outlined"
                  />} />

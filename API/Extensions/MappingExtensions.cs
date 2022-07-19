@@ -23,6 +23,7 @@ namespace API.Extensions
                     StartDate = board.StartDate,
                     Name = board.Name,
                     Description = board.Description,
+                    SprintDaysLength = board.SprintDaysLength,
                     EndDate = board.EndDate,
                     Goals = board.Goals.Select(goal => new GoalDto {
                         GoalEntityId = goal.GoalEntityId,

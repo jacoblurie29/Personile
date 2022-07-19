@@ -8,7 +8,10 @@ interface Props {
     name: string,
     rows?: number,
     register: UseFormRegister<FieldValues>,
-    errors: FieldErrorsImpl<DeepRequired<FieldValues>>
+    error?: boolean,
+    helperText?: string,
+    autoFocus: boolean
+    
 }
 
 export default function NewBoardTextField(formProps: Props) {
@@ -24,10 +27,10 @@ export default function NewBoardTextField(formProps: Props) {
             label= {formProps.label}
             multiline={formProps.rows !== undefined}
             rows={formProps.rows}
-            autoFocus
+            autoFocus={formProps.autoFocus}
             {...formProps.register(formProps.name, {required: formProps.label + ' is required!'})}
-            error={!!formProps.errors.name}
-            helperText={formProps.errors?.name?.message?.toString()}
+            error={!!formProps.error}
+            helperText={formProps.helperText}
             sx={{
             "& .MuiFormHelperText-root":{
                 color: 'grey.500'
