@@ -27,6 +27,7 @@ namespace API.Data
                     StartDate = "Sun Jul 10 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
                     EndDate = "Sat Aug 06 2022 00:00:00 GMT-0400 (Eastern Daylight Time)",
                     SprintDaysLength = 14,
+                    HandleOverflow = "start",
                     Sprints= new List<SprintEntity> {},
                     Goals= new List<GoalEntity> {},
                     Milestones = new List<MilestoneEntity> {}

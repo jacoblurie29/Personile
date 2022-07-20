@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220718155602_MilestonesAdded")]
-    partial class MilestonesAdded
+    [Migration("20220720171906_SprintLengthAndOverflowAdded")]
+    partial class SprintLengthAndOverflowAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,8 +30,14 @@ namespace API.Data.Migrations
                     b.Property<string>("EndDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("HandleOverflow")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("SprintDaysLength")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("StartDate")
                         .HasColumnType("TEXT");
@@ -285,15 +291,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1153d6e0-205d-4094-85cc-0a14eeb2cf72",
-                            ConcurrencyStamp = "4142eb42-ed16-4b8e-a801-8e4bbe0e9bac",
+                            Id = "80ba0a79-3854-4fee-a2a8-5f84655e42b2",
+                            ConcurrencyStamp = "db1f347c-4384-4195-8928-88dbfb505a8b",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "2543f912-d262-4ec3-9358-9962b125d34a",
-                            ConcurrencyStamp = "f87e8a7d-eb53-4e5f-8273-1ca055616c43",
+                            Id = "6c1e6e45-3a0c-4599-9b6d-750894f94626",
+                            ConcurrencyStamp = "37b94081-65c1-475f-a68f-ca3217676723",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

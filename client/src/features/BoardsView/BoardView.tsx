@@ -19,13 +19,13 @@ export default function BoardView() {
 
         <Grid container padding='20px'>
             {boards?.map((board, index) => (
-                <Zoom in={true} timeout={index + 1 * 500 } key={"boardCard-" + index}>  
+                <Zoom in={true} timeout={(index + 1) * 300 } key={"boardCard-" + index}>  
                     <Grid item xl={4} md={6} xs={12} sx={{paddingTop: '20px'}}>
                         <BoardCard board={board} />
                     </Grid>
                 </Zoom>
             ))}
-            <Zoom in={true} timeout={boards?.length === undefined ? 500 : boards.length + 1 * 500}> 
+            <Zoom in={true} timeout={boards?.length === undefined ? 300 : (boards.length) * 500}> 
                 <Grid item xl={4} md={6} xs={12} sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: {xs: '450px'}, paddingTop: '20px'}}>
                     <Box sx={{ border: '1px dashed grey', height: {xs: '90%', md: '100%'}, width: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '5px'}}>
                         <IconButton sx={{ backgroundColor: "primary.main"}} onClick={() => setNewBoard(true)}>

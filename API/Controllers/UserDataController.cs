@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -119,8 +121,39 @@ namespace API.Controllers
 
             var CurrentUserEntity = await RetrieveUserEntity(userId);
 
-            /* TODO: GENERATE SPRINTS BASED ON SPRINT LENGTH SELECTED */
+            /* 
+                TODO: GENERATE SPRINTS BASED ON SPRINT LENGTH SELECTED 
 
+                TWO ROADS HERE: End date or no date
+
+                END DATE: GENERATE ALL SPRINTS (WILL WORK ON EXTREME CASES LATER)
+
+                NO END DATE: GENERATE FIRST 10 SPRINTS (WILL WORK ON GENERATION LATER)
+
+                Will abstract these later
+
+                Based on sprint length - use a while loop and continually generate sprints until the end date is passed or the number of sprints is = 10
+            
+            */
+
+            var startDate = DateTime.ParseExact(boardDto.StartDate,
+                                  "ddd MMM d yyyy HH:mm:ss tt zzz",
+                                  CultureInfo.InvariantCulture);
+        
+
+            
+            if(boardDto.EndDate == "") {
+
+            } else {
+                
+                
+
+                var sprint = new SprintEntity {
+                    SprintEntityId = Guid.NewGuid().ToString(),
+
+                };
+
+            }
 
             var mappedBoard = _mapper.Map<BoardEntity>(boardDto);
 

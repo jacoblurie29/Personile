@@ -1,3 +1,4 @@
+import { StringLiteral } from "typescript";
 import { Goal } from "./goal";
 import { Milestone } from "./milestone";
 import { Sprint } from "./sprint";
@@ -9,6 +10,7 @@ export interface Board {
     startDate: string;
     endDate: string;
     sprintDaysLength: number;
+    handleOverflow: string;
     sprints: Sprint[];
     goals: Goal[];
     milestones: Milestone[];

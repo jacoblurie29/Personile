@@ -56,22 +56,26 @@ export default function BoardCard({board}: Props) {
             <br />
             <Divider />
             <br />
-            <Typography variant="h5" sx={{paddingLeft: '20px'}}>Goals:</Typography>
-            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', marginLeft: '30px', height: '100px'}} >
-              {board.goals.map((goal, index) =>
-                <ListItem key={"listItem-" + index} disablePadding>
+            <Typography variant="h5" sx={{paddingLeft: '20px', paddingBottom: '5px'}}>Goals:</Typography>
+            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px', height: '100px'}} >
+              {board.goals.length > 0 ? board.goals.map((goal, index) =>
+                <ListItem key={"listItem-" + index} sx={{padding:"0px 0px 0px 20px"}}>
                   <ListItemText>
                     <CircleIcon sx={{color: 'grey.600', fontSize: '7px', marginRight: '4px'}} />  
                     {goal.details}
                   </ListItemText>
                 </ListItem>,
-              )}
+              ) : 
+                <Box flexGrow={1} height='100%' textAlign='center' margin= 'auto'>
+                    <Typography variant="h5" sx={{color: 'grey.400', paddingTop: '25px'}}>&#40;No goals&#41;</Typography>
+                </Box>
+              }
             </List>
             <Divider />
             <br />
             <Typography variant="h5" sx={{paddingLeft: '20px'}}>Milestones:</Typography>
-            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', height: '100px'}}>
-              {board.milestones.map((milestone, index) =>
+            <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px', height: '100px'}}>
+              {board.milestones.length > 0 ? board.milestones.map((milestone, index) =>
                 <ListItem key={"listItem-" + index} sx={{width: '100%'}}>
                   <Typography variant="body2"
                   sx={{display: 'flex', marginRight: '10px'}}>
@@ -84,7 +88,11 @@ export default function BoardCard({board}: Props) {
                     {milestone.dueDate !== "" ? (milestone.hardDeadline === true ? "Deadline: " : "Goal: ") + formatDateString(milestone.dueDate) : "No Goal"}
                   </Typography>
                 </ListItem>,
-              )}
+              ) : 
+              <Box flexGrow={1} height='100%' textAlign='center' margin= 'auto'>
+                  <Typography variant="h5" sx={{color: 'grey.400', paddingTop: '25px'}}>&#40;No milestones&#41;</Typography>
+              </Box>
+            }
             </List>
             <Box sx={{flexGrow: 1, textAlign: 'center'}}>
                 <LoadingButton key={"edit-" + board.boardEntityId} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"0px", width: '50%'}} ><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>

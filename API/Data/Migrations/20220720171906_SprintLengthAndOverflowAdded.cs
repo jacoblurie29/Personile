@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class MilestonesAdded : Migration
+    public partial class SprintLengthAndOverflowAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -165,6 +165,8 @@ namespace API.Data.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     StartDate = table.Column<string>(type: "TEXT", nullable: true),
                     EndDate = table.Column<string>(type: "TEXT", nullable: true),
+                    SprintDaysLength = table.Column<int>(type: "INTEGER", nullable: false),
+                    HandleOverflow = table.Column<string>(type: "TEXT", nullable: true),
                     UserEntityId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -287,12 +289,12 @@ namespace API.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1153d6e0-205d-4094-85cc-0a14eeb2cf72", "4142eb42-ed16-4b8e-a801-8e4bbe0e9bac", "Member", "MEMBER" });
+                values: new object[] { "6c1e6e45-3a0c-4599-9b6d-750894f94626", "37b94081-65c1-475f-a68f-ca3217676723", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2543f912-d262-4ec3-9358-9962b125d34a", "f87e8a7d-eb53-4e5f-8273-1ca055616c43", "Admin", "ADMIN" });
+                values: new object[] { "80ba0a79-3854-4fee-a2a8-5f84655e42b2", "db1f347c-4384-4195-8928-88dbfb505a8b", "Member", "MEMBER" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
