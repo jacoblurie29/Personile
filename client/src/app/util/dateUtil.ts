@@ -7,40 +7,40 @@ export function formatDateString(date: string) {
 
     switch (month) {
         case "Jan":
-            numMonth = 1;
+            numMonth = 0;
             break;
         case "Feb":
-            numMonth = 2;
+            numMonth = 1;
             break;
         case "Mar":
-            numMonth = 3;
+            numMonth = 2;
             break;
         case "Apr":
-            numMonth = 4;
+            numMonth = 3;
             break;
         case "May":
-            numMonth = 5;
+            numMonth = 4;
             break;
         case "Jun":
-            numMonth = 6;
+            numMonth = 5;
             break;
         case "Jul":
-            numMonth = 7;
+            numMonth = 6;
             break;
         case "Aug":
-            numMonth = 8;
+            numMonth = 7;
             break;
         case "Sep":
-            numMonth = 9;
+            numMonth = 8;
             break;
         case "Oct":
-            numMonth = 10;
+            numMonth = 9;
             break;
         case "Nov":
-            numMonth = 11;
+            numMonth = 10;
             break;
         case "Dec":
-            numMonth = 12;
+            numMonth = 11;
             break;
         default:
             numMonth = 0;
@@ -51,7 +51,7 @@ export function formatDateString(date: string) {
 
     
 
-    return dateObject.getMonth() + "/" + dateObject.getDate() + "/" + dateObject.getFullYear();
+    return (dateObject.getMonth() + 1) + "/" + dateObject.getDate() + "/" + dateObject.getFullYear();
 }
 
 export function formatDateStringNoYear(date: string) {
@@ -63,40 +63,40 @@ export function formatDateStringNoYear(date: string) {
 
     switch (month) {
         case "Jan":
-            numMonth = 1;
+            numMonth = 0;
             break;
         case "Feb":
-            numMonth = 2;
+            numMonth = 1;
             break;
         case "Mar":
-            numMonth = 3;
+            numMonth = 2;
             break;
         case "Apr":
-            numMonth = 4;
+            numMonth = 3;
             break;
         case "May":
-            numMonth = 5;
+            numMonth = 4;
             break;
         case "Jun":
-            numMonth = 6;
+            numMonth = 5;
             break;
         case "Jul":
-            numMonth = 7;
+            numMonth = 6;
             break;
         case "Aug":
-            numMonth = 8;
+            numMonth = 7;
             break;
         case "Sep":
-            numMonth = 9;
+            numMonth = 8;
             break;
         case "Oct":
-            numMonth = 10;
+            numMonth = 9;
             break;
         case "Nov":
-            numMonth = 11;
+            numMonth = 10;
             break;
         case "Dec":
-            numMonth = 12;
+            numMonth = 11;
             break;
         default:
             numMonth = 0;
@@ -107,7 +107,7 @@ export function formatDateStringNoYear(date: string) {
 
     
 
-    return dateObject.getMonth() + "/" + dateObject.getDate();
+    return (dateObject.getMonth() + 1) + "/" + dateObject.getDate();
 }
 
 

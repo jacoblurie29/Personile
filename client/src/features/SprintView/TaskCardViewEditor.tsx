@@ -65,9 +65,9 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 name: formData.name,
                 description: formData.description,
                 links: links,
-                dateCreated: createdDate,
+                dateCreated: createdDate.substring(0, 15),
                 dateFinished: "",
-                dueDate: formData.dueDate.toString(),
+                dueDate: formData.dueDate.toString().substring(0, 15),
                 currentState: 0,
                 tags: tags,
                 effort: formData.effort,
@@ -81,14 +81,14 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 if(editTask === undefined) return;
 
 
-                var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString();
+                var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString().substring(0, 15);
 
                 var newEditTask = {
                     taskEntityId: editTask.taskEntityId,
                     name: formData.name,
                     description: formData.description,
                     links: links,
-                    dateCreated: editTask.dateCreated,
+                    dateCreated: editTask.dateCreated.substring(0, 15),
                     dateFinished: "",
                     dueDate: dueDate,
                     currentState: editTask.currentState,

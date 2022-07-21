@@ -8,6 +8,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.RequestHelpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -121,39 +122,9 @@ namespace API.Controllers
 
             var CurrentUserEntity = await RetrieveUserEntity(userId);
 
-            /* 
-                TODO: GENERATE SPRINTS BASED ON SPRINT LENGTH SELECTED 
+            var GeneratedSprints = boardDto.generateSprints();
 
-                TWO ROADS HERE: End date or no date
-
-                END DATE: GENERATE ALL SPRINTS (WILL WORK ON EXTREME CASES LATER)
-
-                NO END DATE: GENERATE FIRST 10 SPRINTS (WILL WORK ON GENERATION LATER)
-
-                Will abstract these later
-
-                Based on sprint length - use a while loop and continually generate sprints until the end date is passed or the number of sprints is = 10
-            
-            */
-
-            var startDate = DateTime.ParseExact(boardDto.StartDate,
-                                  "ddd MMM d yyyy HH:mm:ss tt zzz",
-                                  CultureInfo.InvariantCulture);
-        
-
-            
-            if(boardDto.EndDate == "") {
-
-            } else {
-                
-                
-
-                var sprint = new SprintEntity {
-                    SprintEntityId = Guid.NewGuid().ToString(),
-
-                };
-
-            }
+            boardDto.Sprints = GeneratedSprints;
 
             var mappedBoard = _mapper.Map<BoardEntity>(boardDto);
 
@@ -247,6 +218,22 @@ namespace API.Controllers
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
         }
 
+        [HttpDelete("{userId}/boards/{boardId}/deleteBoard", Name = "DeleteBoard")]
+        public async Task<ActionResult> DeleteBoard(string userId, string boardId) {
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var BoardToBeDeleted = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            CurrentUser.Boards.Remove(BoardToBeDeleted);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) return Ok();
+
+            return BadRequest(new ProblemDetails {Title = "Problem deleting board"});
+            
+        }
+
 
 
         [HttpDelete("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/deleteTask", Name = "DeleteTaskFromSprint")]
@@ -297,6 +284,27 @@ namespace API.Controllers
 
             return BadRequest(new ProblemDetails {Title = "Problem removing subtask"});
             
+        }
+
+        [HttpPut("{userId}/boards/{boardId}/updateBoard", Name = "UpdateBoard")]
+        public async Task<ActionResult<UpdateBoardDto>> UpdateBoard(string userId, string boardId, UpdateBoardDto updateBoardDto) {
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            if(CurrentUser == null) return NotFound();
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            if(CurrentBoard == null) return NotFound();
+
+            _mapper.Map(updateBoardDto, CurrentBoard);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) return Ok(updateBoardDto);
+
+            return BadRequest(new ProblemDetails { Title = "Problem updating board" });
+
         }
 
         [HttpPut("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/updateTask", Name = "UpdateTask")]
@@ -369,21 +377,6 @@ namespace API.Controllers
                 .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
         }
 
-        private async Task<SprintEntity> RetrieveSprintEntity(string sprintEntityId) {
-            return await _context.Sprints
-                        .Include(t => t.Tasks)
-                        .ThenInclude(s => s.SubTasks)
-                        .FirstOrDefaultAsync(x => x.SprintEntityId == sprintEntityId);
-        }
-
-        private TaskEntity RetrieveTaskEntity(SprintEntity currentSprint, string taskEntityId) {
-
-            return currentSprint
-                    .Tasks
-                    .Where(x => x.TaskEntityId == taskEntityId)
-                    .FirstOrDefault();
-                        
-        }
 
 
     }

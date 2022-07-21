@@ -3,6 +3,7 @@ import { DeepRequired, FieldErrorsImpl, FieldValues, UseFormRegister } from "rea
 
 interface Props {
     required: boolean,
+    value: string,
     id: string,
     label: string,
     name: string,

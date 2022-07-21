@@ -17,7 +17,7 @@ export default function NewBoardAttributeTextField(formProps: Props) {
     return (
         <TextField
             fullWidth
-            value={formProps.value}
+            value={formProps.value || ""}
             id={formProps.id}
             label={formProps.label}
             required= {true}

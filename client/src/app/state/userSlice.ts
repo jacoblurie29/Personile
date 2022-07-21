@@ -12,6 +12,7 @@ import { history } from "../..";
 import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/sprintSlice";
 import { Board } from "app/models/board";
+import { UpdateBoard } from "app/models/updateBoard";
 
 interface UserState {
     userData: User | null;
@@ -94,7 +95,7 @@ export const removeSubtaskFromTaskAsync = createAsyncThunk<void, {userId: string
     }
 )
 
-export const signInUser = createAsyncThunk<User, FieldValues>(
+export const signInUserAsync = createAsyncThunk<User, FieldValues>(
     'account/signInUser',
     async (data, thunkAPI) => {
         try {
@@ -112,7 +113,7 @@ export const signInUser = createAsyncThunk<User, FieldValues>(
     }
 )
 
-export const fetchCurrentUser = createAsyncThunk<User>(
+export const fetchCurrentUserAsync = createAsyncThunk<User>(
     'account/fetchCurrenUser',
     async (_, thunkAPI) => {
         thunkAPI.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)))
@@ -137,7 +138,7 @@ export const fetchCurrentUser = createAsyncThunk<User>(
     }
 )
 
-export const addBoard = createAsyncThunk<User, {userId: string, board: Board}>(
+export const addBoardAsync = createAsyncThunk<User, {userId: string, board: Board}>(
     'sprint/addBoard',
     async ({userId, board}, thunkAPI) => {
         try {
@@ -147,6 +148,30 @@ export const addBoard = createAsyncThunk<User, {userId: string, board: Board}>(
         }
     }
 ) 
+
+export const updateBoardAsync = createAsyncThunk<Board, {userId: string, boardId: string, updateBoardDto: UpdateBoard, futureState: Board, previousState: Board}>(
+    'sprint/updateBoard',
+    async ({userId, boardId, updateBoardDto, futureState, previousState}, thunkAPI) => {
+        try {
+            return await agent.UserData.updateBoard(userId, boardId, updateBoardDto)
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+) 
+
+export const deleteBoardAsync = createAsyncThunk<void, {userId: string, boardId: string}>(
+    'sprint/deleteBoard',
+    async ({userId, boardId}, thunkAPI) => {
+        try {
+            return await agent.UserData.deleteBoard(userId, boardId)
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+) 
+
+
 
 
 export const userSlice = createSlice({
@@ -166,8 +191,83 @@ export const userSlice = createSlice({
         },
     },
     extraReducers: (builder => {
+
+        // DELETE BOARD
+        builder.addCase(deleteBoardAsync.pending, (state, action) => {
+            state.status = 'pendingDeleteBoard';
+        });
+        builder.addCase(deleteBoardAsync.fulfilled, (state, action) => {
+            const {boardId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            state.userData?.boards.splice(boardIndex, 1);
+
+            state.status = 'idle';
+        });
+        builder.addCase(deleteBoardAsync.rejected, (state, action) => {
+            state.status = 'idle';
+        });
+
+        // UPDATE BOARD 
+        builder.addCase(updateBoardAsync.pending, (state, action) => {
+            const {boardId, futureState} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            state.userData?.boards.splice(boardIndex, 1, futureState);
+
+            state.status = 'pendingUpdateTask';
+
+            
+        });
+        builder.addCase(updateBoardAsync.fulfilled, (state, action) => {
+
+            state.status = 'idle';
+
+            toast.success('Board updated!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+
+        });
+        builder.addCase(updateBoardAsync.rejected, (state, action) => {
+            const {boardId, previousState} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            state.userData?.boards.splice(boardIndex, 1, previousState);
+
+            toast.error('Failed to update board!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+
+            state.status = 'idle';
+        });
+        
         // ADD BOARD
-        builder.addCase(addBoard.pending, (state, action) => {
+        builder.addCase(addBoardAsync.pending, (state, action) => {
             const { userId, board } = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
@@ -176,7 +276,7 @@ export const userSlice = createSlice({
 
             state.status = 'pendingAddBoard';
         });
-        builder.addCase(addBoard.fulfilled, (state, action) => {
+        builder.addCase(addBoardAsync.fulfilled, (state, action) => {
 
             toast.success('Board added!', {
                 position: "bottom-right",
@@ -191,7 +291,7 @@ export const userSlice = createSlice({
 
             state.status = 'idle';
         });
-        builder.addCase(addBoard.rejected, (state, action) => {
+        builder.addCase(addBoardAsync.rejected, (state, action) => {
             toast.error('Failed to add board!', {
                 position: "bottom-right",
                 autoClose: 1500,
@@ -334,7 +434,7 @@ export const userSlice = createSlice({
 
             state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.splice(taskIndex, 1, revertedTask);
 
-            toast.error('Failed to update task state!', {
+            toast.error('Failed to update task!', {
                 position: "bottom-right",
                 autoClose: 1500,
                 hideProgressBar: false,
@@ -562,7 +662,7 @@ export const userSlice = createSlice({
 
         // LOGIN USER
 
-        builder.addCase(fetchCurrentUser.rejected, (state) => {
+        builder.addCase(fetchCurrentUserAsync.rejected, (state) => {
             state.userData = null;
             localStorage.removeItem('user');
             toast.error('Session expired! Please login again', {
@@ -577,10 +677,10 @@ export const userSlice = createSlice({
                 });
             history.push('/');
         })
-        builder.addMatcher(isAnyOf(signInUser.fulfilled, fetchCurrentUser.fulfilled), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled, fetchCurrentUserAsync.fulfilled), (state, action) => {
             state.userData = action.payload
         });
-        builder.addMatcher(isAnyOf(signInUser.rejected), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.rejected), (state, action) => {
             throw action.payload;
         });
 

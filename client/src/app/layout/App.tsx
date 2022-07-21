@@ -5,7 +5,7 @@ import { ThemeProvider } from '@emotion/react';
 import { createTheme, CssBaseline} from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import { useEffect } from 'react';
-import { fetchCurrentUser } from 'app/state/userSlice';
+import { fetchCurrentUserAsync } from 'app/state/userSlice';
 import { setLoading } from 'features/SprintView/sprintSlice';
 import HomeView from 'features/HomeView/HomeView';
 import LoginView from 'features/AccountViews/LoginView';
@@ -149,7 +149,7 @@ function App() {
 
   useEffect(() => {
     dispatch(setLoading(true))
-    dispatch(fetchCurrentUser()).then(() => dispatch(setLoading(false)));
+    dispatch(fetchCurrentUserAsync()).then(() => dispatch(setLoading(false)));
   }, [dispatch])
   
   

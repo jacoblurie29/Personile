@@ -79,7 +79,9 @@ const UserData = {
     addSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.post(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/addSubtask`, body),
     updateSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body),
     removeSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/deleteSubtask`),
-    addBoard: (userId: string, body: {}) => requests.post(`userdata/${userId}/addBoard`, body)
+    addBoard: (userId: string, body: {}) => requests.post(`userdata/${userId}/addBoard`, body),
+    updateBoard: (userId: string, boardId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/updateBoard`, body),
+    deleteBoard: (userId: string, boardId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/deleteBoard`)
 }
 
 const Account = {

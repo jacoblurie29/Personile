@@ -1,6 +1,6 @@
 import { Backdrop, Box, Button, Card, Divider, Grid, Grow, IconButton, MenuItem, Select, Switch, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import ClearIcon from '@mui/icons-material/Clear';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -11,15 +11,18 @@ import NewBoardDatePicker from "./NewBoardDatePicker";
 import { LoadingButton } from "@mui/lab";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { v4 as uuidv4 } from 'uuid';
-import { addBoard } from "app/state/userSlice";
+import { addBoardAsync, deleteBoardAsync, updateBoardAsync } from "app/state/userSlice";
 import { Milestone } from "app/models/milestone";
 import { Goal } from "app/models/goal";
 import Checkbox from '@mui/material/Checkbox';
 import { formatDateString } from "app/util/dateUtil";
+import { Board } from "app/models/board";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 interface Props {
-  setNewBoardState: (state: boolean) => void
+  setNewBoardState: (state: boolean, editBoard?: Board) => void,
+  editBoard?: Board,
 }
 
 export default function NewBoard(props: Props) {
@@ -27,24 +30,25 @@ export default function NewBoard(props: Props) {
     const history = useHistory();
     const userId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
-    const {register, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
+    const {register, handleSubmit, setValue, formState: {isSubmitting, errors, isValid}} = useForm({
         mode: 'onSubmit'
     });
 
     // FORM CONSTANTS
     const [open, setOpen] = useState(true);
-    const [currentName, setCurrentName] = useState<string>();
-    const [currentDescription, setCurrentDecription] = useState<string>();
-    const [endDateEnabled, setEndDateEnabled] = useState(false);
-    const [newGoals, setNewGoals] = useState<string[]>([]);
-    const [newMilestones, setNewMilestones] = useState<string[]>([]);
-    const [newMilestoneDates, setNewMilestoneDates] = useState<string[]>([]);
-    const [enableMilestoneDates, setEnableMilestoneDates] = useState<boolean[]>([]);
-    const [newMilestoneHardDeadline, setNewMilestoneHardDeadline] = useState<boolean[]>([]);
-    const [boardEndDate, setBoardEndDate] = useState<string[]>([new Date().toString()]);
+    const [currentName, setCurrentName] = useState<string>(props.editBoard?.name || "");
+    const [currentDescription, setCurrentDecription] = useState<string>(props.editBoard?.description || "");
+    const [endDateEnabled, setEndDateEnabled] = useState<boolean>(props.editBoard?.endDate !== "" && props.editBoard !== undefined || false);
+    const [newGoals, setNewGoals] = useState<string[]>(props.editBoard?.goals.map(g => g.details) || []);
+    const [newMilestones, setNewMilestones] = useState<string[]>(props.editBoard?.milestones.map(m => m.description) || []);
+    const [newMilestoneDates, setNewMilestoneDates] = useState<string[]>(props.editBoard?.milestones.map(m => m.dueDate) || []);
+    const [enableMilestoneDates, setEnableMilestoneDates] = useState<boolean[]>(props.editBoard?.milestones.map(m => m.dueDate !== "") || []);
+    const [newMilestoneHardDeadline, setNewMilestoneHardDeadline] = useState<boolean[]>(props.editBoard?.milestones.map(m => m.hardDeadline) || []);
+    const [boardEndDate, setBoardEndDate] = useState<string[]>(props.editBoard?.endDate !== "" && props.editBoard?.endDate !== undefined ? [props.editBoard?.endDate] : [new Date().toString()]);
     const [currentScreen, setCurrentScreen] = useState<number>(1);
     const [customLengthChecked, setCustomLengthChecked] = useState<boolean>(false);
     const [currentCustomSprintLength, setCurrentCustomSprintLength] = useState<number | undefined>(undefined);
+    const [overflow, setOverflow] = useState<string>("even");
 
     const [firstScreenAnimation, setFirstScreenAnimation] = useState<boolean>(true);
     const [secondScreenAnimation, setSecondScreenAnimation] = useState<boolean>(true);
@@ -147,15 +151,6 @@ export default function NewBoard(props: Props) {
     
 
     async function submitForm(data: FieldValues) {
-      // console.log(data);
-      // console.log("GOALS: " + newGoals);
-      // console.log("MILESTONES: " + newMilestones);
-      // console.log("MILESTONE DATES: " + newMilestoneDates);
-      // console.log("MILESTONE ENABLED: " + enableMilestoneDates);
-      // console.log("HARD DEADLINE: " + newMilestoneHardDeadline);
-      // console.log("BOARD END DATE: " + boardEndDate[0]);
-
-      /* HERE: Create milestone and goal objects then attach to new board objects and send over the wire */
 
       if(userId == null) return;
 
@@ -191,27 +186,67 @@ export default function NewBoard(props: Props) {
 
       if (currentName === undefined || currentDescription === undefined) return;
 
-      var newBoard = {
-        boardEntityId: uuidv4(),
-        name: currentName,
-        description: currentDescription,
-        sprintDaysLength: 14,
-        handleOverflow: "",
-        startDate: new Date().toString(),
-        endDate: endDateEnabled ? boardEndDate.toString() === "" ? new Date().toString() : boardEndDate.toString() : "",
-        sprints: [],
-        goals: goalArray,
-        milestones: milestoneArray
+      if(props.editBoard == undefined) {
+
+          var newBoard = {
+            boardEntityId: uuidv4(),
+            name: data.name,
+            description: data.description,
+            sprintDaysLength: 14,
+            handleOverflow: overflow,
+            startDate: new Date().toString(),
+            endDate: endDateEnabled ? boardEndDate.toString() === "" ? new Date().toString() : boardEndDate.toString() : "",
+            sprints: [],
+            goals: goalArray,
+            milestones: milestoneArray
+
+          }
+
+        props.setNewBoardState(false);
+        dispatch(addBoardAsync({userId: userId, board: newBoard})).catch(error => console.log(error));
+
+      } else {
+
+        var prevState = props.editBoard;
+
+        var futureState = {
+            boardEntityId: props.editBoard.boardEntityId,
+            name: data.name,
+            description: data.description,
+            sprintDaysLength: props.editBoard.sprintDaysLength,
+            handleOverflow: props.editBoard.handleOverflow,
+            startDate: props.editBoard.startDate,
+            endDate: props.editBoard.endDate,
+            sprints: props.editBoard.sprints,
+            goals: goalArray,
+            milestones: milestoneArray
+        };
+
+        var editBoard = {
+          boardEntityId: props.editBoard.boardEntityId,
+          name: data.name,
+          description: data.description,
+          goals: goalArray,
+          milestones: milestoneArray
+        }
+        
+        props.setNewBoardState(false);
+        dispatch(updateBoardAsync({userId: userId, boardId: props.editBoard.boardEntityId, updateBoardDto: editBoard, previousState: prevState, futureState: futureState}))
+
       }
 
-      /* TODO: PASS THIS TO FOLLOWING COMPONENT, USE START/END DATE FOR CALCULATION  */
-
-      console.log(newBoard)
-
-      props.setNewBoardState(false);
-
-      dispatch(addBoard({userId: userId, board: newBoard})).catch(error => console.log(error));
     }
+
+    const handleDeleteBoard = (boardId: string) => {
+
+        if(userId == null || boardId == "") return;
+
+        props.setNewBoardState(false);
+
+        dispatch(deleteBoardAsync({boardId: boardId, userId: userId}));
+
+    }
+    
 
     async function handleNextScreen(data: FieldValues) {
 
@@ -286,6 +321,13 @@ export default function NewBoard(props: Props) {
 
     }
 
+    useEffect(() => {
+        if(props.editBoard !== undefined) {
+          setValue('name', props.editBoard.name);
+          setValue('description', props.editBoard.description);
+        }
+    }, [])
+
 
     return (
 
@@ -296,18 +338,19 @@ export default function NewBoard(props: Props) {
           {currentScreen === 1 &&
           <Grow in={firstScreenAnimation}>
               <Card sx={{width: '60%', maxWidth: '800px', margin: 'auto'}}>
-                <Box component="form" noValidate onSubmit={handleSubmit(handleNextScreen)} sx={{ mt: 1 }}>
-                    <Typography variant="h2" margin='20px 20px 10px 20px'>New Board</Typography>
+                <Box component="form" noValidate onSubmit={props.editBoard == undefined ? handleSubmit(handleNextScreen) : handleSubmit(submitForm)} sx={{ mt: 1 }}>
+                    <Typography variant="h2" margin='20px 20px 10px 20px'>{props.editBoard == undefined ? "New Board" : "Edit Board"}</Typography>
                     <Divider />
                     <Grid container columns={12} direction='row' alignItems='center'>
                       <Grid item xs={12} padding='10px 20px 0px 20px'>
                           <Typography variant="caption">Board information:</Typography>
-                          <NewBoardTextField required={true} id="name" label="Name" name="name" register={register} autoFocus={true} error={!!errors.name} helperText={errors?.name?.message?.toString()} />
+                          <NewBoardTextField value={currentName} required={true} id="name" label="Name" name="name" register={register} autoFocus={true} error={!!errors.name} helperText={errors?.name?.message?.toString()} />
                       </Grid>
                       <Grid item xs={12} padding='0px 20px 10px 20px'>
-                          <NewBoardTextField required={true} id="description" label="Description" name="description" autoFocus={false} register={register} rows={4} error={!!errors.description} helperText={errors?.description?.message?.toString()} />
+                          <NewBoardTextField value={currentDescription} required={true} id="description" label="Description" name="description" autoFocus={false} register={register} rows={4} error={!!errors.description} helperText={errors?.description?.message?.toString()} />
                       </Grid>
                       <Grid item xs={12} padding='0px 20px 10px 20px'>
+                      {props.editBoard == undefined &&
                         <Grid container  alignItems='center'>
                           <Grid item xs={1} textAlign='left'>
                               <Switch sx={{color: 'primary.light'}} checked={endDateEnabled} onChange={(event, checked) => setEndDateEnabled(checked)} />
@@ -316,6 +359,7 @@ export default function NewBoard(props: Props) {
                             <NewBoardDatePicker disabled={!endDateEnabled} id={"boardEndDate"} label={"Board End Date"} name={"boardEndDate"} value={boardEndDate[0]} index={0} onChange={handleChangeBoardEndDate} />
                           </Grid>
                         </Grid>
+                      } 
                       </Grid>
                       </Grid>
                       <Divider />
@@ -387,8 +431,18 @@ export default function NewBoard(props: Props) {
                     </Grid>
                     <Divider />
                     <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px', padding: '10px'}}>
-                          <LoadingButton key={"cancel"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => props.setNewBoardState(false)}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
-                          <LoadingButton type="submit" key={"next"} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>NEXT</LoadingButton>
+                        {props.editBoard == undefined ?
+                          <>
+                            <LoadingButton key={"cancel"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => props.setNewBoardState(false)}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                            <LoadingButton type="submit" key={"next"} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>NEXT</LoadingButton>
+                          </>
+                        :
+                          <>
+                            <LoadingButton key={"cancel"} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={() => props.setNewBoardState(false)}><ArrowBackIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                            <LoadingButton key={"delete"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => handleDeleteBoard(props.editBoard?.boardEntityId || "")}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                            <LoadingButton type="submit" key={"next"} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>UPDATE</LoadingButton>
+                          </>
+                        }
                     </Box>
                 </Box>
               </Card>
@@ -464,7 +518,7 @@ export default function NewBoard(props: Props) {
                       <Grid item xs={6} textAlign='center' >
                         <Box>
                           <Typography component='span' variant='h5'>Handle overflow:&nbsp;&nbsp;</Typography>
-                          <Select defaultValue={'even'} size='small'>
+                          <Select defaultValue={'even'} value={overflow} size='small' onChange={(event) => setOverflow(event.target.value)}>
                             <MenuItem value={'even'}>Evenly Distribute</MenuItem>
                             <MenuItem value={'start'}>Attach to start</MenuItem>
                             <MenuItem value={'end'}>Attach to end</MenuItem>

@@ -10,7 +10,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { useAppDispatch, } from 'app/store/configureStore';
-import { signInUser } from 'app/state/userSlice';
+import { signInUserAsync } from 'app/state/userSlice';
 
 
 export default function LoginView() {
@@ -22,7 +22,7 @@ export default function LoginView() {
   });
 
   async function submitForm(data: FieldValues) {
-    await dispatch(signInUser(data));
+    await dispatch(signInUserAsync(data));
     history.push('/sprint')     
   }
 

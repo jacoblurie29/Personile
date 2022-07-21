@@ -17,32 +17,31 @@ export default function SprintTopCardView() {
     const handleSprintChangeBackwards = () => {
         
         var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "");
-        var newApproximateSprintStartTime = currentSprintStartTime - 1209600000;
-        var newSprintId = sprints?.filter(s => Date.parse(s.startDate) > newApproximateSprintStartTime - 194800000 && Date.parse(s.startDate) < newApproximateSprintStartTime + 194800000);
-        
-        console.log(newSprintId)
+        var newSprint = sprints?.find(s => Date.parse(s.endDate) > currentSprintStartTime - 95040000 && Date.parse(s.endDate) < currentSprintStartTime);
 
-        if (newSprintId !== undefined  && newSprintId.length > 0) {
-            dispatch(setCurrentSprint(newSprintId[0].sprintEntityId));
+        console.log(newSprint?.sprintEntityId)
+        console.log(sprints !== undefined && Date.parse(sprints[1].endDate))
+
+        if (newSprint !== undefined) {
+            dispatch(setCurrentSprint(newSprint.sprintEntityId));
         }
 
     }
 
     const handleSprintChangeForwards = () => {
 
-        var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "");
-        var newApproximateSprintStartTime = currentSprintStartTime + 1209600000;
-        var newSprintId = sprints?.filter(s => Date.parse(s.startDate) > newApproximateSprintStartTime - 194800000 && Date.parse(s.startDate) < newApproximateSprintStartTime + 194800000);
+        var currentSprintEndTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "");
+        var newSprint = sprints?.find(s => Date.parse(s.startDate) < currentSprintEndTime + 95040000 && Date.parse(s.startDate) > currentSprintEndTime);
         
-        console.log(newSprintId)
+        console.log(newSprint)
 
         /*
             This will be where we generate new sprints for the group. The default group will have 5 sprints. If you get to a sprint that doesn't have a 
             future sprint that is 5 sprints away, we generate that in the background
         */
 
-        if (newSprintId !== undefined && newSprintId.length > 0) {
-            dispatch(setCurrentSprint(newSprintId[0].sprintEntityId));
+        if (newSprint !== undefined) {
+            dispatch(setCurrentSprint(newSprint.sprintEntityId));
         }
     }
 
@@ -119,6 +118,13 @@ export default function SprintTopCardView() {
                                 </Typography>
                             </Box>
                             <Box sx={{marginBottom: '10px', width: '90%', marginRight: 'auto', marginLeft:'auto'}} >
+                                {(calculateNewTaskNumber() + calculateTodayTaskNumber() + calculateCompletedTaskNumber()) === 0 ?
+                                    <Grid container columns={12}>
+                                        <Grid item xs={12}>
+                                            <Box textAlign='center' sx={{borderRadius: '5px', backgroundColor: 'grey.400', color: 'background.paper', padding: '4px'}}>No tasks</Box>
+                                        </Grid>
+                                    </Grid>
+                                :
                                 <Grid container columns={calculateNewTaskNumber() + calculateTodayTaskNumber() + calculateCompletedTaskNumber()}>
                                     {calculateNewTaskNumber() !== 0 && 
                                         <Grid item xs={calculateNewTaskNumber()}>
@@ -136,6 +142,7 @@ export default function SprintTopCardView() {
                                         </Grid>
                                     }
                                 </Grid>
+                                }
                             </Box>
                         </Grid>
                     </Grid>
