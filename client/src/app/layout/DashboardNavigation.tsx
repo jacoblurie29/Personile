@@ -28,6 +28,8 @@ import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import LoadingComponent from './LoadingComponent';
 import { signOut } from 'app/state/userSlice';
 import BoardView from 'features/BoardsView/BoardView';
+import { Typography } from '@mui/material';
+import SprintBoardTopView from 'features/SprintView/SprintBoardTopView';
 
 const drawerWidth = 230;
 
@@ -62,6 +64,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
+  
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -125,15 +128,16 @@ export default function DashboardNavigation({component}: Props) {
 
 
   return (
-    <Box overflow='auto' height='100vh' sx={{ display: 'flex', backgroundColor: 'background' }}>
-      <CssBaseline />
-      <Drawer variant="permanent" open={open} >
+    <Box overflow='auto' height='100vh' sx={{ display: 'flex' }}>
+      <Drawer variant="permanent" open={open} 
+            sx={{"& .MuiPaper-root": {
+              border: '0px'
+            }}} >
         <DrawerHeader>
           <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
             {!open ? <MenuIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
-        <Divider />
         <List>
           {sprintLinks.map(({linkTitle, linkRoute}, index) => (
             <ListItem key={linkRoute}
@@ -164,7 +168,6 @@ export default function DashboardNavigation({component}: Props) {
             </ListItem>
           ))}
         </List>
-        <Divider />
         <List>
           {adminLinks.map(({linkTitle, linkRoute}, index) => (
             <ListItem key={linkRoute} 
@@ -217,7 +220,11 @@ export default function DashboardNavigation({component}: Props) {
             </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, height: '100vh' }}>
+      <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
+        <Box sx={{backgroundColor: 'background.default', width: '100%', height: '10%'}}>     
+          {!loading && component === "sprint" && <SprintBoardTopView />}
+          {!loading && component === "boards" && <SprintBoardTopView />}
+        </Box>
         {/* Below handles the routing */}
           {loading && <LoadingComponent />}       
           {!loading && component === "sprint" && <SprintView />}

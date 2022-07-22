@@ -18,6 +18,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { formatDateString } from "app/util/dateUtil";
 import { Board } from "app/models/board";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 
 interface Props {
@@ -49,6 +50,7 @@ export default function NewBoard(props: Props) {
     const [customLengthChecked, setCustomLengthChecked] = useState<boolean>(false);
     const [currentCustomSprintLength, setCurrentCustomSprintLength] = useState<number | undefined>(undefined);
     const [overflow, setOverflow] = useState<string>("even");
+    const [sprintOptionSelected, setSprintOptionSelected] = useState<number | undefined>(undefined);
 
     const [firstScreenAnimation, setFirstScreenAnimation] = useState<boolean>(true);
     const [secondScreenAnimation, setSecondScreenAnimation] = useState<boolean>(true);
@@ -188,11 +190,32 @@ export default function NewBoard(props: Props) {
 
       if(props.editBoard == undefined) {
 
+          var sprintDaysLength = () => {
+              if (customLengthChecked) {
+                return currentCustomSprintLength;
+              } else {
+                switch (sprintOptionSelected) {
+                  case 0:
+                    return calculateSprintShortLength(calculateTotalLength(boardEndDate[0]));
+                    break;
+                  case 1:
+                    return calculateSprintRecommendedLength(calculateTotalLength(boardEndDate[0]));
+                    break;
+                  case 2:
+                    return calculateSprintLongLength(calculateTotalLength(boardEndDate[0]));
+                    break;
+                  default:
+                    return 14;
+                    break;
+                }
+              }
+          }
+
           var newBoard = {
             boardEntityId: uuidv4(),
             name: data.name,
             description: data.description,
-            sprintDaysLength: 14,
+            sprintDaysLength: sprintDaysLength() || 14,
             handleOverflow: overflow,
             startDate: new Date().toString(),
             endDate: endDateEnabled ? boardEndDate.toString() === "" ? new Date().toString() : boardEndDate.toString() : "",
@@ -203,6 +226,7 @@ export default function NewBoard(props: Props) {
           }
 
         props.setNewBoardState(false);
+
         dispatch(addBoardAsync({userId: userId, board: newBoard})).catch(error => console.log(error));
 
       } else {
@@ -464,7 +488,17 @@ export default function NewBoard(props: Props) {
                     <Grid container padding='20px' flexGrow={1} columns={25} justifyContent='center'>
                       <Grid item xs={7} sx={{textAlign: 'left', margin: '20px 6px 6px 6px'}}>
                         <Card sx={{textAlign: 'center'}} elevation={3}>
-                          <Typography variant="h4" sx={{margin: '8px 8px 2px 8px'}}>Shorter</Typography>
+                          <Grid container>
+                            <Grid item xs={2}>
+
+                            </Grid>
+                            <Grid item xs={8}  sx={{padding: '8px 8px 4px 8px'}}>
+                              <Typography variant="h4">Shorter</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{paddingTop: '2px'}}>
+                              {sprintOptionSelected == 0 && !customLengthChecked && <CheckCircleIcon sx={{color: 'success.main'}} />}
+                            </Grid>
+                          </Grid>
                           <Divider />
                           <Box paddingLeft='5px'>
                             <Typography sx={{margin: '4px 4px 0px 4px', fontSize: '60px', display: 'inline-block'}}>{calculateSprintShortLength(calculateTotalLength(boardEndDate[0]))}</Typography>
@@ -473,14 +507,24 @@ export default function NewBoard(props: Props) {
                           <Typography variant="h5" sx={{margin: '0px 4px 4px 4px'}}>{calculateTotalLength(boardEndDate[0]) / calculateSprintShortLength(calculateTotalLength(boardEndDate[0])) !== 0 ? ("(" + calculateNumberOfSprints(calculateTotalLength(boardEndDate[0]), calculateSprintShortLength(calculateTotalLength(boardEndDate[0]))) + " Sprints)") : "" }</Typography>
                           <Divider />
                           <Typography variant='subtitle2' padding='5px'>Divide your board into smaller sections. Great for boards with smaller tasks.</Typography>
-                          <Button fullWidth sx={{backgroundColor: customLengthChecked ? 'grey.400' : 'primary.main', borderRadius: '0px 0px 5px 5px', ':hover': { backgroundColor: 'primary.dark'}}} disabled={customLengthChecked}>
+                          <Button onClick={() => setSprintOptionSelected(0)} fullWidth sx={{backgroundColor: customLengthChecked ? 'grey.400' : 'primary.main', borderRadius: '0px 0px 5px 5px', ':hover': { backgroundColor: 'primary.dark'}}} disabled={customLengthChecked}>
                               <Typography variant='h6' sx={{color: 'background.paper'}}>Select</Typography>
                           </Button>
                         </Card>
                       </Grid>
                       <Grid item xs={9} sx={{textAlign: 'left', margin: '10px 6px 6px 6px'}}>
                         <Card sx={{textAlign: 'center'}} elevation={3}>
-                          <Typography variant="h4" sx={{margin: '8px 8px 2px 8px'}}>Recommended</Typography>
+                          <Grid container>
+                            <Grid item xs={2}>
+
+                            </Grid>
+                            <Grid item xs={8}  sx={{padding: '8px 8px 4px 8px'}}>
+                              <Typography variant="h4">Reccommended</Typography>
+                            </Grid>
+                            <Grid item xs={2}  sx={{paddingTop: '2px'}}>
+                              {sprintOptionSelected == 1 && !customLengthChecked && <CheckCircleIcon sx={{color: 'success.main'}} />}
+                            </Grid>
+                          </Grid>
                           <Divider />
                           <Box paddingLeft='5px'>
                             <Typography sx={{margin: '4px 4px 0px 4px', fontSize: '90px', display: 'inline-block'}}>{calculateSprintRecommendedLength(calculateTotalLength(boardEndDate[0]))}</Typography>
@@ -489,14 +533,24 @@ export default function NewBoard(props: Props) {
                             <Typography variant="h5" sx={{margin: '0px 4px 4px 4px'}}>{calculateTotalLength(boardEndDate[0]) / calculateSprintShortLength(calculateTotalLength(boardEndDate[0])) !== 0 ? ("(" + calculateNumberOfSprints(calculateTotalLength(boardEndDate[0]), calculateSprintRecommendedLength(calculateTotalLength(boardEndDate[0]))) + " Sprints)") : "" }</Typography>
                           <Divider />
                           <Typography variant='subtitle2' padding='5px'>Not sure where to start? We've got you covered. Our algorithm reccomends you start here!</Typography>
-                          <Button fullWidth sx={{backgroundColor: customLengthChecked ? 'grey.400' : 'primary.main', borderRadius: '0px 0px 5px 5px', ':hover': { backgroundColor: 'primary.dark'}}} disabled={customLengthChecked}>
+                          <Button onClick={() => setSprintOptionSelected(1)} fullWidth sx={{backgroundColor: customLengthChecked ? 'grey.400' : 'primary.main', borderRadius: '0px 0px 5px 5px', ':hover': { backgroundColor: 'primary.dark'}}} disabled={customLengthChecked}>
                               <Typography variant='h6' sx={{color: 'background.paper'}}>Select</Typography>
                           </Button>
                         </Card>
                       </Grid>
                       <Grid item xs={7} sx={{textAlign: 'left', margin: '20px 6px 0px 6px'}}>
                         <Card sx={{textAlign: 'center'}}  elevation={3}>
-                          <Typography variant="h4" sx={{margin: '8px 8px 2px 8px'}}>Longer</Typography>
+                          <Grid container>
+                            <Grid item xs={2}>
+
+                            </Grid>
+                            <Grid item xs={8}  sx={{padding: '8px 8px 4px 8px'}}>
+                              <Typography variant="h4">Longer</Typography>
+                            </Grid>
+                            <Grid item xs={2} sx={{paddingTop: '2px'}}>
+                                {sprintOptionSelected == 2 && !customLengthChecked && <CheckCircleIcon sx={{color: 'success.main'}} />}
+                            </Grid>
+                          </Grid>
                           <Divider />
                           <Box paddingLeft='5px'>
                             <Typography sx={{margin: '4px 4px 0px 4px', fontSize: '60px', display: 'inline-block'}}>{calculateSprintLongLength(calculateTotalLength(boardEndDate[0]))}</Typography>
@@ -505,7 +559,7 @@ export default function NewBoard(props: Props) {
                           <Typography variant="h5" sx={{margin: '0px 4px 4px 4px'}}>{calculateTotalLength(boardEndDate[0]) / calculateSprintShortLength(calculateTotalLength(boardEndDate[0])) !== 0 ? ("(" + calculateNumberOfSprints(calculateTotalLength(boardEndDate[0]), calculateSprintLongLength(calculateTotalLength(boardEndDate[0]))) + " Sprints)") : "" }</Typography>
                           <Divider />
                           <Typography variant='subtitle2' padding='5px'>Divide your board into longer sections. Better for boards with broader tasks</Typography>
-                          <Button fullWidth sx={{backgroundColor: customLengthChecked ? 'grey.400' : 'primary.main', borderRadius: '0px 0px 5px 5px', ':hover': { backgroundColor: 'primary.dark'}}} disabled={customLengthChecked}>
+                          <Button onClick={() => setSprintOptionSelected(2)} fullWidth sx={{backgroundColor: customLengthChecked ? 'grey.400' : 'primary.main', borderRadius: '0px 0px 5px 5px', ':hover': { backgroundColor: 'primary.dark'}}} disabled={customLengthChecked}>
                               <Typography variant='h6' sx={{color: 'background.paper'}}>Select</Typography>
                           </Button>
                         </Card>
@@ -518,10 +572,10 @@ export default function NewBoard(props: Props) {
                       <Grid item xs={6} textAlign='center' >
                         <Box>
                           <Typography component='span' variant='h5'>Handle overflow:&nbsp;&nbsp;</Typography>
-                          <Select defaultValue={'even'} value={overflow} size='small' onChange={(event) => setOverflow(event.target.value)}>
-                            <MenuItem value={'even'}>Evenly Distribute</MenuItem>
+                          <Select defaultValue={'start'} value={overflow} size='small' onChange={(event) => setOverflow(event.target.value)}>
                             <MenuItem value={'start'}>Attach to start</MenuItem>
                             <MenuItem value={'end'}>Attach to end</MenuItem>
+                            <MenuItem value={'even'}>Evenly Distribute</MenuItem>
                           </Select>
                         </Box>
                       </Grid>
@@ -530,13 +584,13 @@ export default function NewBoard(props: Props) {
                           
                           <Grid container width='fit-content'>
                             <Grid item xs = {1} marginTop='auto' marginBottom='auto'>
-                              <Checkbox sx={{color: 'grey.600', marginRight: '10px'}} value={customLengthChecked} onChange={(event, checked) => setCustomLengthChecked(checked)} />
+                              <Checkbox sx={{color: 'grey.600', marginRight: '10px'}} value={customLengthChecked} onChange={(event, checked) => {setCustomLengthChecked(checked); setCurrentCustomSprintLength(calculateSprintRecommendedLength(calculateTotalLength(boardEndDate[0])))}} />
                             </Grid>
                             <Grid item xs={4} textAlign='right' marginTop='auto' marginBottom='auto' alignItems='center'>
                               <Typography sx={{color: customLengthChecked ? 'grey.800' : 'grey.400'}} component='span' variant='h5'>Custom length:&nbsp;&nbsp;</Typography>
                             </Grid> 
                             <Grid item xs={6} marginTop='auto' marginBottom='auto'>
-                              <TextField value={customLengthChecked ? currentCustomSprintLength : ""} onChange={(event) => {event.target.value == "" ? setCurrentCustomSprintLength(undefined) : parseInt(event.target.value) > 0 && setCurrentCustomSprintLength(parseInt(event.target.value))}} size='small' disabled={!customLengthChecked} placeholder="Days" type='number' helperText={currentCustomSprintLength !== undefined && currentCustomSprintLength > 0 && customLengthChecked ? (calculateNumberOfSprints(calculateTotalLength(boardEndDate[0]), currentCustomSprintLength) + " Sprints") : ""}/>   
+                              <TextField value={customLengthChecked ? currentCustomSprintLength : ""} onChange={(event) => {event.target.value == "" ? setCurrentCustomSprintLength(undefined) : parseInt(event.target.value) > 0 && setCurrentCustomSprintLength(parseInt(event.target.value))}} size='small' disabled={!customLengthChecked} placeholder="Days" type='number' helperText={currentCustomSprintLength !== undefined && endDateEnabled && currentCustomSprintLength > 0 && customLengthChecked ? (calculateNumberOfSprints(calculateTotalLength(boardEndDate[0]), currentCustomSprintLength) + " Sprints") : ""}/>   
                             </Grid>
                           </Grid>
                         </Box>                      
@@ -546,16 +600,16 @@ export default function NewBoard(props: Props) {
                 <Divider />
                 <Box>
                   <Grid container>
-                      <Grid item xs={2}>
+                      <Grid item xs={3}>
                         <Box sx={{flexGrow: 1, textAlign: 'left', marginRight: '5px', marginTop: '5px', padding: '10px'}}>
                           <Button key={"back"} variant='contained' sx={{margin: 'auto', background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={() => handleGoBack()}>GO BACK</Button>
                         </Box>
                       </Grid>
-                      <Grid item xs={8}>
+                      <Grid item xs={6}>
                         
                       </Grid>
-                      <Grid item xs={2}>
-                        <Box sx={{flexGrow: 1, textAlign: 'right', padding: '10px'}}>
+                      <Grid item xs={3}>
+                        <Box sx={{flexGrow: 1, textAlign: 'right',  marginRight: '5px', marginTop: '5px', padding: '10px'}}>
                           <LoadingButton type="submit" key={"submit"} variant='contained' sx={{margin: 'auto', borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>CREATE</LoadingButton>
                         </Box>
                       </Grid>
