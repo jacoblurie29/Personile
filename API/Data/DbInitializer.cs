@@ -52,35 +52,6 @@ namespace API.Data
                 }
             };
 
-            var milestones = new List<MilestoneEntity> {
-                new MilestoneEntity {
-                    MilestoneEntityId = Guid.NewGuid().ToString(),
-                    Description = "Finish Controllers",
-                    Status = "Incomplete",
-                    DueDate = "Sun Jul 27 2022",
-                    HardDeadline = false,
-                    AssociatedTaskIds = "",
-                    CompletedDate = "",
-                },
-                new MilestoneEntity {
-                    MilestoneEntityId = Guid.NewGuid().ToString(),
-                    Description = "Submit Project",
-                    Status = "Incomplete",
-                    DueDate = "",
-                    HardDeadline = false,
-                    AssociatedTaskIds = "",
-                    CompletedDate = "",
-                },
-                new MilestoneEntity {
-                    MilestoneEntityId = Guid.NewGuid().ToString(),
-                    Description = "Receive good grades",
-                    Status = "Incomplete",
-                    DueDate = "Sun Jul 29 2022",
-                    HardDeadline = true,
-                    AssociatedTaskIds = "",
-                    CompletedDate = "",
-                }
-            };
 
             var sprints = new List<SprintEntity>  {
                     new SprintEntity {
@@ -110,6 +81,7 @@ namespace API.Data
                     Tags = "App|Frontend|Development|Personal",
                     Effort = 6,
                     Color = 0,
+                    Milestones = new List<MilestoneEntity>()
                 },
                 new TaskEntity {
                     TaskEntityId = "TASK_ID_1",
@@ -122,7 +94,8 @@ namespace API.Data
                     CurrentState = 1,
                     Tags = "App|Backend|Development|Personal",
                     Effort = 8,
-                    Color = 0
+                    Color = 0,
+                    Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_2",
                     Name = "Build app database",
@@ -134,7 +107,8 @@ namespace API.Data
                     CurrentState = 2,
                     Tags = "App|Database|Development|Personal",
                     Effort = 4,
-                    Color = 0
+                    Color = 0,
+                    Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_3",
                     Name = "Build app marketing",
@@ -146,7 +120,8 @@ namespace API.Data
                     CurrentState = 2,
                     Tags = "App|Marketing|Business|Team",
                     Effort = 9,
-                    Color = 1
+                    Color = 1,
+                    Milestones = new List<MilestoneEntity>()
                 }
         };
         
@@ -162,7 +137,8 @@ namespace API.Data
                     CurrentState = 0,
                     Tags = "App|Social|Business|Team",
                     Effort = 3,
-                    Color = 1
+                    Color = 1,
+                    Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_5",
                     Name = "Make app idea",
@@ -174,7 +150,8 @@ namespace API.Data
                     CurrentState = 2,
                     Tags = "App|Development|Team",
                     Effort = 6,
-                    Color = 2
+                    Color = 2,
+                    Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_6",
                     Name = "Collaborate with team",
@@ -186,7 +163,8 @@ namespace API.Data
                     CurrentState = 0,
                     Tags = "App|Development|Team",
                     Effort = 6,
-                    Color = 2
+                    Color = 2,
+                    Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_7",
                     Name = "Get outside funding",
@@ -198,7 +176,8 @@ namespace API.Data
                     CurrentState = 1,
                     Tags = "App|Money|Team",
                     Effort = 6,
-                    Color = 2
+                    Color = 2,
+                    Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_8",
                     Name = "Write app documentation",
@@ -210,13 +189,52 @@ namespace API.Data
                     CurrentState = 1,
                     Tags = "App|Usage|Documentation",
                     Effort = 6,
-                    Color = 2
+                    Color = 2,
+                    Milestones = new List<MilestoneEntity>()
                 },
         };
 
+        var milestones = new List<MilestoneEntity> {
+            new MilestoneEntity {
+                MilestoneEntityId = Guid.NewGuid().ToString(),
+                Description = "Finish Controllers",
+                Status = "Incomplete",
+                DueDate = "Sun Jul 27 2022",
+                HardDeadline = false,
+                AssociatedTaskIds = "",
+                CompletedDate = "",
+                Tasks = new List<TaskEntity>()
+            },
+            new MilestoneEntity {
+                MilestoneEntityId = Guid.NewGuid().ToString(),
+                Description = "Submit Project",
+                Status = "Incomplete",
+                DueDate = "",
+                HardDeadline = false,
+                AssociatedTaskIds = "",
+                CompletedDate = "",
+                Tasks = new List<TaskEntity>()
+            },
+            new MilestoneEntity {
+                MilestoneEntityId = Guid.NewGuid().ToString(),
+                Description = "Receive good grades",
+                Status = "Incomplete",
+                DueDate = "Sun Jul 29 2022",
+                HardDeadline = true,
+                AssociatedTaskIds = "",
+                CompletedDate = "",
+                Tasks = new List<TaskEntity>()
+            }
+        };
+
+        
 
         sprints[0].Tasks = tasksForSprint0;
         sprints[1].Tasks = tasksForSprint1;
+
+        tasksForSprint0[0].Milestones.Add(milestones[0]);
+        tasksForSprint0[0].Milestones.Add(milestones[1]);
+        tasksForSprint0[1].Milestones.Add(milestones[2]);
 
         board[0].Sprints.Add(sprints[0]);
         board[0].Sprints.Add(sprints[1]);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using API.Entities;
 
 namespace API.DTOs
 {
@@ -17,6 +18,7 @@ namespace API.DTOs
         public int Effort { get; set; }
         public int Color { get; set; }
         public List<SubTaskDto> SubTasks { get; set; }
+        public List<string> MilestoneIds { get; set; }
 
     }
 }

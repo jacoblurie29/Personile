@@ -16,6 +16,7 @@ namespace API.Data
         public DbSet<BoardEntity> Boards { get; set; }
         public DbSet<GoalEntity> Goals { get; set; }
         public DbSet<MilestoneEntity> Milestones { get; set; }
+        public DbSet<TaskMilestoneEntity> TaskMilestones { get; set; }
         public DbSet<SprintEntity> Sprints { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<SubTaskEntity> SubTasks { get; set; }
@@ -63,6 +64,22 @@ namespace API.Data
             .HasOne(b => b.BoardEntity)
             .WithMany(m => m.Milestones)
             .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder
+            .Entity<TaskEntity>()
+            .HasMany(m => m.Milestones)
+            .WithMany(t => t.Tasks)
+            .UsingEntity<TaskMilestoneEntity>(
+                tm => tm
+                    .HasOne(tm => tm.MilestoneEntity)
+                    .WithMany()
+                    .HasForeignKey("MilestoneEntityId"),
+                tm => tm
+                    .HasOne(tm => tm.TaskEntity)
+                    .WithMany()
+                    .HasForeignKey("TaskEntityId")
+            ).ToTable("TaskMilestones")
+             .HasKey(tm => new { tm.TaskEntityId, tm.MilestoneEntityId});
 
             modelBuilder.Entity<IdentityRole>()
                 .HasData(
