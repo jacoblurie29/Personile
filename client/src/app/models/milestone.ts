@@ -6,4 +6,5 @@ export interface Milestone {
     hardDeadline: boolean;
     associatedTaskIds: string;
     completedDate: string;
+    taskIds: string[];
 }

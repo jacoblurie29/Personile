@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class SprintLengthAndOverflowAdded : Migration
+    public partial class MilestonesManyToMany : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -286,15 +286,45 @@ namespace API.Data.Migrations
                         principalColumn: "TaskEntityId");
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "6c1e6e45-3a0c-4599-9b6d-750894f94626", "37b94081-65c1-475f-a68f-ca3217676723", "Admin", "ADMIN" });
+            migrationBuilder.CreateTable(
+                name: "TaskMilestones",
+                columns: table => new
+                {
+                    MilestoneEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    TaskEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    UserEntityId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskMilestones", x => new { x.TaskEntityId, x.MilestoneEntityId });
+                    table.ForeignKey(
+                        name: "FK_TaskMilestones_AspNetUsers_UserEntityId",
+                        column: x => x.UserEntityId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TaskMilestones_Milestones_MilestoneEntityId",
+                        column: x => x.MilestoneEntityId,
+                        principalTable: "Milestones",
+                        principalColumn: "MilestoneEntityId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskMilestones_Tasks_TaskEntityId",
+                        column: x => x.TaskEntityId,
+                        principalTable: "Tasks",
+                        principalColumn: "TaskEntityId",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "80ba0a79-3854-4fee-a2a8-5f84655e42b2", "db1f347c-4384-4195-8928-88dbfb505a8b", "Member", "MEMBER" });
+                values: new object[] { "1172dcfb-f42a-4c4b-a570-4bcba9430eff", "41bf18e8-bb61-461f-bc92-76086822fb20", "Member", "MEMBER" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "5583eaaa-c29a-43a7-9a9a-3b622eec01e0", "0c33b8b8-c3f1-4868-bbe3-25a543d96392", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -359,6 +389,16 @@ namespace API.Data.Migrations
                 column: "TaskEntityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TaskMilestones_MilestoneEntityId",
+                table: "TaskMilestones",
+                column: "MilestoneEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskMilestones_UserEntityId",
+                table: "TaskMilestones",
+                column: "UserEntityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tasks_SprintEntityId",
                 table: "Tasks",
                 column: "SprintEntityId");
@@ -385,13 +425,16 @@ namespace API.Data.Migrations
                 name: "Goals");
 
             migrationBuilder.DropTable(
-                name: "Milestones");
-
-            migrationBuilder.DropTable(
                 name: "SubTasks");
 
             migrationBuilder.DropTable(
+                name: "TaskMilestones");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Milestones");
 
             migrationBuilder.DropTable(
                 name: "Tasks");

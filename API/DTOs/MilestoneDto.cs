@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Entities;
 
 namespace API.DTOs
 {
@@ -14,5 +15,6 @@ namespace API.DTOs
         public Boolean HardDeadline { get; set; }
         public string AssociatedTaskIds { get; set; }
         public string CompletedDate { get; set; }
+        public List<string> TaskIds { get; set; }
     }
 }

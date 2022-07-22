@@ -21,6 +21,8 @@ namespace API.Entities
         public List<SubTaskEntity> SubTasks { get; set; }
         public SprintEntity SprintEntity { get; set; }
         public string SprintEntityId { get; set; }
+        public List<MilestoneEntity> Milestones { get; set; }
+
 
         public void AddSubtask(SubTaskEntity subTaskEntity) {
             if (SubTasks.All(subTask => subTask.SubTaskEntityId != subTaskEntity.SubTaskEntityId)) {

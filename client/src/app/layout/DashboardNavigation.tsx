@@ -221,9 +221,8 @@ export default function DashboardNavigation({component}: Props) {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
-        <Box sx={{backgroundColor: 'background.default', width: '100%', height: '10%'}}>     
+        <Box sx={{backgroundColor: 'background.default', width: '100%', height: '8%'}}>     
           {!loading && component === "sprint" && <SprintBoardTopView />}
-          {!loading && component === "boards" && <SprintBoardTopView />}
         </Box>
         {/* Below handles the routing */}
           {loading && <LoadingComponent />}       

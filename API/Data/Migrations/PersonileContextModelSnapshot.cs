@@ -191,6 +191,26 @@ namespace API.Data.Migrations
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("API.Entities.TaskMilestoneEntity", b =>
+                {
+                    b.Property<string>("TaskEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MilestoneEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TaskEntityId", "MilestoneEntityId");
+
+                    b.HasIndex("MilestoneEntityId");
+
+                    b.HasIndex("UserEntityId");
+
+                    b.ToTable("TaskMilestones", (string)null);
+                });
+
             modelBuilder.Entity("API.Entities.UserEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -289,15 +309,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "80ba0a79-3854-4fee-a2a8-5f84655e42b2",
-                            ConcurrencyStamp = "db1f347c-4384-4195-8928-88dbfb505a8b",
+                            Id = "1172dcfb-f42a-4c4b-a570-4bcba9430eff",
+                            ConcurrencyStamp = "41bf18e8-bb61-461f-bc92-76086822fb20",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "6c1e6e45-3a0c-4599-9b6d-750894f94626",
-                            ConcurrencyStamp = "37b94081-65c1-475f-a68f-ca3217676723",
+                            Id = "5583eaaa-c29a-43a7-9a9a-3b622eec01e0",
+                            ConcurrencyStamp = "0c33b8b8-c3f1-4868-bbe3-25a543d96392",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -465,6 +485,29 @@ namespace API.Data.Migrations
                     b.Navigation("SprintEntity");
                 });
 
+            modelBuilder.Entity("API.Entities.TaskMilestoneEntity", b =>
+                {
+                    b.HasOne("API.Entities.MilestoneEntity", "MilestoneEntity")
+                        .WithMany()
+                        .HasForeignKey("MilestoneEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.TaskEntity", "TaskEntity")
+                        .WithMany()
+                        .HasForeignKey("TaskEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.UserEntity", null)
+                        .WithMany("TaskMilestones")
+                        .HasForeignKey("UserEntityId");
+
+                    b.Navigation("MilestoneEntity");
+
+                    b.Navigation("TaskEntity");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -538,6 +581,8 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.UserEntity", b =>
                 {
                     b.Navigation("Boards");
+
+                    b.Navigation("TaskMilestones");
                 });
 #pragma warning restore 612, 618
         }

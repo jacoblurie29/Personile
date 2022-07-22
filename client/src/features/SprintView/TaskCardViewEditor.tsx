@@ -71,7 +71,8 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 currentState: 0,
                 tags: tags,
                 effort: formData.effort,
-                color: 0
+                color: 0,
+                milestoneIds: [] as string[]
              }
              console.log(newTask)
              setNewTask(false);
@@ -94,7 +95,8 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                     currentState: editTask.currentState,
                     tags: tags,
                     effort: formData.effort,
-                    color: 0
+                    color: 0,
+                    milestoneIds: editTask.milestoneIds
                 }
 
                 var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);

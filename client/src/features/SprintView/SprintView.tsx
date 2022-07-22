@@ -32,8 +32,8 @@ export default function SprintView() {
         }
     
     return (
-        <Grid container margin='10px 10px 0px 0px' sx={{height: '85%'}} columns={12}>
-            <Grid item lg={9} md={8} sx={{backgroundColor: '#D9E8F9', borderRadius: '15px'}}>
+        <Grid container margin='10px 10px 0px 0px' sx={{height: '88%'}} columns={12}>
+            <Grid item lg={9} md={8} sx={{backgroundColor: '#D9E8F9', borderRadius: '15px',}}>
                 <Grid container 
                     columns={13}
                     justifyContent='center'

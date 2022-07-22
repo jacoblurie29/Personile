@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
-using API.Extensions;
 using API.RequestHelpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +40,7 @@ namespace API.Controllers
 
            if(CurrentBoardEntity == null) return NotFound();
 
-           return CurrentBoardEntity.mapBoardToDto();
+           return _mapper.Map<BoardDto>(CurrentBoardEntity);
 
         }
 
@@ -58,7 +57,7 @@ namespace API.Controllers
 
            foreach (var sprint in CurrentSprints)
            {
-               mappedSprintList.Add(sprint.mapSprintToDto());
+               mappedSprintList.Add(_mapper.Map<SprintDto>(sprint));
            }
 
            return mappedSprintList;
@@ -76,7 +75,7 @@ namespace API.Controllers
 
             var CurrentSprintEntity = CurrentBoardEntity.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
 
-            return CurrentSprintEntity.mapSprintToDto();
+            return _mapper.Map<SprintDto>(CurrentSprintEntity);
 
         }
 
@@ -96,7 +95,7 @@ namespace API.Controllers
                 return BadRequest(new ProblemDetails{Title = "Task not found"});
             }
 
-            return CurrentTaskEntity.mapTaskToDto();
+            return _mapper.Map<TaskDto>(CurrentTaskEntity);
 
         }
 
@@ -154,7 +153,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) {
-                return CreatedAtRoute("GetUser", new { userId = userId }, CurrentUser.mapUserToDto());
+                return CreatedAtRoute("GetUser", new { userId = userId }, _mapper.Map<UserDto>(CurrentUser));
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem creating new sprint"});
@@ -181,7 +180,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, CurrentSprint.mapSprintToDto());
+                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
@@ -212,7 +211,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, CurrentTask.mapTaskToDto());
+                return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
@@ -373,8 +372,10 @@ namespace API.Controllers
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
                 return await _context.Users.Where(u => u.Id == userEntityId)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
-                .Include(b => b.Boards).ThenInclude(m => m.Milestones)
-                .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
+                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
+                .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
+                .Include(b => b.Boards).ThenInclude(g => g.Goals)
+                .FirstOrDefaultAsync();
         }
 
 

@@ -16,5 +16,6 @@ namespace API.Entities
         public string CompletedDate { get; set; }
         public BoardEntity BoardEntity { get; set; }
         public string BoardEntityId { get; set; }
+        public List<TaskEntity> Tasks { get; set; }
     }
 }
