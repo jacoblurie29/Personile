@@ -100,8 +100,10 @@ namespace API.Controllers
 
             var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
-                .Include(b => b.Boards).ThenInclude(m => m.Milestones)
-                .Include(b => b.Boards).ThenInclude(g => g.Goals).FirstOrDefaultAsync();
+                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
+                .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
+                .Include(b => b.Boards).ThenInclude(g => g.Goals)
+                .FirstOrDefaultAsync();
 
 
             defaultBoard.Sprints.Add(defaultSprint);
@@ -121,7 +123,8 @@ namespace API.Controllers
             
             var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
-                .Include(b => b.Boards).ThenInclude(m => m.Milestones)
+                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
+                .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
                 .Include(b => b.Boards).ThenInclude(g => g.Goals)
                 .FirstOrDefaultAsync();
             

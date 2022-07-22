@@ -6,6 +6,10 @@ import MessageIcon from '@mui/icons-material/Message';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import { useState } from "react";
+import { Task } from "app/models/task";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import PunchClockIcon from '@mui/icons-material/PunchClock';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function SprintBoardSideView() {
 
@@ -14,6 +18,37 @@ export default function SprintBoardSideView() {
     const theme = useTheme();
     const board = boards?.find(b => b.boardEntityId == currentBoard)
     const [currentTab, setCurrentTab] = useState<number>(0);
+
+    const getTasksForMilestone = (milestoneId: string) => {
+        var sprints = board?.sprints;
+
+        if (sprints == undefined) return;
+
+        var Tasks = [] as Task[];
+        
+        sprints.map(sprint => {
+            sprint.tasks.map(task => {
+                if(task.milestoneIds.includes(milestoneId)) {
+                    Tasks.push(task);
+                }
+            })
+        });
+
+        Tasks.sort((a, b) => {
+            return a.currentState - b.currentState;
+        })
+        
+        return Tasks;
+        
+
+    }
+
+    const getMilestoneTaskBorders = (index: number, tasks: Task[]) => {
+        if(index === 0 && tasks.length > 1) return '5px 5px 0 0';
+        if(index === 0 && tasks.length <= 1) return '5px';
+        if(index !== 0 && tasks.length === index + 1) return '0 0 5px 5px';
+        return '0px';
+    }
 
     return (
 
@@ -48,6 +83,7 @@ export default function SprintBoardSideView() {
                 <Divider sx={{backgroundColor: 'grey.300', marginTop: '10px', marginBottom: '10px'}} />
                 <Typography variant='h3' sx={{color: 'background.paper', marginBottom: '5px'}}>Sprint length:</Typography>
                 <Typography variant='h4' sx={{color: 'background.paper', fontWeight: 200}}>&nbsp;&nbsp;&nbsp;{board?.sprintDaysLength}&nbsp;Days</Typography>
+                <Divider sx={{backgroundColor: 'grey.300', marginTop: '10px', marginBottom: '10px'}} />
                 <Typography variant='h3' sx={{color: 'background.paper', marginBottom: '5px'}}>Goals:</Typography>
                 <List dense>
                     {board?.goals.map((goal, index) => (
@@ -66,8 +102,27 @@ export default function SprintBoardSideView() {
                         {board?.milestones.map((milestone, index) => (
                             <>
                                 {index !== 0 && <Divider sx={{backgroundColor: 'grey.300', marginTop: '10px', marginBottom: '10px'}} />}
-                                <ListItem  sx={{paddingLeft: '0px'}} secondaryAction={<Checkbox checked={milestone.status === "completed"} />}>
+                                <ListItem  sx={{paddingLeft: '0px'}} secondaryAction={<Checkbox checked={getTasksForMilestone(milestone.milestoneEntityId)?.every(t => t.currentState === 2)} />}>
                                         <Typography variant='h4' sx={{color: 'background.paper', fontWeight: 200}}>&nbsp;&nbsp;&nbsp;&nbsp;{milestone.description}&nbsp;<br />{milestone.dueDate !== "" && <Typography variant="caption" sx={{marginLeft: '40px', color: 'background.paper'}}>{milestone.hardDeadline ? "Due Date:" : "Goal:"}&nbsp;{milestone.dueDate}</Typography>}</Typography>
+                                </ListItem>
+                                <ListItem  sx={{paddingLeft: '20px'}}>
+                                    <Grid container>
+                                        {getTasksForMilestone(milestone.milestoneEntityId)?.map((task, index) => (
+                                            <Grid item xs={12} sx={{padding: '5px', backgroundColor: 'background.paper', borderBottom: index + 1 !== getTasksForMilestone(milestone.milestoneEntityId)?.length ? "1px solid lightgrey" : "",
+                                            borderRadius: getMilestoneTaskBorders(index, getTasksForMilestone(milestone.milestoneEntityId) || []) }}>
+                                                <Grid container alignItems='center' padding='2px'>
+                                                    <Grid item xs={1} height='20px'>
+                                                    </Grid>
+                                                    <Grid item xs={10} height='20px'>
+                                                        <Typography variant='h4' sx={{color: 'primary.main', textAlign: 'center'}}>{task.name}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={1} height='20px'>
+                                                        {task.currentState === 0 ? <HighlightOffIcon sx={{fontSize: '20px', color: 'error.main'}}/> : task.currentState === 1 ? <PunchClockIcon sx={{fontSize: '20px', color: 'warning.dark'}} /> : <CheckCircleOutlineIcon sx={{fontSize: '20px', color: 'success.main'}}  />}
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
                                 </ListItem>
                             </>
                         ))}

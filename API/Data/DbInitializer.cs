@@ -224,6 +224,26 @@ namespace API.Data
                 AssociatedTaskIds = "",
                 CompletedDate = "",
                 Tasks = new List<TaskEntity>()
+            },
+            new MilestoneEntity {
+                MilestoneEntityId = Guid.NewGuid().ToString(),
+                Description = "Go to all classes",
+                Status = "Incomplete",
+                DueDate = "Sun Jul 31 2022",
+                HardDeadline = false,
+                AssociatedTaskIds = "",
+                CompletedDate = "",
+                Tasks = new List<TaskEntity>()
+            },
+            new MilestoneEntity {
+                MilestoneEntityId = Guid.NewGuid().ToString(),
+                Description = "Finish project ahead of schedule",
+                Status = "Incomplete",
+                DueDate = "Sun Jul 12 2022",
+                HardDeadline = false,
+                AssociatedTaskIds = "",
+                CompletedDate = "",
+                Tasks = new List<TaskEntity>()
             }
         };
 
@@ -235,6 +255,9 @@ namespace API.Data
         tasksForSprint0[0].Milestones.Add(milestones[0]);
         tasksForSprint0[0].Milestones.Add(milestones[1]);
         tasksForSprint0[1].Milestones.Add(milestones[2]);
+        tasksForSprint0[2].Milestones.Add(milestones[0]);
+        tasksForSprint0[2].Milestones.Add(milestones[1]);
+        tasksForSprint0[2].Milestones.Add(milestones[1]);
 
         board[0].Sprints.Add(sprints[0]);
         board[0].Sprints.Add(sprints[1]);

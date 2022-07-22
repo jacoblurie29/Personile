@@ -180,7 +180,8 @@ export default function NewBoard(props: Props) {
               dueDate: enableMilestoneDates[index] ? newMilestoneDates[index].toString() === "" ? new Date().toString() : newMilestoneDates[index].toString() : "",
               hardDeadline: newMilestoneHardDeadline[index],
               associatedTaskIds: "",
-              completedDate: ""
+              completedDate: "",
+              taskIds: [] as string[]
             }
           )
         }
