@@ -63,6 +63,7 @@ const TestErrors = {
 const requests = {
     get: (url: string) => axios.get(url).then(responseBody),
     post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
+    patch: (url: string) => axios.patch(url).then(responseBody),
     put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
     delete: (url: string) => axios.delete(url).then(responseBody),
 }
@@ -81,7 +82,8 @@ const UserData = {
     removeSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/deleteSubtask`),
     addBoard: (userId: string, body: {}) => requests.post(`userdata/${userId}/addBoard`, body),
     updateBoard: (userId: string, boardId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/updateBoard`, body),
-    deleteBoard: (userId: string, boardId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/deleteBoard`)
+    deleteBoard: (userId: string, boardId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/deleteBoard`),
+    addTaskToMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.patch(`${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/addTaskToMilestone`)
 }
 
 const Account = {

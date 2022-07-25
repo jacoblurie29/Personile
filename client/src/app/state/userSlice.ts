@@ -74,7 +74,7 @@ export const addSubTaskToTaskAsync = createAsyncThunk<SubTask, {userId: string, 
 ) 
 
 export const updateSubtaskAsync = createAsyncThunk<SubTask, {userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string, updatedSubtask: SubTask}>(
-    'sprints/updateSubtaskAsync',
+    'sprint/updateSubtaskAsync',
     async ({userId, boardId, sprintId, taskId, subtaskId, updatedSubtask}, thunkAPI) => {
         try {
             return await agent.UserData.updateSubtask(userId, boardId, sprintId, taskId, subtaskId, updatedSubtask)
@@ -85,7 +85,7 @@ export const updateSubtaskAsync = createAsyncThunk<SubTask, {userId: string, boa
 )
 
 export const removeSubtaskFromTaskAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string}>(
-    'sprints/removeSubtaskFromTaskAsync',
+    'sprint/removeSubtaskFromTaskAsync',
     async ({userId, boardId, sprintId, taskId, subtaskId}, thunkAPI) => {
         try {
             return await agent.UserData.removeSubtask(userId, boardId, sprintId, taskId, subtaskId)
@@ -171,6 +171,17 @@ export const deleteBoardAsync = createAsyncThunk<void, {userId: string, boardId:
     }
 ) 
 
+export const addTaskToMilestoneAsync = createAsyncThunk<Sprint, {userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string}>(
+    'sprint/addTaskToMilestoneAsync',
+    async ({userId, boardId, milestoneId, sprintId, taskId}, thunkAPI) => {
+        try {
+            return await agent.UserData.addTaskToMilestone(userId, boardId, milestoneId, sprintId, taskId);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
 
 
 
@@ -191,6 +202,35 @@ export const userSlice = createSlice({
         },
     },
     extraReducers: (builder => {
+
+        // ADD TASK TO MILESTONE
+        builder.addCase(addTaskToMilestoneAsync.pending, (state, action) => {
+            state.status = 'pendingAddTaskToMilestone';
+        });
+        builder.addCase(addTaskToMilestoneAsync.fulfilled, (state, action) => {
+            const {sprintId, taskId, boardId, milestoneId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.push(milestoneId);
+
+            state.status = 'idle';
+        });
+        builder.addCase(addTaskToMilestoneAsync.rejected, (state, action) => {
+            state.status = 'idle';
+        });
 
         // DELETE BOARD
         builder.addCase(deleteBoardAsync.pending, (state, action) => {

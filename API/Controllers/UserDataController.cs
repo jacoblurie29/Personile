@@ -187,6 +187,44 @@ namespace API.Controllers
 
         }
 
+        [HttpPatch("{userId}/boards/{boardId}/milestones/{milestoneId}/sprints/{sprintId}/tasks/{taskId}/addTaskToMilestone", Name = "AddTaskToMilestone")]
+        public async Task<ActionResult<UserDto>> AddTaskToMilestone(string userId, string boardId, string sprintId, string taskId, string milestoneId) {
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentMilestone = CurrentBoard.Milestones.Where(m => m.MilestoneEntityId == milestoneId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            if (CurrentSprint == null) {
+                return BadRequest(new ProblemDetails{Title = "Sprint not found"});
+            }
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if (CurrentTask == null) {
+                return BadRequest(new ProblemDetails{Title = "Task not found"});
+            }
+
+            if(CurrentMilestone.Tasks.Contains(CurrentTask)) {
+                return BadRequest(new ProblemDetails{Title = "Task already in milestone!"});
+            }
+
+            CurrentMilestone.Tasks.Add(CurrentTask);
+
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) {
+                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
+
+        }
+
 
         // Adds a subtask to a specific task
         [HttpPost("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/addSubtask", Name = "AddSubtaskToTask")]
