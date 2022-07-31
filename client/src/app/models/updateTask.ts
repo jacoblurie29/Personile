@@ -13,7 +13,7 @@ export interface UpdateTask {
     tags: string;
     effort: number;
     color: number;
-    milestoneIds: string[];
+    milestoneIds: string;
 }
 
 export function mapTaskToUpdateTask(task: Task) {
@@ -29,7 +29,7 @@ export function mapTaskToUpdateTask(task: Task) {
         tags: task.tags,
         effort: task.effort,
         color: task.color,
-        milestoneIds: task.milestoneIds
+        milestoneIds: task.milestoneIds.join("|")
     } 
 }
 
@@ -49,7 +49,7 @@ export function mapUpdateTaskToTask(task: UpdateTask) {
         tags: task.tags,
         effort: task.effort,
         color: task.color,
-        milestoneIds: task.milestoneIds,
+        milestoneIds: task.milestoneIds.split("|"),
         subTasks: emptySubtaskArr
     } 
 }

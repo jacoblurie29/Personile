@@ -125,19 +125,25 @@ export default function SprintTopCardView() {
                                         </Grid>
                                     </Grid>
                                 :
-                                <Grid container columns={calculateNewTaskNumber() + calculateTodayTaskNumber() + calculateCompletedTaskNumber()}>
+                                <Grid container columns={((calculateNewTaskNumber() + calculateTodayTaskNumber() + calculateCompletedTaskNumber()) * 4) + (calculateTodayTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 ? 1 : 0) + (calculateTodayTaskNumber() > 0 && calculateNewTaskNumber() > 0 ? 1 : 0)}>
                                     {calculateNewTaskNumber() !== 0 && 
-                                        <Grid item xs={calculateNewTaskNumber()}>
+                                        <Grid item xs={calculateNewTaskNumber() * 4}>
                                             <Box textAlign='center' sx={{borderRadius: calculateNewTaskBorder(), backgroundColor: 'error.light', color: 'background.paper', padding: '4px'}}>New&nbsp;&#40;{calculateNewTaskNumber()}&#41;</Box>
                                         </Grid>
                                     }
+                                    {calculateTodayTaskNumber() > 0 && calculateNewTaskNumber() > 0 && <Grid item xs={1}>
+                                    <Box textAlign='center' sx={{borderRadius: '0px', background: 'linear-gradient(270deg, rgba(255,152,0,1)  0%, rgba(239,83,80,1) 100%)', color: 'background.paper', padding: '4px'}}>&nbsp;</Box>
+                                    </Grid>}
                                     {calculateTodayTaskNumber() !== 0 && 
-                                        <Grid item xs={calculateTodayTaskNumber()}>
+                                        <Grid item xs={calculateTodayTaskNumber() * 4}>
                                             <Box textAlign='center' sx={{borderRadius: calculateTodayTaskBorder(), backgroundColor: 'warning.light', color: 'background.paper', padding: '4px'}}>Today&nbsp;&#40;{calculateTodayTaskNumber()}&#41;</Box>
                                         </Grid>
                                     }
+                                    {calculateTodayTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 && <Grid item xs={1}>
+                                    <Box textAlign='center' sx={{borderRadius: '0px', background: 'linear-gradient(90deg, rgba(255,152,0,1)  0%, rgba(76,175,80,255) 100%)', color: 'background.paper', padding: '4px'}}>&nbsp;</Box>
+                                    </Grid>}
                                     {calculateCompletedTaskNumber() !== 0 && 
-                                        <Grid item xs={calculateCompletedTaskNumber()}>
+                                        <Grid item xs={calculateCompletedTaskNumber() * 4}>
                                             <Box textAlign='center' sx={{borderRadius: calculateCompletedTaskBorder(), backgroundColor: 'success.light', color: 'background.paper', padding: '4px'}}>Completed&nbsp;&#40;{calculateCompletedTaskNumber()}&#41;</Box>
                                         </Grid>
                                     }

@@ -87,7 +87,7 @@ export default function SprintBoardSideView() {
                 <Typography variant='h3' sx={{color: 'background.paper', marginBottom: '5px'}}>Goals:</Typography>
                 <List dense>
                     {board?.goals.map((goal, index) => (
-                        <ListItem>
+                        <ListItem key={"goal" + index}>
                                 <Typography variant='h4' sx={{color: 'background.paper', fontWeight: 200}}>&nbsp;&nbsp;&nbsp;<b>&#8226;</b>&nbsp;{goal.details}&nbsp;</Typography>
                         </ListItem>
                     ))}
@@ -100,7 +100,7 @@ export default function SprintBoardSideView() {
                     <Typography variant='h3' sx={{color: 'background.paper', marginBottom: '5px'}}>Milestones:</Typography>
                     <List dense>
                         {board?.milestones.map((milestone, index) => (
-                            <>
+                            <div key={"milestoneOuterDiv" + index}>
                                 {index !== 0 && <Divider sx={{backgroundColor: 'grey.300', marginTop: '10px', marginBottom: '10px'}} />}
                                 <ListItem  sx={{paddingLeft: '0px'}} secondaryAction={<Checkbox checked={getTasksForMilestone(milestone.milestoneEntityId)?.every(t => t.currentState === 2)} />}>
                                         <Typography variant='h4' sx={{color: 'background.paper', fontWeight: 200}}>&nbsp;&nbsp;&nbsp;&nbsp;{milestone.description}&nbsp;<br />{milestone.dueDate !== "" && <Typography variant="caption" sx={{marginLeft: '40px', color: 'background.paper'}}>{milestone.hardDeadline ? "Due Date:" : "Goal:"}&nbsp;{milestone.dueDate}</Typography>}</Typography>
@@ -108,13 +108,13 @@ export default function SprintBoardSideView() {
                                 <ListItem  sx={{paddingLeft: '20px'}}>
                                     <Grid container>
                                         {getTasksForMilestone(milestone.milestoneEntityId)?.map((task, index) => (
-                                            <Grid item xs={12} sx={{padding: '5px', backgroundColor: 'background.paper', borderBottom: index + 1 !== getTasksForMilestone(milestone.milestoneEntityId)?.length ? "1px solid lightgrey" : "",
+                                            <Grid item key={'milestone' + index} xs={12} sx={{padding: '5px', backgroundColor: 'background.paper', borderBottom: index + 1 !== getTasksForMilestone(milestone.milestoneEntityId)?.length ? "1px solid lightgrey" : "",
                                             borderRadius: getMilestoneTaskBorders(index, getTasksForMilestone(milestone.milestoneEntityId) || []) }}>
                                                 <Grid container alignItems='center' padding='2px'>
                                                     <Grid item xs={1} height='20px'>
                                                     </Grid>
                                                     <Grid item xs={10} height='20px'>
-                                                        <Typography variant='h4' sx={{color: 'primary.main', textAlign: 'center'}}>{task.name}</Typography>
+                                                        <Typography variant='subtitle1' sx={{color: 'primary.main', textAlign: 'center'}}>{task.name}</Typography>
                                                     </Grid>
                                                     <Grid item xs={1} height='20px'>
                                                         {task.currentState === 0 ? <HighlightOffIcon sx={{fontSize: '20px', color: 'error.main'}}/> : task.currentState === 1 ? <PunchClockIcon sx={{fontSize: '20px', color: 'warning.dark'}} /> : <CheckCircleOutlineIcon sx={{fontSize: '20px', color: 'success.main'}}  />}
@@ -124,7 +124,7 @@ export default function SprintBoardSideView() {
                                         ))}
                                     </Grid>
                                 </ListItem>
-                            </>
+                            </div>
                         ))}
                     </List>
                 </Box>

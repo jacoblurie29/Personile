@@ -13,6 +13,8 @@ import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { addTaskToSprintAsync, updateTaskAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
 import { Task } from "app/models/task";
+import NewEditTaskMilestoneSelect from "./ NewEditTaskMilestoneSelect";
+import { Board } from "app/models/board";
 
 
 interface Props {
@@ -39,6 +41,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
     const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
     const userId = useAppSelector(state => state.user.userData?.userEntityId);
     const sprints = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId === currentBoard)?.sprints);
+    const board = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId == currentBoard));
     const dispatch = useAppDispatch();
 
 
@@ -72,7 +75,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 tags: tags,
                 effort: formData.effort,
                 color: 0,
-                milestoneIds: [] as string[]
+                milestoneIds: formData.milestones.join("|")
              }
              console.log(newTask)
              setNewTask(false);
@@ -96,7 +99,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                     tags: tags,
                     effort: formData.effort,
                     color: 0,
-                    milestoneIds: editTask.milestoneIds
+                    milestoneIds: formData.milestones.join("|")
                 }
 
                 var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
@@ -111,7 +114,9 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 var currentTaskId = newEditTask.taskEntityId;
                 if(futureTaskEntity === undefined) return;
 
-                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
+                console.log(newEditTask)
+                
+                //dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
             }
     }
 
@@ -128,6 +133,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                                 <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
                                 <NewEditTaskAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
                                 <NewEditTaskAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
+                                <NewEditTaskMilestoneSelect editvalue={editTask?.milestoneIds} name="milestones" label="milestones" placeholder="Milestones" board={board || {} as Board} control={control}/>
                                 <Grid container alignItems="center" display='flex'
                                         justifyContent="center" sx={{marginBottom: '10px'}}>
                                     <Grid item xs={2} display= 'flex' justifyContent='center'>
@@ -138,7 +144,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                                     </Grid>
                                 </Grid>
                                 <Box width='90%' flexGrow={1} margin='auto'>
-                                <Typography variant="caption" sx={{color: 'white'}}>Estimated effort &#40;{currentEffort}&#41;</Typography>
+                                <Typography variant="caption" sx={{color: 'grey.600'}}>Estimated effort &#40;{currentEffort}&#41;</Typography>
                                     <NewEditTaskEffortSlider name="effort" control={control}/>
                                 </Box>
                                 <Grid container sx={{display: 'flex', width: 'auto', marginLeft: '5px', marginBottom:'10px'}}>
