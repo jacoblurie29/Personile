@@ -6,7 +6,7 @@ interface Props {
     index: number
 }
 
-export default function NewTaskButton({addNewTaskOnClick, index}: Props) {
+export default function PageLayoutNewTaskButton({addNewTaskOnClick, index}: Props) {
 
     return (
         <Grow in={true} timeout={(index + 1) * 500}>

@@ -89,14 +89,14 @@ namespace API.Controllers
                 BoardEntityId = Guid.NewGuid().ToString(),
                 StartDate = null,
                 EndDate = null,
-                Sprints = null,
+                Sprints = new List<SprintEntity>()
             };
 
             SprintEntity defaultSprint = new SprintEntity{
                 SprintEntityId = Guid.NewGuid().ToString(),
                 StartDate = null,
                 EndDate = null,
-                Tasks = null,
+                Tasks = new List<TaskEntity>(),
             };
 
             var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)

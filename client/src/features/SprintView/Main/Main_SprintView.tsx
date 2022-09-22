@@ -1,10 +1,9 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { useState } from "react";
-import { useAppSelector } from "../../app/store/configureStore";
-import SprintBoardSideView from "./SprintBoardSideView";
-import SprintTopCardView from "./SprintTopCardView";
-import TaskColumnView from "./TaskColumnView";
-
+import { useAppSelector } from "../../../app/store/configureStore";
+import PageLayoutTaskColumnView from "../PageLayout/PageLayout_TaskColumnView";
+import SideViewTabbedSection from "../SideView/SideView_TabbedSection";
+import TopViewSprintInfoCard from "../TopView/TopView_SprintInfoCard";
 
 // "{tasks}: Props" destructures the props for the fields inside
 export default function SprintView() {
@@ -40,7 +39,7 @@ export default function SprintView() {
                     display='flex'
                     flexDirection='row'>
                     <Grid item xs justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
-                        <SprintTopCardView />
+                        <TopViewSprintInfoCard />
                     </Grid>
                 </Grid>
                 <Grid container 
@@ -49,17 +48,17 @@ export default function SprintView() {
                     display='flex'
                     >
                         <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
-                            <TaskColumnView sprintId={currentSprint || ""} stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+                            <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                 return task.currentState === 0;
                             }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId} />
                         </Grid>  
                         <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} margin='10px'>
-                            <TaskColumnView sprintId={currentSprint || ""} stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+                            <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                 return task.currentState === 1;
                             }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                         </Grid>
                         <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} margin='10px'>
-                            <TaskColumnView sprintId={currentSprint || ""} stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
+                            <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                 return task.currentState === 2;
                             }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                         </Grid>
@@ -67,7 +66,7 @@ export default function SprintView() {
             </Grid>
             <Grid item lg={3} md={4}>
                 <Box  sx={{backgroundColor: '#D9E8F9', borderRadius: '15px', marginLeft: '20px', height: '100%', width: '90%', padding: '10px'}}>
-                    <SprintBoardSideView />
+                    <SideViewTabbedSection />
                 </Box>
             </Grid>
         </Grid>

@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { sprintSlice } from "../../features/SprintView/sprintSlice";
+import { sprintSlice } from "../../features/SprintView/Redux/sprintSlice";
 import { userSlice } from "../state/userSlice";
 
 //export function configureStore() {

@@ -10,7 +10,7 @@ import { SubTask } from "app/models/subTask";
 import { FieldValues } from "react-hook-form";
 import { history } from "../..";
 import { store } from "app/store/configureStore";
-import { setCurrentBoard, setCurrentSprint } from "features/SprintView/sprintSlice";
+import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
 

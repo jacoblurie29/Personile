@@ -10,7 +10,7 @@ interface Props {
 }
 
 
-export default function TaskMilestonesView({task}: Props) {
+export default function TaskMilestonesSubView({task}: Props) {
 
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);

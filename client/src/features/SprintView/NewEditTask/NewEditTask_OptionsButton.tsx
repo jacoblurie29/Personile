@@ -13,7 +13,7 @@ interface Props {
     isEdit: boolean
 }
 
-export default function AddTaskOptionsButton({setNewTask, isEdit, task, toggleEditTask}: Props) {
+export default function NewEditTaskOptionsButton({setNewTask, isEdit, task, toggleEditTask}: Props) {
 
     const [alignment, setAlignment] = useState<string | null>('left');
 

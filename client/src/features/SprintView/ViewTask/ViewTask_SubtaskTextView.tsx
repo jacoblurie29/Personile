@@ -6,7 +6,7 @@ interface formProps extends UseControllerProps {
     editSubTaskValue: string
 }
 
-export default function EditSubtaskTextField(props: formProps) {
+export default function ViewTaskSubtaskTextView(props: formProps) {
 
     const {fieldState, field} = useController({...props, defaultValue: ""})
 

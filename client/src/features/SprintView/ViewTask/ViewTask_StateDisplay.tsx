@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PunchClockIcon from '@mui/icons-material/PunchClock';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -8,7 +8,7 @@ interface Props {
     title: string
 }
 
-export default function TaskStateDisplay({currentState, title}: Props) {
+export default function ViewTaskStateDisplay({currentState, title}: Props) {
 
     return (
         <Grid container display='flex' flexGrow={1} sx={{padding: '5px'}} >

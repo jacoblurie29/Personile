@@ -1,15 +1,15 @@
 import { Accordion, AccordionSummary, Box, Typography, Divider, AccordionDetails, Grid, Zoom } from "@mui/material";
 import { LoadingButton } from '@mui/lab';
-import TaskMoreDetails from "./TaskMoreDetails";
-import { Task } from "../../app/models/task";
-import { useAppSelector, useAppDispatch } from "../../app/store/configureStore";
-import { removeFromIsExpanded, addToIsExpanded } from "./sprintSlice";
-import { removeTaskFromSprintAsync, updateTaskAsync } from "../../app/state/userSlice";
-import StateToggleButton from "./StateToggleButton";
+import ViewTaskMoreDetails from "./ViewTask_MoreDetails";
+import { Task } from "../../../app/models/task";
+import { useAppSelector, useAppDispatch } from "../../../app/store/configureStore";
+import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
+import { removeTaskFromSprintAsync, updateTaskAsync } from "../../../app/state/userSlice";
+import ViewTaskStateToggleButton from "./ViewTask_StateToggleButton";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import TaskStateDisplay from "./TaskStateDisplay";
+import ViewTaskStateDisplay from "./ViewTask_StateDisplay";
 import { useState } from "react";
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 
 
 
-export default function TaskCardView({task, toggleEditTask, indexForAnimation}: Props) {
+export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: Props) {
 
     const {status} = useAppSelector(state => state.user)
     const {currentSprint, isExpanded: expanded, currentBoard } = useAppSelector(state => state.sprintView);
@@ -64,7 +64,7 @@ export default function TaskCardView({task, toggleEditTask, indexForAnimation}: 
             <Accordion elevation={2} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
                 <AccordionSummary>
                     <Box flexGrow={1}>
-                        <TaskStateDisplay title={task.name} currentState={task.currentState}/>
+                        <ViewTaskStateDisplay title={task.name} currentState={task.currentState}/>
                         <Typography sx={{ fontSize: 14, marginLeft: '4%', width:'90%' }} color="grey.500">
                             {task.description}
                         </Typography> 
@@ -72,11 +72,11 @@ export default function TaskCardView({task, toggleEditTask, indexForAnimation}: 
                 </AccordionSummary>
                 <Divider />
                 <AccordionDetails sx={{alignItems: 'center'}}>
-                <TaskMoreDetails focusedTask={task} />
+                <ViewTaskMoreDetails focusedTask={task} />
                 <Grid container sx={{display: 'flex', width: 'auto'}}>
                     <Grid item xs={6}>
                         <Box sx={{flexGrow: 1, textAlign: 'left'}}>
-                            <StateToggleButton startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
+                            <ViewTaskStateToggleButton startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
                         </Box>
                     </Grid>
                     <Grid item xs={6}>

@@ -167,6 +167,8 @@ namespace API.Controllers
 
             var CurrentUser = await RetrieveUserEntity(userId);
 
+            
+
             var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 
             var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();

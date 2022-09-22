@@ -3,7 +3,7 @@ import { useState } from "react";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PunchClockIcon from '@mui/icons-material/PunchClock';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { Task } from "../../app/models/task";
+import { Task } from "app/models/task";
 
 interface Props {
     startingState: number,
@@ -11,7 +11,7 @@ interface Props {
     handleChangeState: (currentTask: Task, currentState: number, newState: number) => void
 }
 
-export default function StateToggleButton({task, startingState, handleChangeState} : Props) {
+export default function ViewTaskStateToggleButton({task, startingState, handleChangeState} : Props) {
 
     const [alignment, setAlignment] = useState<string | null>('left');
 

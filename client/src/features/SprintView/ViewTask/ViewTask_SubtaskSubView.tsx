@@ -1,24 +1,24 @@
 import { Box, Checkbox, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, ListSubheader } from "@mui/material";
-import { Task } from "../../app/models/task";
 import CircleIcon from '@mui/icons-material/Circle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from "react";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import AddSubtaskTextField from "./AddSubtaskTextField";
+import ViewTaskEditSubtaskTextField from "./ViewTask_EditSubtaskTextField";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { addSubTaskToTaskAsync, removeSubtaskFromTaskAsync, updateSubtaskAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
-import EditSubtaskTextField from "./EditSubtaskTextField";
+import ViewTaskSubtaskTextView from "./ViewTask_SubtaskTextView";
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Task } from "app/models/task";
 
 interface Props {
     task: Task,
     isDialog: boolean
 }
 
-export default function SubTasksView({task, isDialog}: Props) {
+export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
 
     const methods = useForm();
 
@@ -196,7 +196,7 @@ export default function SubTasksView({task, isDialog}: Props) {
                                     disablePadding
                                 >
                                 <CircleIcon sx={{fontSize: '10px', ml: "10px", color: subTask.status === "Completed" ? "success.main" : "error.main"}}/>
-                                    <EditSubtaskTextField control={control} name="editSubtask" setEditSubTaskValue={setEditSubtaskValue} editSubTaskValue={editSubtaskValue}/>
+                                    <ViewTaskSubtaskTextView control={control} name="editSubtask" setEditSubTaskValue={setEditSubtaskValue} editSubTaskValue={editSubtaskValue}/>
                                 <IconButton type="submit" sx={{margin: 'auto', padding: '1px',marginLeft:'6px'}} size="small" ><PublishedWithChangesIcon sx={{fontSize: '20px'}} /></IconButton>
                                 <IconButton sx={{margin: 'auto', padding: '1px', marginLeft: '2px', marginRight: '2px' }} onClick={() => deleteSubtask(subTask.subTaskEntityId)} size="small" ><DeleteIcon sx={{fontSize: '20px'}} /></IconButton>
                                 <IconButton sx={{margin: 'auto', padding: '1px', marginRight:'6px'}} size="small" onClick={cancelEditSubtask} ><ClearIcon sx={{fontSize: '20px'}} /></IconButton>
@@ -218,7 +218,7 @@ export default function SubTasksView({task, isDialog}: Props) {
                             disablePadding
                         >
                         <CircleIcon sx={{fontSize: '10px', ml: "10px", color: '#888888'}}/>
-                            <AddSubtaskTextField control={control} name="newSubtask" setNewSubTaskValue={setNewSubTaskValue} newSubTaskValue={newSubTaskValue}/>
+                            <ViewTaskEditSubtaskTextField control={control} name="newSubtask" setNewSubTaskValue={setNewSubTaskValue} newSubTaskValue={newSubTaskValue}/>
                         <IconButton type="submit" sx={{margin: 'auto', padding: '1px', marginRight:'14px', marginLeft:'14px'}} size="small" ><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>
                     </ListItem>
                     }

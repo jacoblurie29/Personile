@@ -19,7 +19,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import SprintView from 'features/SprintView/SprintView';
+import SprintView from 'features/SprintView/Main/Main_SprintView';
 import TodayView from 'features/TodayView/TodayView';
 import NotFound from 'app/errors/NotFound';
 import ServerError from 'app/errors/ServerError';
@@ -29,7 +29,7 @@ import LoadingComponent from './LoadingComponent';
 import { signOut } from 'app/state/userSlice';
 import BoardView from 'features/BoardsView/BoardView';
 import { Typography } from '@mui/material';
-import SprintBoardTopView from 'features/SprintView/SprintBoardTopView';
+import TopView_LayoutBox from 'features/SprintView/TopView/TopView_LayoutBox';
 
 const drawerWidth = 230;
 
@@ -222,7 +222,7 @@ export default function DashboardNavigation({component}: Props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
         <Box sx={{backgroundColor: 'background.default', width: '100%', height: '8%'}}>     
-          {!loading && component === "sprint" && <SprintBoardTopView />}
+          {!loading && component === "sprint" && <TopView_LayoutBox />}
         </Box>
         {/* Below handles the routing */}
           {loading && <LoadingComponent />}       

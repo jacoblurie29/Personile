@@ -6,7 +6,7 @@ import { LoadingButton } from "@mui/lab";
 import EditIcon from '@mui/icons-material/Edit';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { setCurrentBoard, setCurrentSprint } from "features/SprintView/sprintSlice";
+import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { useHistory } from "react-router-dom";
 import CircleIcon from '@mui/icons-material/Circle';
 import { formatDateString } from "app/util/dateUtil";
@@ -29,24 +29,27 @@ export default function BoardCard({board, setNewBoardState, indexForAnimation, a
       
         dispatch(setCurrentBoard(boardId));
 
-        console.log(boards)
+        //console.log(boards)
         
         var currentBoardSprints = boards?.find(b => b.boardEntityId === boardId)?.sprints;
 
-        console.log(currentBoardSprints)
+        //console.log(currentBoardSprints)
 
         if(currentBoardSprints === undefined) {
           return;
         }
 
+
+        // TODO FIX THIS (need to fix where board lands if current date is not within the board bounds)
         var setSprint =  currentBoardSprints.find(s => {
             return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 8539999) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 8539999
-        })?.sprintEntityId; 
+        })?.sprintEntityId || currentBoardSprints[0]; 
 
-
+        
         if(setSprint === undefined) {
           return;
         }
+        
 
         dispatch(setCurrentSprint(setSprint))
 
@@ -124,7 +127,7 @@ export default function BoardCard({board, setNewBoardState, indexForAnimation, a
               </List>
               <Box sx={{flexGrow: 1, textAlign: 'center'}}>
                   <LoadingButton key={"edit-" + board.boardEntityId} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"0px", width: '50%'}} onClick={() => setNewBoardState(true, board)} ><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
-                  <LoadingButton key={"delete-" + board.boardEntityId} variant='contained' sx={{borderRadius:"0px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)', width: '50%'}} onClick={() => {handleOpenBoard(board.boardEntityId)}}><LaunchIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                  <LoadingButton key={"launch-" + board.boardEntityId} variant='contained' sx={{borderRadius:"0px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)', width: '50%'}} onClick={() => {handleOpenBoard(board.boardEntityId)}}><LaunchIcon sx={{color: 'background.paper'}} /></LoadingButton>
               </Box>
           </Card>
         </Zoom>

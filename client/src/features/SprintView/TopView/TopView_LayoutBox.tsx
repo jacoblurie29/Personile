@@ -2,7 +2,7 @@ import { Box, Card, Grid, Typography, useTheme } from "@mui/material";
 import { useAppSelector } from "app/store/configureStore";
 
 
-export default function SprintBoardTopView() {
+export default function TopView_LayoutBox() {
 
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);

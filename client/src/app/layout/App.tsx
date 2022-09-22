@@ -6,7 +6,7 @@ import { createTheme, CssBaseline} from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import { useEffect } from 'react';
 import { fetchCurrentUserAsync } from 'app/state/userSlice';
-import { setLoading } from 'features/SprintView/sprintSlice';
+import { setLoading } from 'features/SprintView/Redux/sprintSlice';
 import HomeView from 'features/HomeView/HomeView';
 import LoginView from 'features/AccountViews/LoginView';
 import RegisterView from 'features/AccountViews/RegisterView';

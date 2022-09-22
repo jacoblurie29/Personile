@@ -1,8 +1,8 @@
 import { Grid, Typography, Chip, LinearProgress, linearProgressClasses, styled, Tooltip, Box } from "@mui/material";
 import { useAppSelector } from "app/store/configureStore";
 import { Task } from "../../app/models/task";
-import SubTasksView from "./SubTasksView";
-import TaskMilestonesView from "./TaskMilestonesView";
+import ViewTaskSubtaskSubView from "./ViewTask_SubtaskSubView";
+import TaskMilestonesSubView from "./ViewTask_MilestonesSubView";
 
 interface Props {
     focusedTask: Task,
@@ -20,7 +20,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     },
 }));
 
-export default function TaskMoreDetails({ focusedTask }: Props) {
+export default function ViewTaskMoreDetails({ focusedTask }: Props) {
 
 
     const { currentBoard } = useAppSelector(state => state.sprintView);
@@ -58,13 +58,13 @@ export default function TaskMoreDetails({ focusedTask }: Props) {
             </Box>
             }
             <Typography variant="caption" sx={{color: 'grey.600'}}>Milestones</Typography>
-            <TaskMilestonesView task={focusedTask} />
+            <TaskMilestonesSubView task={focusedTask} />
             <Typography variant="caption" sx={{color: 'grey.600'}}>Estimated effort</Typography>
             <Tooltip title={focusedTask.effort} arrow>
                 <BorderLinearProgress sx={{mt: '2px', mb: '12px', boxShadow: '1px 2px 7px #777777' }} variant="determinate" value={focusedTask.effort * 10} />
             </Tooltip>
             <Typography variant="caption" sx={{color: 'grey.600'}}>Subtasks&nbsp;({focusedTask.subTasks.length})</Typography>
-            <SubTasksView task={focusedTask} isDialog={true} />         
+            <ViewTaskSubtaskSubView task={focusedTask} isDialog={true} />         
         </Box>
     )
 }

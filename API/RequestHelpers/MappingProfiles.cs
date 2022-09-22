@@ -14,13 +14,11 @@ namespace API.RequestHelpers
             CreateMap<BoardEntity, BoardDto>();
             CreateMap<GoalEntity, GoalDto>();
             CreateMap<MilestoneEntity, MilestoneDto>()
-                .ForMember(dto => dto.TaskIds, opt => opt.MapFrom(x => x.Tasks.Select(t => t.TaskEntityId).ToList()));
-
+                .ForMember(dto => dto.TaskIds, opt => opt.MapFrom(x => x.Tasks.Select(t => t.TaskEntityId)));
             CreateMap<SprintEntity, SprintDto>();
             CreateMap<TaskEntity, TaskDto>()
-                .ForMember(dto => dto.MilestoneIds, opt => opt.MapFrom(x => x.Milestones.Select(t => t.MilestoneEntityId).ToList()));
+                .ForMember(dto => dto.MilestoneIds, opt => opt.MapFrom(x => string.Join("|", x.Milestones.Select(t => t.MilestoneEntityId).ToList())));
             CreateMap<SubTaskEntity, SubTaskDto>();
-
             CreateMap<BoardDto, BoardEntity>();
             CreateMap<GoalDto, GoalEntity>();
             CreateMap<MilestoneDto, MilestoneEntity>();

@@ -1,20 +1,20 @@
 import { Box, Card, Grid, Switch, Typography, Zoom } from "@mui/material";
-import NewEditTaskAutoComplete from "./NewEditTaskAutoComplete";
-import WhiteTransparentTextField from "./NewEditTaskTextField";
+import NewEditTaskAutoComplete from "./NewEditTask_AutoComplete";
 import { useState } from "react";
-import AddTaskOptionsButton from "./AddTaskOptionsButton";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import NewEditTaskDatePicker from "./NewEditTaskDatePicker";
-import NewEditTaskEffortSlider from "./NewEditTaskEffortSlider";
+import NewEditTaskDatePicker from "./NewEditTask_DatePicker";
+import NewEditTaskEffortSlider from "./NewEditTask_EffortSlider";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { validationSchema } from "./newTaskValidation";
+import { validationSchema } from "../Validation/newTaskValidation";
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { addTaskToSprintAsync, updateTaskAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
 import { Task } from "app/models/task";
-import NewEditTaskMilestoneSelect from "./ NewEditTaskMilestoneSelect";
 import { Board } from "app/models/board";
+import NewEditTaskTextField from "./NewEditTask_TextField";
+import NewEditTaskMilestoneSelect from "./NewEditTask_MilestoneSelect";
+import NewEditTaskOptionsButton from "./NewEditTask_OptionsButton";
 
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
     toggleEditTask: (taskId: string) => void
 }
 
-export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask}: Props) {
+export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: Props) {
 
 
     const methods = useForm({
@@ -59,9 +59,10 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
         
         var tags = formData.tags === [] ? "" : formData.taskTags.join("|");
         var links = formData.links === [] ? "" : formData.taskLinks.join("|");
+        var milestones = formData.milestones === [] ? "" : formData.milestones.join("|");
 
 
-
+        // undefined: newTask, not undefined: updatedTask
         if(editTask === undefined) {
             var newTask = {
                 taskEntityId: uuidv4(),
@@ -75,49 +76,54 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                 tags: tags,
                 effort: formData.effort,
                 color: 0,
-                milestoneIds: formData.milestones.join("|")
+                milestoneIds: milestones
              }
              console.log(newTask)
              setNewTask(false);
+             console.log("DEBUG: " + userId + " " + currentBoard + " " + currentSprint);
              dispatch(addTaskToSprintAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")});
         
-            } else {
-                if(editTask === undefined) return;
+        } else {
+            if(editTask === undefined) return;
 
+            var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
 
-                var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString().substring(0, 15);
+            var currentTaskEntity = currentSprintEntity?.tasks.find(t => t.taskEntityId === editTask.taskEntityId)
+            if(currentTaskEntity === undefined) return;
 
-                var newEditTask = {
-                    taskEntityId: editTask.taskEntityId,
-                    name: formData.name,
-                    description: formData.description,
-                    links: links,
-                    dateCreated: editTask.dateCreated.substring(0, 15),
-                    dateFinished: "",
-                    dueDate: dueDate,
-                    currentState: editTask.currentState,
-                    tags: tags,
-                    effort: formData.effort,
-                    color: 0,
-                    milestoneIds: formData.milestones.join("|")
-                }
+            var currentSubtasks = currentTaskEntity?.subTasks;
+            if(currentSubtasks === undefined) return;
 
-                var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
-
-                var currentTaskEntity = currentSprintEntity?.tasks.find(t => t.taskEntityId === editTask.taskEntityId)
-                if(currentTaskEntity === undefined) return;
-
-                var currentSubtasks = currentTaskEntity?.subTasks;
-                if(currentSubtasks === undefined) return;
-
-                var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
-                var currentTaskId = newEditTask.taskEntityId;
-                if(futureTaskEntity === undefined) return;
-
-                console.log(newEditTask)
-                
-                //dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
+            if(editTask == currentTaskEntity) {
+                toggleEditTask(currentTaskEntity.taskEntityId);
+                return;
             }
+
+            var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString().substring(0, 15);
+
+            var newEditTask = {
+                taskEntityId: editTask.taskEntityId,
+                name: formData.name,
+                description: formData.description,
+                links: links,
+                dateCreated: editTask.dateCreated.substring(0, 15),
+                dateFinished: "",
+                dueDate: dueDate,
+                currentState: editTask.currentState,
+                tags: tags,
+                effort: formData.effort,
+                color: 0,
+                milestoneIds: formData.milestones.join("|")
+            }
+
+            var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
+            var currentTaskId = newEditTask.taskEntityId;
+            if(futureTaskEntity === undefined) return;
+
+
+            
+            dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => toggleEditTask(newEditTask.taskEntityId!));;
+        }
     }
 
 
@@ -129,8 +135,8 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                     <form onSubmit={handleSubmit((data) => handleAddOrUpdateTask(data))}>
                         <Grid container margin='10px' columns={24}>
                             <Grid item xs={21}>
-                                <WhiteTransparentTextField control={control} label="Task Name" name="name" editvalue={editTask?.name}/>
-                                <WhiteTransparentTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
+                                <NewEditTaskTextField control={control} label="Task Name" name="name" editvalue={editTask?.name}/>
+                                <NewEditTaskTextField control={control} label="Description" name="description" lines={3} editvalue={editTask?.description}/>
                                 <NewEditTaskAutoComplete control={control} label="Tags" placeholder="Tags" name="taskTags" editvalue={editTask?.tags.split("|")}/>
                                 <NewEditTaskAutoComplete control={control} label="Links" placeholder="Links" name="taskLinks" editvalue={editTask?.links.split("|")}/>
                                 <NewEditTaskMilestoneSelect editvalue={editTask?.milestoneIds} name="milestones" label="milestones" placeholder="Milestones" board={board || {} as Board} control={control}/>
@@ -150,7 +156,7 @@ export default function TaskCardViewEditor({setNewTask, editTask, toggleEditTask
                                 <Grid container sx={{display: 'flex', width: 'auto', marginLeft: '5px', marginBottom:'10px'}}>
                                     <Grid item xs={12}>
                                         <Box sx={{flexGrow: 1, textAlign: 'right', marginTop: '5px'}}>
-                                            <AddTaskOptionsButton setNewTask={setNewTask} isEdit={editTask === undefined} toggleEditTask={toggleEditTask} task={editTask}/>
+                                            <NewEditTaskOptionsButton setNewTask={setNewTask} isEdit={editTask === undefined} toggleEditTask={toggleEditTask} task={editTask}/>
                                         </Box>
                                     </Grid>
                                 </Grid>
