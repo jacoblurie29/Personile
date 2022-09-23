@@ -27,7 +27,7 @@ import SettingsView from 'features/SettingsView/SettingsView';
 import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import LoadingComponent from './LoadingComponent';
 import { signOut } from 'app/state/userSlice';
-import BoardView from 'features/BoardsView/BoardView';
+import BoardView from 'features/BoardsView/Main/Main_BoardView';
 import { Typography } from '@mui/material';
 import TopView_LayoutBox from 'features/SprintView/TopView/TopView_LayoutBox';
 

@@ -1,10 +1,10 @@
 import { Box, Fade, Grid, Grow, IconButton, Zoom } from "@mui/material";
 import { useAppSelector } from "app/store/configureStore";
-import BoardCard from "./BoardCard";
+import ViewBoardCard from "../ViewBoard/ViewBoard_Card";
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from "react";
-import NewBoard from "./NewBoard";
 import { Board } from "app/models/board";
+import NewBoardCard from "../NewBoard/NewBoard_Card";
 
 export default function BoardView() {
 
@@ -25,7 +25,7 @@ export default function BoardView() {
             <Grid container>
                 {boards?.map((board, index) => (
                     <Grid item xl={4} md={6} xs={12} sx={{paddingTop: '20px'}} key={"board-" + index}>
-                        <BoardCard board={board} setNewBoardState={setNewBoardState} indexForAnimation={index} animationBoolean={true}  />
+                        <ViewBoardCard board={board} setNewBoardState={setNewBoardState} indexForAnimation={index} animationBoolean={true}  />
                     </Grid>
                 ))}
                 <Zoom in={true} timeout={boards?.length === undefined ? 300 : (boards.length) * 500}> 
@@ -37,7 +37,7 @@ export default function BoardView() {
                         </Box>
                     </Grid>
                 </Zoom>
-                {newBoard && <NewBoard setNewBoardState={setNewBoardState} editBoard={editBoard} />}
+                {newBoard && <NewBoardCard setNewBoardState={setNewBoardState} editBoard={editBoard} />}
             </Grid>
         </Box>
 

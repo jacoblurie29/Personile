@@ -1,8 +1,8 @@
 import { Grid, Typography, Chip, LinearProgress, linearProgressClasses, styled, Tooltip, Box } from "@mui/material";
 import { useAppSelector } from "app/store/configureStore";
-import { Task } from "../../app/models/task";
 import ViewTaskSubtaskSubView from "./ViewTask_SubtaskSubView";
 import TaskMilestonesSubView from "./ViewTask_MilestonesSubView";
+import { Task } from "app/models/task";
 
 interface Props {
     focusedTask: Task,

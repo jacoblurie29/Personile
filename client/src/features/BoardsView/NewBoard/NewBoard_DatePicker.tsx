@@ -13,7 +13,7 @@ interface Props {
     index: number,
     onChange: (index: number, value: string) => void
 }
-export default function NewEditTaskDatePicker(formProps: Props) {
+export default function NewBoardDatePicker(formProps: Props) {
 
     const enabledStyles = { 
         "& .MuiInputLabel-root": {color: 'grey.500'},

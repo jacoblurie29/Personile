@@ -1,9 +1,9 @@
 import { Typography, Card, Grid, useTheme, Box, IconButton, Stack } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { setCurrentSprint } from "./Redux/sprintSlice";
 import { formatDateString, formatDateStringNoYear } from "app/util/dateUtil";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { setCurrentSprint } from "../Redux/sprintSlice";
 
 export default function TopViewSprintInfoCard() {
 
@@ -19,9 +19,6 @@ export default function TopViewSprintInfoCard() {
         var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "");
         var newSprint = sprints?.find(s => Date.parse(s.endDate) > currentSprintStartTime - 95040000 && Date.parse(s.endDate) < currentSprintStartTime);
 
-        console.log(newSprint?.sprintEntityId)
-        console.log(sprints !== undefined && Date.parse(sprints[1].endDate))
-
         if (newSprint !== undefined) {
             dispatch(setCurrentSprint(newSprint.sprintEntityId));
         }
@@ -32,8 +29,7 @@ export default function TopViewSprintInfoCard() {
 
         var currentSprintEndTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "");
         var newSprint = sprints?.find(s => Date.parse(s.startDate) < currentSprintEndTime + 95040000 && Date.parse(s.startDate) > currentSprintEndTime);
-        
-        console.log(newSprint)
+    
 
         /*
             This will be where we generate new sprints for the group. The default group will have 5 sprints. If you get to a sprint that doesn't have a 

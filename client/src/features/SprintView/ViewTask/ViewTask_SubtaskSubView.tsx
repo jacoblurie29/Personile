@@ -20,18 +20,18 @@ interface Props {
 
 export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
 
+    // REDUX AND FORMS
     const methods = useForm();
-
+    const dispatch = useAppDispatch();
     const { control, handleSubmit } = useForm();
+    const userId = useAppSelector(state => state.user.userData?.userEntityId);
 
+    // STATE CONSTANTS
     const [newSubTask, setNewSubTask] = useState<boolean>(false);
     const [newSubTaskValue, setNewSubTaskValue] = useState<string>("");
     const [isEditSubtask, setIsEditSubtask] = useState<string>("");
     const [editSubtaskValue, setEditSubtaskValue] = useState<string>("");
-
-    const dispatch = useAppDispatch();
     const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
-    const userId = useAppSelector(state => state.user.userData?.userEntityId);
 
     const handleSubtaskState = (value: number) => () => {
 
@@ -40,31 +40,24 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         if(currentBoard == null) return;
 
         var subTaskId = (value + 1) + "-" + task.taskEntityId;
-
         var subtask = task.subTasks.find(s => s.subTaskEntityId == subTaskId);
-
         if(subtask == undefined) return;
 
         var newSubTask = {...subtask};
-        
         if(newSubTask == null) return;
-
-        
 
         if(newSubTask.status == "Incomplete") {
             newSubTask.status = "Completed";
         } else {
             newSubTask.status = "Incomplete";
         }
-        console.log(subtask)
+
         dispatch(updateSubtaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, subtaskId: subTaskId, updatedSubtask: newSubTask}))
 
     };
 
     const handleNewSubtask = (data: FieldValues) => {
         
-        console.log(data);
-
         if(userId == null) return;
         if(currentSprint == null) return;
         if(currentBoard == null) return;
@@ -80,8 +73,6 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
             setNewSubTaskValue("");
             return;
         }
-
-        console.log(newSubtask);
 
         setNewSubTask(false);
         setNewSubTaskValue("");
@@ -108,16 +99,11 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         if(currentBoard == null) return;
 
         var subtask = task.subTasks.find(s => s.subTaskEntityId == updateSubtaskId);
-
         if(subtask == undefined) return;
 
         var newSubTask = {...subtask};
-        
         if(newSubTask == null) return;
-
         newSubTask.details = editSubtaskValue;
-
-        console.log(newSubTask);
 
         setEditSubtaskValue("");
         setIsEditSubtask("");
@@ -138,7 +124,6 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         if(currentBoard == null) return;
 
         var subtask = task.subTasks.find(s => s.subTaskEntityId == deleteSubtaskId);
-
         if(subtask == undefined) return;
 
         dispatch(removeSubtaskFromTaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, subtaskId: subtask.subTaskEntityId}))
@@ -157,82 +142,81 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
     return (
         <>
             <List dense sx={{ width: '100%', borderRadius: '5px', }} subheader={!isDialog && <ListSubheader sx={{backgroundColor: 'rgba(256, 256, 256, 0)'}}>Subtasks</ListSubheader>}>  
-            {task.subTasks.map((subTask, index) => {
-                const labelId = `checkbox-list-secondary-label-${index}`;
-                return (
-                <div key={index + 'div'}>
-                    {!isEditSubtask.includes(subTask.subTaskEntityId) && 
-                    <ListItem
-                        key={subTask.subTaskEntityId}
-                        sx={{backgroundColor: subTask.status === "Completed" ? 'success.light' : 'error.light', borderRadius: task.subTasks.length === 1 ? '5px 5px 0px 0px' : index === 0 ? '5px 5px 0 0'  : ''}}
-                        secondaryAction={
-                            <Checkbox
-                                key={subTask.subTaskEntityId + '-checkbox'}
-                                edge="end"
-                                checked={subTask.status === "Completed"}
-                                onChange={handleSubtaskState(index)}
-                                sx ={{
-                                    color: 'grey',
-                                    '&.Mui-checked': {
-                                    color: 'rgba(30,177,121,1)',
-                                    },
-                                }}
-                            />
+                {task.subTasks.map((subTask, index) => {
+                    const labelId = `checkbox-list-secondary-label-${index}`;
+                    return (
+                    <div key={index + 'div'}>
+                        {!isEditSubtask.includes(subTask.subTaskEntityId) && 
+                        <ListItem
+                            key={subTask.subTaskEntityId}
+                            sx={{backgroundColor: subTask.status === "Completed" ? 'success.light' : 'error.light', borderRadius: task.subTasks.length === 1 ? '5px 5px 0px 0px' : index === 0 ? '5px 5px 0 0'  : ''}}
+                            secondaryAction={
+                                <Checkbox
+                                    key={subTask.subTaskEntityId + '-checkbox'}
+                                    edge="end"
+                                    checked={subTask.status === "Completed"}
+                                    onChange={handleSubtaskState(index)}
+                                    sx ={{
+                                        color: 'grey',
+                                        '&.Mui-checked': {
+                                        color: 'rgba(30,177,121,1)',
+                                        },
+                                    }}
+                                />
 
-                        }
-                        disablePadding
-                    >
-                        <CircleIcon key={subTask.subTaskEntityId + '-icon'} sx={{fontSize: '10px', ml: "10px", color: subTask.status === "Completed" ? "success.main" : "error.main"}} />
-                        <ListItemButton key={subTask.subTaskEntityId + '-listItemButton'} onClick={() => {handleEditSubtaskToggle(subTask.subTaskEntityId)}} >
-                            <ListItemText key={subTask.subTaskEntityId + '-listItemText'} id={labelId} primary={subTask.details} sx={{ my: 0 }}  />
-                        </ListItemButton>
-                    </ListItem>
-                    }
-                    {isEditSubtask.includes(subTask.subTaskEntityId) && 
-                    <FormProvider {...methods}>
-                        <form onSubmit={handleSubmit((data) => {handleUpdateSubtask(subTask.subTaskEntityId)})}>
-                            <ListItem
-                                    sx={{backgroundColor: subTask.status === "Completed" ? 'success.light' : 'error.light', borderRadius: getEditTaskBorders(index)}}
-                                    disablePadding
-                                >
-                                <CircleIcon sx={{fontSize: '10px', ml: "10px", color: subTask.status === "Completed" ? "success.main" : "error.main"}}/>
-                                    <ViewTaskSubtaskTextView control={control} name="editSubtask" setEditSubTaskValue={setEditSubtaskValue} editSubTaskValue={editSubtaskValue}/>
-                                <IconButton type="submit" sx={{margin: 'auto', padding: '1px',marginLeft:'6px'}} size="small" ><PublishedWithChangesIcon sx={{fontSize: '20px'}} /></IconButton>
-                                <IconButton sx={{margin: 'auto', padding: '1px', marginLeft: '2px', marginRight: '2px' }} onClick={() => deleteSubtask(subTask.subTaskEntityId)} size="small" ><DeleteIcon sx={{fontSize: '20px'}} /></IconButton>
-                                <IconButton sx={{margin: 'auto', padding: '1px', marginRight:'6px'}} size="small" onClick={cancelEditSubtask} ><ClearIcon sx={{fontSize: '20px'}} /></IconButton>
-                            </ListItem>
-                        </form>
-                    </FormProvider>
-                    }
-                    {index !== task.subTasks.length - 1 &&
-                        <Divider sx={{backgroundColor: 'grey.50'}} key={subTask.subTaskEntityId + '-divider'} />
-                    }
-                </div>
-                );
-            })}
-            <FormProvider {...methods}>
-                <form onSubmit={handleSubmit((data) => {handleNewSubtask(data)})}>
-                    {newSubTask && 
-                    <ListItem
-                            sx={{backgroundColor: 'grey.50', borderRadius: addTaskBorders}}
+                            }
                             disablePadding
                         >
-                        <CircleIcon sx={{fontSize: '10px', ml: "10px", color: '#888888'}}/>
-                            <ViewTaskEditSubtaskTextField control={control} name="newSubtask" setNewSubTaskValue={setNewSubTaskValue} newSubTaskValue={newSubTaskValue}/>
-                        <IconButton type="submit" sx={{margin: 'auto', padding: '1px', marginRight:'14px', marginLeft:'14px'}} size="small" ><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>
-                    </ListItem>
-                    }
-                    {!newSubTask && 
-                        <ListItem sx={{backgroundColor: 'grey.50', borderRadius: addTaskBorders}}>
-                            <Box sx={{ marginRight: '5px', textAlign:'center'}} flexGrow={1} >
-                                    <IconButton sx={{margin: 'auto', padding: '1px'}} size="small" onClick={(event) => {setNewSubTask(true)}}><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>   
-                            </Box>
+                            <CircleIcon key={subTask.subTaskEntityId + '-icon'} sx={{fontSize: '10px', ml: "10px", color: subTask.status === "Completed" ? "success.main" : "error.main"}} />
+                            <ListItemButton key={subTask.subTaskEntityId + '-listItemButton'} onClick={() => {handleEditSubtaskToggle(subTask.subTaskEntityId)}} >
+                                <ListItemText key={subTask.subTaskEntityId + '-listItemText'} id={labelId} primary={subTask.details} sx={{ my: 0 }}  />
+                            </ListItemButton>
                         </ListItem>
-                    }
-                </form>
-            </FormProvider>
-
-        </List> 
+                        }
+                        {isEditSubtask.includes(subTask.subTaskEntityId) && 
+                        <FormProvider {...methods}>
+                            <form onSubmit={handleSubmit((data) => {handleUpdateSubtask(subTask.subTaskEntityId)})}>
+                                <ListItem
+                                        sx={{backgroundColor: subTask.status === "Completed" ? 'success.light' : 'error.light', borderRadius: getEditTaskBorders(index)}}
+                                        disablePadding
+                                    >
+                                    <CircleIcon sx={{fontSize: '10px', ml: "10px", color: subTask.status === "Completed" ? "success.main" : "error.main"}}/>
+                                        <ViewTaskSubtaskTextView control={control} name="editSubtask" setEditSubTaskValue={setEditSubtaskValue} editSubTaskValue={editSubtaskValue}/>
+                                    <IconButton type="submit" sx={{margin: 'auto', padding: '1px',marginLeft:'6px'}} size="small" ><PublishedWithChangesIcon sx={{fontSize: '20px'}} /></IconButton>
+                                    <IconButton sx={{margin: 'auto', padding: '1px', marginLeft: '2px', marginRight: '2px' }} onClick={() => deleteSubtask(subTask.subTaskEntityId)} size="small" ><DeleteIcon sx={{fontSize: '20px'}} /></IconButton>
+                                    <IconButton sx={{margin: 'auto', padding: '1px', marginRight:'6px'}} size="small" onClick={cancelEditSubtask} ><ClearIcon sx={{fontSize: '20px'}} /></IconButton>
+                                </ListItem>
+                            </form>
+                        </FormProvider>
+                        }
+                        {index !== task.subTasks.length - 1 &&
+                            <Divider sx={{backgroundColor: 'grey.50'}} key={subTask.subTaskEntityId + '-divider'} />
+                        }
+                    </div>
+                    );
+                })}
+                <FormProvider {...methods}>
+                    <form onSubmit={handleSubmit((data) => {handleNewSubtask(data)})}>
+                        {newSubTask && 
+                        <ListItem
+                                sx={{backgroundColor: 'grey.50', borderRadius: addTaskBorders}}
+                                disablePadding
+                            >
+                            <CircleIcon sx={{fontSize: '10px', ml: "10px", color: '#888888'}}/>
+                                <ViewTaskEditSubtaskTextField control={control} name="newSubtask" setNewSubTaskValue={setNewSubTaskValue} newSubTaskValue={newSubTaskValue}/>
+                            <IconButton type="submit" sx={{margin: 'auto', padding: '1px', marginRight:'14px', marginLeft:'14px'}} size="small" ><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>
+                        </ListItem>
+                        }
+                        {!newSubTask && 
+                            <ListItem sx={{backgroundColor: 'grey.50', borderRadius: addTaskBorders}}>
+                                <Box sx={{ marginRight: '5px', textAlign:'center'}} flexGrow={1} >
+                                        <IconButton sx={{margin: 'auto', padding: '1px'}} size="small" onClick={(event) => {setNewSubTask(true)}}><AddCircleIcon sx={{fontSize: '20px'}} /></IconButton>   
+                                </Box>
+                            </ListItem>
+                        }
+                    </form>
+                </FormProvider>
+            </List> 
         </>
 
     )

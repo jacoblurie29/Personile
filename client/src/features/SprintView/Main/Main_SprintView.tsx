@@ -25,7 +25,6 @@ export default function SprintView() {
             } else {
                 var taskToBeEditedIdCopy = [...taskToBeEditedId];
                 taskToBeEditedIdCopy.push(taskId);
-                console.log(taskToBeEditedIdCopy)
                 setTaskToBeEditedId(taskToBeEditedIdCopy);
             }
         }

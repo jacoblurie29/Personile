@@ -13,15 +13,18 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function SideViewTabbedSection() {
 
+    // REDUX AND FORMS
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);
     const theme = useTheme();
     const board = boards?.find(b => b.boardEntityId == currentBoard)
+
+    // STATE CONSTANTS
     const [currentTab, setCurrentTab] = useState<number>(0);
 
     const getTasksForMilestone = (milestoneId: string) => {
-        var sprints = board?.sprints;
 
+        var sprints = board?.sprints;
         if (sprints == undefined) return;
 
         var Tasks = [] as Task[];
@@ -39,8 +42,6 @@ export default function SideViewTabbedSection() {
         })
         
         return Tasks;
-        
-
     }
 
     const getMilestoneTaskBorders = (index: number, tasks: Task[]) => {
@@ -103,7 +104,7 @@ export default function SideViewTabbedSection() {
                             <div key={"milestoneOuterDiv" + index}>
                                 {index !== 0 && <Divider sx={{backgroundColor: 'grey.300', marginTop: '10px', marginBottom: '10px'}} />}
                                 <ListItem  sx={{paddingLeft: '0px'}} secondaryAction={<Checkbox checked={getTasksForMilestone(milestone.milestoneEntityId)?.every(t => t.currentState === 2)} />}>
-                                        <Typography variant='h4' sx={{color: 'background.paper', fontWeight: 200}}>&nbsp;&nbsp;&nbsp;&nbsp;{milestone.description}&nbsp;<br />{milestone.dueDate !== "" && <Typography variant="caption" sx={{marginLeft: '40px', color: 'background.paper'}}>{milestone.hardDeadline ? "Due Date:" : "Goal:"}&nbsp;{milestone.dueDate}</Typography>}</Typography>
+                                        <Typography variant='h4' sx={{color: 'background.paper', fontWeight: 200}}>&nbsp;&nbsp;&nbsp;&nbsp;{milestone.description}&nbsp;<br />{milestone.dueDate !== "" && <Typography variant="caption" sx={{marginLeft: '40px', color: 'background.paper'}}>{milestone.hardDeadline ? "Due Date:" : "Goal:"}&nbsp;{milestone.dueDate.substring(0, 15)}</Typography>}</Typography>
                                 </ListItem>
                                 <ListItem  sx={{paddingLeft: '20px'}}>
                                     <Grid container>

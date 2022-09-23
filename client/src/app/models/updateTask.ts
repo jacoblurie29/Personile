@@ -29,7 +29,7 @@ export function mapTaskToUpdateTask(task: Task) {
         tags: task.tags,
         effort: task.effort,
         color: task.color,
-        milestoneIds: task.milestoneIds.join("|")
+        milestoneIds: task.milestoneIds.toString()
     } 
 }
 
@@ -49,7 +49,7 @@ export function mapUpdateTaskToTask(task: UpdateTask) {
         tags: task.tags,
         effort: task.effort,
         color: task.color,
-        milestoneIds: task.milestoneIds.split("|"),
+        milestoneIds: task.milestoneIds,
         subTasks: emptySubtaskArr
     } 
 }

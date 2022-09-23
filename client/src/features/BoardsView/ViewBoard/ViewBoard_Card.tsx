@@ -18,7 +18,7 @@ interface Props {
     animationBoolean: boolean
 }
 
-export default function BoardCard({board, setNewBoardState, indexForAnimation, animationBoolean}: Props) {
+export default function ViewBoardCard({board, setNewBoardState, indexForAnimation, animationBoolean}: Props) {
 
     const dispatch = useAppDispatch();
     const history = useHistory();
@@ -26,34 +26,24 @@ export default function BoardCard({board, setNewBoardState, indexForAnimation, a
 
     const handleOpenBoard = (boardId: string) => {
 
-      
         dispatch(setCurrentBoard(boardId));
-
-        //console.log(boards)
         
         var currentBoardSprints = boards?.find(b => b.boardEntityId === boardId)?.sprints;
 
-        //console.log(currentBoardSprints)
+        if(currentBoardSprints === undefined) return;
 
-        if(currentBoardSprints === undefined) {
-          return;
-        }
-
-
-        // TODO FIX THIS (need to fix where board lands if current date is not within the board bounds)
         var setSprint =  currentBoardSprints.find(s => {
-            return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 8539999) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 8539999
+            console.log("START: " + Date.parse(s.startDate || ""));
+            console.log("END: " + Date.parse(s.startDate || ""));
+            return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 86396400) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 86396400
         })?.sprintEntityId || currentBoardSprints[0]; 
 
-        
-        if(setSprint === undefined) {
-          return;
-        }
-        
 
-        dispatch(setCurrentSprint(setSprint))
+        dispatch(setCurrentSprint(setSprint));
 
-        history.push('/sprint')
+        history.push("/sprint")
+
+        
     }
 
     return (

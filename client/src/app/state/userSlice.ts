@@ -13,6 +13,7 @@ import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
+import { StoreTwoTone } from "@mui/icons-material";
 
 interface UserState {
     userData: User | null;
@@ -103,7 +104,6 @@ export const signInUserAsync = createAsyncThunk<User, FieldValues>(
             if (userDto) thunkAPI.dispatch(setUser(userDto));
             localStorage.setItem('user', JSON.stringify(userDto));
 
-            console.log(userDto.boards[0])
             store.dispatch(setCurrentBoard(userDto.boards[0].boardEntityId))
             store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
             return userDto;
@@ -142,7 +142,11 @@ export const addBoardAsync = createAsyncThunk<User, {userId: string, board: Boar
     'sprint/addBoard',
     async ({userId, board}, thunkAPI) => {
         try {
-            return await agent.UserData.addBoard(userId, board)
+            var userDto = await agent.UserData.addBoard(userId, board);
+            store.dispatch(setBoards(userDto.boards));
+
+            return userDto;
+            
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -192,6 +196,10 @@ export const userSlice = createSlice({
         setUser: (state, action) => {
             state.userData = action.payload
         },
+        setBoards: (state, action) => {
+            if (state.userData === null) return;
+            state.userData.boards = action.payload
+        },
         setLoading: (state, action) => {
             state.loading = action.payload
         },
@@ -224,7 +232,7 @@ export const userSlice = createSlice({
 
             if (taskIndex === undefined || taskIndex < 0) return;
 
-            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.push(milestoneId);
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.concat("|" + milestoneId);
 
             state.status = 'idle';
         });
@@ -265,7 +273,6 @@ export const userSlice = createSlice({
 
             state.status = 'pendingUpdateTask';
 
-            
         });
         builder.addCase(updateBoardAsync.fulfilled, (state, action) => {
 
@@ -308,11 +315,8 @@ export const userSlice = createSlice({
         
         // ADD BOARD
         builder.addCase(addBoardAsync.pending, (state, action) => {
-            const { userId, board } = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
-
-            state.userData?.boards.push(board);
 
             state.status = 'pendingAddBoard';
         });
@@ -730,4 +734,4 @@ export const userSlice = createSlice({
     
 })
 
-export const {setUser, setLoading, signOut} = userSlice.actions;
+export const {setUser, setBoards, setLoading, signOut} = userSlice.actions;

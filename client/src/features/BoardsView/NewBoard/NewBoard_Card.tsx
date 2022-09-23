@@ -5,9 +5,8 @@ import { FieldValues, useForm } from "react-hook-form";
 import ClearIcon from '@mui/icons-material/Clear';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useHistory } from "react-router-dom";
-import NewBoardTextField from "./NewBoardTextField";
-import NewBoardAttributeTextField from "./NewBoardAttributeTextField";
-import NewBoardDatePicker from "./NewBoardDatePicker";
+import NewBoardTextField from "./NewBoard_TextField";
+import NewBoardAttributeTextField from "./NewBoard_AttributeTextField";
 import { LoadingButton } from "@mui/lab";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,6 +18,7 @@ import { formatDateString } from "app/util/dateUtil";
 import { Board } from "app/models/board";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import NewBoardDatePicker from "./NewBoard_DatePicker";
 
 
 interface Props {
@@ -26,8 +26,9 @@ interface Props {
   editBoard?: Board,
 }
 
-export default function NewBoard(props: Props) {
+export default function NewBoardCard(props: Props) {
 
+    // REDUX AND ROUTER
     const history = useHistory();
     const userId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
@@ -35,7 +36,7 @@ export default function NewBoard(props: Props) {
         mode: 'onSubmit'
     });
 
-    // FORM CONSTANTS
+    // STATE CONSTANTS
     const [open, setOpen] = useState(true);
     const [currentName, setCurrentName] = useState<string>(props.editBoard?.name || "");
     const [currentDescription, setCurrentDecription] = useState<string>(props.editBoard?.description || "");
@@ -51,7 +52,6 @@ export default function NewBoard(props: Props) {
     const [currentCustomSprintLength, setCurrentCustomSprintLength] = useState<number | undefined>(undefined);
     const [overflow, setOverflow] = useState<string>("even");
     const [sprintOptionSelected, setSprintOptionSelected] = useState<number | undefined>(undefined);
-
     const [firstScreenAnimation, setFirstScreenAnimation] = useState<boolean>(true);
     const [secondScreenAnimation, setSecondScreenAnimation] = useState<boolean>(true);
     
@@ -154,8 +154,13 @@ export default function NewBoard(props: Props) {
 
     async function submitForm(data: FieldValues) {
 
-      if(userId == null) return;
+      console.log("ONE");
 
+      // NULL CHECKS
+      if(userId == null) return;
+      if (currentName === undefined || currentDescription === undefined) return;
+
+      console.log("TWO");
 
       var goalArray: Goal[] = [];
       var milestoneArray: Milestone[] = [];
@@ -187,8 +192,8 @@ export default function NewBoard(props: Props) {
         }
       })
 
-      if (currentName === undefined || currentDescription === undefined) return;
 
+      // NEW BOARD
       if(props.editBoard == undefined) {
 
           var sprintDaysLength = () => {
@@ -230,7 +235,10 @@ export default function NewBoard(props: Props) {
 
         dispatch(addBoardAsync({userId: userId, board: newBoard})).catch(error => console.log(error));
 
+      // EDIT BOARD
       } else {
+
+        console.log("FUCK")
 
         var prevState = props.editBoard;
 
@@ -254,6 +262,7 @@ export default function NewBoard(props: Props) {
           goals: goalArray,
           milestones: milestoneArray
         }
+
         
         props.setNewBoardState(false);
         dispatch(updateBoardAsync({userId: userId, boardId: props.editBoard.boardEntityId, updateBoardDto: editBoard, previousState: prevState, futureState: futureState}))

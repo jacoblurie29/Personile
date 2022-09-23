@@ -117,7 +117,7 @@ namespace API.Controllers
         // MARK: - POSTS
         
         [HttpPost("{userId}/addBoard", Name = "AddBoard")]
-        public async Task<ActionResult<BoardDto>> AddNewBoard(BoardDto boardDto, string userId) {
+        public async Task<ActionResult<UserDto>> AddNewBoard(BoardDto boardDto, string userId) {
 
             var CurrentUserEntity = await RetrieveUserEntity(userId);
 
@@ -132,7 +132,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) {
-                return CreatedAtRoute("GetBoard", new { userId = userId, boardId = mappedBoard.BoardEntityId }, boardDto);
+                return CreatedAtRoute("GetBoard", new { userId = userId, boardId = mappedBoard.BoardEntityId }, _mapper.Map<UserDto>(CurrentUserEntity));
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem creating new board"});
@@ -166,8 +166,6 @@ namespace API.Controllers
             var MappedTask = _mapper.Map<TaskEntity>(taskDto);
 
             var CurrentUser = await RetrieveUserEntity(userId);
-
-            
 
             var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
 

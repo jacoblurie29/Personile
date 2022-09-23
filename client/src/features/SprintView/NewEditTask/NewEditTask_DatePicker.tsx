@@ -59,7 +59,6 @@ export default function NewEditTaskDatePicker(props: formProps) {
             }}}
             onChange={(newValue) => {
                 if(newValue !== null) {
-                    console.log(newValue)
                     if(newValue !== undefined) {
                         setValue(newValue);
                         field.onChange(newValue);

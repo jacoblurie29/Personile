@@ -6,7 +6,7 @@ import { useController, UseControllerProps, useForm } from "react-hook-form";
 interface formProps extends UseControllerProps {
     label: string
     placeholder: string
-    editvalue?: string[]
+    editvalue?: String
     board: Board
 }
 
@@ -26,7 +26,7 @@ const MenuProps = {
 
 export default function NewEditTaskMilestoneSelect(props: formProps) {
 
-    const {fieldState, field } = useController({...props, defaultValue: props.editvalue || []});
+    const {fieldState, field} = useController({...props, defaultValue: props.editvalue?.split("|") || []});
 
     const handleChange = (event: SelectChangeEvent<typeof field.value>) => {
         const {
@@ -35,10 +35,7 @@ export default function NewEditTaskMilestoneSelect(props: formProps) {
 
         field.onChange(value)
 
-        console.log(field.value)
-
       };
-
 
 
     return (
@@ -57,9 +54,9 @@ export default function NewEditTaskMilestoneSelect(props: formProps) {
           multiline={true}
           fullWidth
           onChange={handleChange}
-          defaultValue={props.editvalue !== undefined && props.editvalue[0] !== '' ? [...props.editvalue] : undefined}
+          defaultValue={props.editvalue !== undefined && props.editvalue !== "" ? [...props.editvalue.split("|")] : []}
           error={!!fieldState.error?.message}
-          value={field.value}
+          value={field.value[0] !== "" ? field.value : []}
           input={
             <OutlinedInput 
                 label="Milestones"
@@ -67,7 +64,7 @@ export default function NewEditTaskMilestoneSelect(props: formProps) {
             MenuProps={MenuProps}
             renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {field.value.map((value: string, index: number) => (
+              {field.value[0] !== "" && field.value.map((value: string, index: number) => (
                 <Chip
                 key={'selectedMilestone' + index}
                 sx={{backgroundColor: 'primary.light'}}
