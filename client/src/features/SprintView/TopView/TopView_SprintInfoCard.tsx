@@ -5,6 +5,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { setCurrentSprint } from "../Redux/sprintSlice";
 
+
+
 export default function TopViewSprintInfoCard() {
 
     const dispatch = useAppDispatch();
@@ -62,7 +64,7 @@ export default function TopViewSprintInfoCard() {
     }
 
     const calculateCompletedTaskBorder = () => {
-        if (calculateTodayTaskNumber() === 0 && calculateCompletedTaskNumber() === 0) {
+        if (calculateTodayTaskNumber() === 0 && calculateNewTaskNumber() === 0) {
             return '5px'
         } else {
             return '0 5px 5px 0';
@@ -132,7 +134,7 @@ export default function TopViewSprintInfoCard() {
                                     </Grid>}
                                     {calculateTodayTaskNumber() !== 0 && 
                                         <Grid item xs={calculateTodayTaskNumber() * 4}>
-                                            <Box textAlign='center' sx={{borderRadius: calculateTodayTaskBorder(), backgroundColor: 'warning.light', color: 'background.paper', padding: '4px'}}>Today&nbsp;&#40;{calculateTodayTaskNumber()}&#41;</Box>
+                                            <Box textAlign='center' sx={{borderRadius: calculateTodayTaskBorder(), backgroundColor: 'warning.light', color: 'background.paper', padding: '4px'}}>Active&nbsp;&#40;{calculateTodayTaskNumber()}&#41;</Box>
                                         </Grid>
                                     }
                                     {calculateTodayTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 && <Grid item xs={1}>

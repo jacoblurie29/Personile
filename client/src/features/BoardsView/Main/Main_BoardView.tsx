@@ -1,4 +1,4 @@
-import { Box, Fade, Grid, Grow, IconButton, Zoom } from "@mui/material";
+import { Box, Fade, Grid, Grow, IconButton, Zoom, Typography } from "@mui/material";
 import { useAppSelector } from "app/store/configureStore";
 import ViewBoardCard from "../ViewBoard/ViewBoard_Card";
 import AddIcon from '@mui/icons-material/Add';

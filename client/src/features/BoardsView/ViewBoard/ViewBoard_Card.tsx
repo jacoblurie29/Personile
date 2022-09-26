@@ -33,8 +33,6 @@ export default function ViewBoardCard({board, setNewBoardState, indexForAnimatio
         if(currentBoardSprints === undefined) return;
 
         var setSprint =  currentBoardSprints.find(s => {
-            console.log("START: " + Date.parse(s.startDate || ""));
-            console.log("END: " + Date.parse(s.startDate || ""));
             return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 86396400) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 86396400
         })?.sprintEntityId || currentBoardSprints[0]; 
 
@@ -57,17 +55,17 @@ export default function ViewBoardCard({board, setNewBoardState, indexForAnimatio
                       <Grid container width='fit-content' spacing={1} paddingTop='10px' margin='auto' flexGrow={1}>
                           <Grid xs={4} item sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                               <Box height='30px' width="30px" borderRadius='30px' sx={{backgroundColor: 'error.light'}}>
-                                  <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints[0]?.tasks.filter(t => t.currentState === 0).length || "0"}</Typography>
+                                  <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints?.flatMap(s => s.tasks).filter(t => t.currentState === 0).length || "0"}</Typography>
                               </Box>
                           </Grid>
                           <Grid xs={4} item sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                               <Box height='30px' width="30px" borderRadius='30px' sx={{backgroundColor: 'warning.light'}} textAlign='center'>
-                                  <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints[0]?.tasks.filter(t => t.currentState === 1).length || "0"}</Typography>
+                                  <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints?.flatMap(s => s.tasks).filter(t => t.currentState === 1).length || "0"}</Typography>
                               </Box>
                           </Grid>
                           <Grid xs={4} item sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                               <Box height='30px' width="30px" borderRadius='30px' sx={{backgroundColor: 'success.light'}}>
-                                  <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints[0]?.tasks.filter(t => t.currentState === 2).length || "0"}</Typography>
+                                  <Typography variant="h5" color='background.paper' textAlign='center' paddingTop='20%'>{board.sprints?.flatMap(s => s.tasks).filter(t => t.currentState === 2).length || "0"}</Typography>
                               </Box>
                           </Grid>
                       </Grid>

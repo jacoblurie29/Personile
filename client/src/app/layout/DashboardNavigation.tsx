@@ -112,7 +112,15 @@ interface Props {
 
 export default function DashboardNavigation({component}: Props) {
 
+  const dispatch = useAppDispatch();
+  const {loading} = useAppSelector(state => state.sprintView);
+
+  const { currentBoard } = useAppSelector(state => state.sprintView);
+  const boards = useAppSelector(state => state.user.userData?.boards);
+  const board = boards?.find(b => b.boardEntityId == currentBoard);
+  const [currentSprintPage, setCurrentSprintPage] = useState<string>("sprint");
   const [open, setOpen] = useState(false); 
+  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -122,9 +130,11 @@ export default function DashboardNavigation({component}: Props) {
     setOpen(false);
   };
 
-  const dispatch = useAppDispatch();
+  const toggleSprintPageView = (pageSelection: string) => {
+    setCurrentSprintPage(pageSelection);
+}
 
-  const {loading} = useAppSelector(state => state.sprintView);
+
 
 
   return (
@@ -222,11 +232,11 @@ export default function DashboardNavigation({component}: Props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
         <Box sx={{backgroundColor: 'background.default', width: '100%', height: '8%'}}>     
-          {!loading && component === "sprint" && <TopView_LayoutBox />}
+          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "sprint" ? board?.name || "" : component === "today" ? "Today" : "Your boards"} />}
         </Box>
         {/* Below handles the routing */}
           {loading && <LoadingComponent />}       
-          {!loading && component === "sprint" && <SprintView />}
+          {!loading && component === "sprint" && <SprintView page={currentSprintPage} />}
           {!loading && component === "today" && <TodayView />}
           {!loading && component === "boards" && <BoardView />}
           {!loading && component === "settings" && <SettingsView />}
