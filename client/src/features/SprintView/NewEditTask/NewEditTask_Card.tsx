@@ -18,6 +18,7 @@ import NewEditTaskOptionsButton from "./NewEditTask_OptionsButton";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Collapse from '@mui/material/Collapse';
+import { compareTaskMilestones, compareTasks } from "app/util/taskComparisonUtil";
 
 
 interface Props {
@@ -132,13 +133,32 @@ export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: 
             var currentTaskId = newEditTask.taskEntityId;
             if(futureTaskEntity === undefined) return;
 
-            dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => {
+            if(!compareTasks(futureTaskEntity, currentTaskEntity) && compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
+                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => {
+                    toggleEditTask(newEditTask.taskEntityId!);
+                });
+            } else if (compareTasks(futureTaskEntity, currentTaskEntity) && !compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
                 formData.milestones.forEach((currentMilestoneId: string) => {
-                    dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: newTaskId})))
-                 });
+                    console.log(currentMilestoneId);
+                    if(!currentTaskEntity?.milestoneIds.includes(currentMilestoneId)) {
+                        dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: currentTaskId})))
+                    }
+                 });   
+                 toggleEditTask(newEditTask.taskEntityId!);         
+            } else if (!compareTasks(futureTaskEntity, currentTaskEntity) && !compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
+                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => {
+                    formData.milestones.forEach((currentMilestoneId: string) => {
+                        if(!currentTaskEntity?.milestoneIds.includes(currentMilestoneId)) {
+                            dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: currentTaskId})))
+                        }                     });
+                    toggleEditTask(newEditTask.taskEntityId!);
+    
+                });
+            } else {
                 toggleEditTask(newEditTask.taskEntityId!);
+                return;
+            }
 
-            });
         }
     }
 

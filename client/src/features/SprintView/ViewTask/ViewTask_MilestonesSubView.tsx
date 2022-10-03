@@ -1,4 +1,4 @@
-import { Grid, List, ListItem, ListItemText, ListSubheader, Typography } from "@mui/material"
+import { Box, Grid, List, ListItem, ListItemText, ListSubheader, Typography } from "@mui/material"
 import { Task } from "app/models/task"
 import { useAppSelector } from "app/store/configureStore";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
@@ -35,6 +35,15 @@ export default function TaskMilestonesSubView({task}: Props) {
                 )
             )
         }
+            {board?.milestones.filter(m => task.milestoneIds.includes(m.milestoneEntityId)).length === 0 &&
+                <ListItem sx={{backgroundColor: 'grey.50', borderRadius: "5px"}}>
+                    <Box sx={{ marginRight: '5px', textAlign:'center'}} flexGrow={1} >
+                        <Typography variant="subtitle2" fontSize={"14px"}>No milestones for this task.</Typography>
+                    </Box>
+                </ListItem>
+                
+                
+            }
         </List> 
 
     )

@@ -13,7 +13,6 @@ import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
-import { StoreTwoTone } from "@mui/icons-material";
 
 interface UserState {
     userData: User | null;
@@ -207,15 +206,13 @@ export const userSlice = createSlice({
             state.userData = null;
             localStorage.removeItem('user');
             history.push('/');
-        },
+        }
     },
     extraReducers: (builder => {
 
         // ADD TASK TO MILESTONE
         builder.addCase(addTaskToMilestoneAsync.pending, (state, action) => {
-            state.status = 'pendingAddTaskToMilestone';
-        });
-        builder.addCase(addTaskToMilestoneAsync.fulfilled, (state, action) => {
+
             const {sprintId, taskId, boardId, milestoneId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
@@ -232,11 +229,48 @@ export const userSlice = createSlice({
 
             if (taskIndex === undefined || taskIndex < 0) return;
 
-            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.concat("|" + milestoneId);
+            var pastMilestoneIds = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds;
 
+            if(state.userData !== null) {
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = pastMilestoneIds +=  "|" + milestoneId;
+            }
+
+            console.log(state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.concat("|" + milestoneId)            )
+
+            if (pastMilestoneIds.concat("|" + milestoneId).charAt(0) === "|") {
+                state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.substring(1, state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.length - 1);
+            }
+
+
+            state.status = 'pendingAddTaskToMilestone';
+        });
+        builder.addCase(addTaskToMilestoneAsync.fulfilled, (state, action) => {
             state.status = 'idle';
         });
         builder.addCase(addTaskToMilestoneAsync.rejected, (state, action) => {
+
+            const {sprintId, taskId, boardId, milestoneId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var milestoneIds = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds;
+
+            if(state.userData !== null) {
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.substring(milestoneIds.length - (milestoneId.length + 1), milestoneIds.length);
+            }
+
             state.status = 'idle';
         });
 

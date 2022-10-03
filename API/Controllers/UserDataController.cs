@@ -188,7 +188,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{userId}/boards/{boardId}/milestones/{milestoneId}/sprints/{sprintId}/tasks/{taskId}/addTaskToMilestone", Name = "AddTaskToMilestone")]
-        public async Task<ActionResult<UserDto>> AddTaskToMilestone(string userId, string boardId, string sprintId, string taskId, string milestoneId) {
+        public async Task<ActionResult<TaskDto>> AddTaskToMilestone(string userId, string boardId, string sprintId, string taskId, string milestoneId) {
 
             var CurrentUser = await RetrieveUserEntity(userId);
 
@@ -218,7 +218,7 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});

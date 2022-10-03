@@ -4,13 +4,14 @@ import { Task } from "app/models/task";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
 import { removeTaskFromSprintAsync, updateTaskAsync } from "app/state/userSlice";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
-import ViewTaskMoreDetails from "../ViewTask/ViewTask_MoreDetails";
-import ViewTaskStateDisplay from "../ViewTask/ViewTask_StateDisplay";
 import ViewTaskStateToggleButton from "../ViewTask/ViewTask_StateToggleButton";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import TaskStateTitle from "../SummaryView/SummaryView_TaskStateTitle";
+import TaskActionButtons from "../SummaryView/SummaryView_TaskActionButtons";
+import SummaryTaskMoreDetails from "../SummaryView/SummaryView_SummaryTaskMoreDetails";
 
 export default function SummaryView() {
 
@@ -83,15 +84,19 @@ export default function SummaryView() {
                             <Accordion elevation={3} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
                                 <AccordionSummary  sx={{borderRadius: "0px"}}>
                                     <Box flexGrow={1}>
-                                        <ViewTaskStateDisplay title={task.name} currentState={task.currentState}/>
-                                        <Typography sx={{ fontSize: 14, marginLeft: '4%', width:'90%' }} color="grey.500">
-                                            {task.description}
-                                        </Typography> 
+                                        <Grid container>
+                                            <Grid item xs={8}>
+                                                <TaskStateTitle title={task.name} currentState={task.currentState} description={task.description}/>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <TaskActionButtons />
+                                            </Grid>
+                                        </Grid>
                                     </Box>
                                 </AccordionSummary>
                                 <Divider />
                                 <AccordionDetails sx={{alignItems: 'center'}}>
-                                    <ViewTaskMoreDetails focusedTask={task} />
+                                    <SummaryTaskMoreDetails focusedTask={task} />
                                     <Grid container sx={{display: 'flex', width: 'auto'}}>
                                         <Grid item xs={6}>
                                             <Box sx={{flexGrow: 1, textAlign: 'left'}}>

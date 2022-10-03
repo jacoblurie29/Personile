@@ -57,7 +57,7 @@ export default function ViewTaskMoreDetails({ focusedTask }: Props) {
                 </Grid>
             </Box>
             }
-            <Typography variant="caption" sx={{color: 'grey.600'}}>Milestones</Typography>
+            <Typography variant="caption" sx={{color: 'grey.600'}}>Milestones&nbsp;({focusedTask.milestoneIds === "" ? "0" : focusedTask.milestoneIds.split("|").length})</Typography>
             <TaskMilestonesSubView task={focusedTask} />
             <Typography variant="caption" sx={{color: 'grey.600'}}>Estimated effort</Typography>
             <Tooltip title={focusedTask.effort} arrow>

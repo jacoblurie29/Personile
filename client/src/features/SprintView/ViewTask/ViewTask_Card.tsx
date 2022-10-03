@@ -64,10 +64,17 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: 
             <Accordion elevation={2} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
                 <AccordionSummary>
                     <Box flexGrow={1}>
-                        <ViewTaskStateDisplay title={task.name} currentState={task.currentState}/>
-                        <Typography sx={{ fontSize: 14, marginLeft: '4%', width:'90%' }} color="grey.500">
-                            {task.description}
-                        </Typography> 
+                        <Grid container columns={1}>
+                            <Grid item xs = {6}>
+                                <ViewTaskStateDisplay title={task.name} currentState={task.currentState}/>
+                            </Grid>
+                            <Grid item xs = {6}>
+                                <Typography sx={{ fontSize: 14, marginLeft: '4%', width:'90%' }} color="grey.500">
+                                    {task.description}
+                                </Typography>     
+                            </Grid>
+                        </Grid>
+
                     </Box>
                 </AccordionSummary>
                 <Divider />
