@@ -185,6 +185,17 @@ export const addTaskToMilestoneAsync = createAsyncThunk<Sprint, {userId: string,
     }
 )
 
+export const removeTaskFromMilestoneAsync = createAsyncThunk<void, {userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string}>(
+    'sprint/removeTaskFromMilestoneAsync',
+    async ({userId, boardId, milestoneId, sprintId, taskId}, thunkAPI) => {
+        try {
+            return await agent.UserData.removeTaskFromMilestone(userId, boardId, milestoneId, sprintId, taskId);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
 
 
 
@@ -210,6 +221,72 @@ export const userSlice = createSlice({
     },
     extraReducers: (builder => {
 
+        // REMOVE TASK FROM MILESTONE
+        builder.addCase(removeTaskFromMilestoneAsync.pending, (state, action) => {
+
+            const {sprintId, taskId, boardId, milestoneId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            if(state.userData !== null) {
+                var milestoneIds = [...state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.split("|")];
+                //console.log("TEST ONE: " + milestoneIds);
+                var indexOfDelete = milestoneIds.indexOf(milestoneId);
+                //console.log("TEST TWO: " + indexOfDelete);
+                milestoneIds.splice(indexOfDelete, 1);
+                //console.log("TEST THREE: " + milestoneIds)
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = milestoneIds.join("|");
+                //console.log("TEST FOUR: " + milestoneIds.join("|"));
+            }
+
+            state.status = 'pendingRemoveTaskFromMilestone';
+        });
+        builder.addCase(removeTaskFromMilestoneAsync.fulfilled, (state, action) => {
+            state.status = 'idle';
+        });
+        builder.addCase(removeTaskFromMilestoneAsync.rejected, (state, action) => {
+
+            const {sprintId, taskId, boardId, milestoneId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var milestoneIds = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds;
+
+            if(state.userData !== null) {
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = milestoneIds.length == 0 ? milestoneId : milestoneIds +=  "|" + milestoneId;
+            }
+            
+            if (milestoneIds.concat("|" + milestoneId).charAt(0) === "|") {
+                state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.substring(1, state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.length);
+            }
+
+            
+        });
+
         // ADD TASK TO MILESTONE
         builder.addCase(addTaskToMilestoneAsync.pending, (state, action) => {
 
@@ -231,14 +308,10 @@ export const userSlice = createSlice({
 
             var pastMilestoneIds = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds;
 
+            console.log("PAST IDs: " + pastMilestoneIds);
+
             if(state.userData !== null) {
-                state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = pastMilestoneIds +=  "|" + milestoneId;
-            }
-
-            console.log(state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.concat("|" + milestoneId)            )
-
-            if (pastMilestoneIds.concat("|" + milestoneId).charAt(0) === "|") {
-                state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.substring(1, state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.length - 1);
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = pastMilestoneIds === milestoneId ? milestoneId : pastMilestoneIds +=  "|" + milestoneId;
             }
 
 
@@ -683,9 +756,6 @@ export const userSlice = createSlice({
 
         // REMOVE SUBTASK FROM TASK
         builder.addCase(removeSubtaskFromTaskAsync.pending, (state, action) => {
-            state.status = 'pendingDeleteSubtask';
-        });
-        builder.addCase(removeSubtaskFromTaskAsync.fulfilled, (state, action) => {
             const {sprintId, taskId, boardId, subtaskId} = action.meta.arg;
 
             if(state.userData === null || state.userData === undefined) return;
@@ -708,6 +778,10 @@ export const userSlice = createSlice({
 
             state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].subTasks.splice(subtaskIndex, 1);
 
+            state.status = 'pendingDeleteSubtask';
+        });
+        builder.addCase(removeSubtaskFromTaskAsync.fulfilled, (state, action) => {
+
             toast.success('Subtask deleted!', {
                 position: "bottom-right",
                 autoClose: 1500,
@@ -717,7 +791,7 @@ export const userSlice = createSlice({
                 draggable: true,
                 progress: undefined,
                 theme: 'light'
-                });
+            });
 
             state.status = 'idle';
         });

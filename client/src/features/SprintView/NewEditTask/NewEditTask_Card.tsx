@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from "../Validation/newTaskValidation";
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { addTaskToMilestoneAsync, addTaskToSprintAsync, updateTaskAsync } from "app/state/userSlice";
+import { addTaskToMilestoneAsync, addTaskToSprintAsync, removeTaskFromMilestoneAsync, updateTaskAsync } from "app/state/userSlice";
 import { toast } from "react-toastify";
 import { Task } from "app/models/task";
 import { Board } from "app/models/board";
@@ -30,16 +30,19 @@ interface Props {
 export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: Props) {
 
 
+    // react hook form
     const methods = useForm({
         mode: 'all',
         resolver: yupResolver(validationSchema)
     });
 
-    const {control, handleSubmit, watch } = useForm({
+    // more react hook form
+    const {control, handleSubmit, watch} = useForm({
         mode: 'all',
         resolver: yupResolver(validationSchema)
     });
     
+    // state and redux values
     const [disabled, setDisabled] = useState<boolean>(editTask?.dueDate !== "" || false);
     const [addTaskMoreDetails, setAddTaskMoreDetails] = useState<boolean>(false)
     const currentEffort = watch("effort", 5);
@@ -49,117 +52,207 @@ export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: 
     const board = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId == currentBoard));
     const dispatch = useAppDispatch();
 
+    // makes decision to either add or update the focused task after submit button clicked
     const handleAddOrUpdateTask = async (formData: FieldValues) => {
-
-        if(userId == null) return;
-        if(currentSprint == null) return;
-        if(currentBoard == null) return;
-
-        const createdDate = new Date().toString();
-        
-        var tags = formData.tags == undefined ? "" : formData.tags === [] ? "" : formData.taskTags.join("|");
-        var links = formData.tags == undefined ? "" : formData.links === [] ? "" : formData.taskLinks.join("|");
-        var milestones = formData.milestones == undefined ? "" : formData.milestones.join("|");
-        var dueDate = formData.dueDate == undefined ? "" : formData.dueDate.toString().substring(0, 15);
 
         // undefined: newTask, not undefined: updatedTask
         if(editTask === undefined) {
 
-            var newTaskId = uuidv4();
-
-            var newTask = {
-                taskEntityId: newTaskId,
-                name: formData.name || "",
-                description: formData.description || "",
-                links: links || "",
-                dateCreated: createdDate.substring(0, 15) || "",
-                dateFinished: "",
-                dueDate: dueDate,
-                currentState: 0,
-                tags: tags || "",
-                effort: formData.effort || 0,
-                color: 0,
-                milestoneIds: milestones || ""
-             }
-
-
-
-             setNewTask(false);
-             dispatch(addTaskToSprintAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(
-                () => {
-                    formData.milestones.forEach((currentMilestoneId: string) => {
-                        dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: newTaskId})))
-                     });
-                }
-             );
-
-              
+            handleAddTask(formData);  
         
         } else {
 
-
-            var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
-
-            var currentTaskEntity = currentSprintEntity?.tasks.find(t => t.taskEntityId === editTask.taskEntityId)
-            if(currentTaskEntity === undefined) return;
-
-            var currentSubtasks = currentTaskEntity?.subTasks;
-            if(currentSubtasks === undefined) return;
-
-            var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString().substring(0, 15);
-
-            var newEditTask = {
-                taskEntityId: editTask.taskEntityId,
-                name: formData.name,
-                description: formData.description,
-                links: links,
-                dateCreated: editTask.dateCreated.substring(0, 15),
-                dateFinished: "",
-                dueDate: dueDate,
-                currentState: editTask.currentState,
-                tags: tags,
-                effort: formData.effort,
-                color: 0,
-                milestoneIds: formData.milestones.join("|")
-            }
-
-
-            if(newEditTask == currentTaskEntity) {
-                toggleEditTask(currentTaskEntity.taskEntityId);
-                return;
-            }
-            
-            var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
-            var currentTaskId = newEditTask.taskEntityId;
-            if(futureTaskEntity === undefined) return;
-
-            if(!compareTasks(futureTaskEntity, currentTaskEntity) && compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
-                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => {
-                    toggleEditTask(newEditTask.taskEntityId!);
-                });
-            } else if (compareTasks(futureTaskEntity, currentTaskEntity) && !compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
-                formData.milestones.forEach((currentMilestoneId: string) => {
-                    console.log(currentMilestoneId);
-                    if(!currentTaskEntity?.milestoneIds.includes(currentMilestoneId)) {
-                        dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: currentTaskId})))
-                    }
-                 });   
-                 toggleEditTask(newEditTask.taskEntityId!);         
-            } else if (!compareTasks(futureTaskEntity, currentTaskEntity) && !compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
-                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => {
-                    formData.milestones.forEach((currentMilestoneId: string) => {
-                        if(!currentTaskEntity?.milestoneIds.includes(currentMilestoneId)) {
-                            dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: currentTaskId})))
-                        }                     });
-                    toggleEditTask(newEditTask.taskEntityId!);
-    
-                });
-            } else {
-                toggleEditTask(newEditTask.taskEntityId!);
-                return;
-            }
+            handleEditTask(formData, editTask);
 
         }
+    }
+
+
+    const handleAddTask = (formData: FieldValues) => {
+
+        // generate new values
+        const newTaskId = uuidv4();
+        const createdDate = new Date().toString();
+
+        // shape some data from form
+        var tags = formData.taskTags == undefined ? "" : formData.taskTags.length == 0 ? "" : formData.taskTags.join("|");
+        var links = formData.taskLinks == undefined ? "" : formData.taskLinks.length == 0 ? "" : formData.taskLinks.join("|");
+        var milestones = formData.milestones == undefined ? "" : formData.milestones.join("|");
+        var dueDate = formData.dueDate == undefined ? "" : formData.dueDate.toString().substring(0, 15);
+
+        // null checks
+        if(userId == null) return;
+        if(currentSprint == null) return;
+        if(currentBoard == null) return;
+
+        // create new task object
+        var newTask = {
+            taskEntityId: newTaskId,
+            name: formData.name || "",
+            description: formData.description || "",
+            links: links || "",
+            dateCreated: createdDate.substring(0, 15) || "",
+            dateFinished: "",
+            dueDate: dueDate,
+            currentState: 0,
+            tags: tags || "",
+            effort: formData.effort || 0,
+            color: 0,
+            milestoneIds: milestones || ""
+         }
+
+
+         // close new task panel
+         setNewTask(false);
+
+         // add new task and add new milestones to the task after
+         dispatch(addTaskToSprintAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, task: newTask})).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(
+            () => {
+                formData.milestones.forEach((currentMilestoneId: string) => {
+                    dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: newTaskId})))
+                 });
+            }
+         );
+
+         
+    }
+
+    const handleEditTask = (formData: FieldValues, editTask: Task) => {
+
+        // null checks
+        if(userId == null) return;
+        if(currentSprint == null) return;
+        if(currentBoard == null) return;
+
+        // shape some data from form
+        var tags = formData.taskTags == undefined ? "" : formData.taskTags.length == 0 ? "" : formData.taskTags.join("|");
+        var links = formData.taskLinks == undefined ? "" : formData.taskLinks.length == 0 ? "" : formData.taskLinks.join("|");
+        var milestones = formData.milestones == undefined ? "" : formData.milestones.join("|");
+        var dueDate = formData.dueDate == undefined ? "" : formData.dueDate.toString().substring(0, 15);
+
+        // retrieve entities and undefined check
+        var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
+        var currentTaskEntity = currentSprintEntity?.tasks.find(t => t.taskEntityId === editTask.taskEntityId);
+        if(currentTaskEntity === undefined) return;
+        var currentSubtasks = currentTaskEntity?.subTasks;
+        if(currentSubtasks === undefined) return;
+
+        // generate new values
+        var dueDate = formData.dueDate.toString() === "Invalid Date" ? "" : formData.dueDate.toString().substring(0, 15);
+
+        // create edited task entity with old/new data
+        var newEditTask = {
+            taskEntityId: editTask.taskEntityId,
+            name: formData.name,
+            description: formData.description,
+            links: links,
+            dateCreated: editTask.dateCreated.substring(0, 15),
+            dateFinished: "",
+            dueDate: dueDate,
+            currentState: editTask.currentState,
+            tags: tags,
+            effort: formData.effort,
+            color: 0,
+            milestoneIds: formData.milestones.join("|")
+        }
+
+        // generate future entity and retrieve current task's id
+        var futureTaskEntity = {...newEditTask, subTasks: currentSubtasks}
+        var currentTaskId = newEditTask.taskEntityId;
+
+        // undefined check
+        if(futureTaskEntity === undefined) return;
+
+        // tasks are NOT equal (task was edited) but the milestones are the SAME
+        if(!compareTasks(futureTaskEntity, currentTaskEntity) && compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
+
+            // only update the task, not the milestones
+            dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to edit task")}).finally(() => {
+                toggleEditTask(newEditTask.taskEntityId!);
+            });
+
+        // tasks are equal (not edited) but the milestones WERE edited
+        } else if (compareTasks(futureTaskEntity, currentTaskEntity) && !compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
+
+            // find the milestones that were deleted
+            var deletedMilestones = findDeletedMilestonesFromTask(currentTaskEntity?.milestoneIds.split("|"), formData.milestones);
+
+            // loop through the new milestone list to add the new ones
+            formData.milestones.forEach((currentMilestoneId: string) => {
+
+                // if old list of milestones doesn't include milestone in question, add that milestone
+                if(!currentTaskEntity?.milestoneIds.includes(currentMilestoneId)) {
+                    dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: currentTaskId})))
+                }
+             });   
+
+            // if the milestones are not empty (can't delete anything if theres nothing there)
+            if(currentTaskEntity?.milestoneIds !== "") {
+            
+            // loop through the deleted milestones and remove them one at a time
+            deletedMilestones.forEach((deletedMilestone: String) => {
+                dispatch(removeTaskFromMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: deletedMilestone as string, sprintId: currentSprint, taskId: currentTaskId})));
+            });
+
+            }
+
+            // close the edit task window
+            toggleEditTask(newEditTask.taskEntityId!);  
+
+        // task was edited AND milestones were edited
+        } else if (!compareTasks(futureTaskEntity, currentTaskEntity) && !compareTaskMilestones(futureTaskEntity, currentTaskEntity)) {
+                
+                // update task values that are not milestones
+                dispatch(updateTaskAsync(({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: currentTaskId, updatedTaskDto: newEditTask, previousState: editTask, futureState: futureTaskEntity}))).catch((error) => {console.log(error); toast.error("Failed to create task")}).finally(() => {
+                
+                // find milestones that were deleted
+                var deletedMilestones = findDeletedMilestonesFromTask(currentTaskEntity?.milestoneIds.split("|") || [], formData.milestones);
+
+                // loop through the new milestone list to add the new ones
+                formData.milestones.forEach((currentMilestoneId: string) => {
+
+                    // if old list of milestones doesn't include milestone in question, add that milestone
+                    if(!currentTaskEntity?.milestoneIds.includes(currentMilestoneId)) {
+                        dispatch(addTaskToMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: currentMilestoneId, sprintId: currentSprint, taskId: currentTaskId})))
+                    }                     
+                });
+
+                // if the milestones are not empty (can't delete anything if theres nothing there)
+                if(currentTaskEntity?.milestoneIds !== "") {
+                
+                    // loop through the deleted milestones and remove them one at a time
+                    deletedMilestones.forEach((deletedMilestone: String) => {
+                        dispatch(removeTaskFromMilestoneAsync(({userId: userId, boardId: currentBoard, milestoneId: deletedMilestone as string, sprintId: currentSprint, taskId: currentTaskId})));
+                    });
+                }
+
+                toggleEditTask(newEditTask.taskEntityId!);
+
+            });
+        // neither task or milestones were edited
+        } else {
+
+            // close edit task window
+            toggleEditTask(newEditTask.taskEntityId!);
+            return;
+        }
+
+    }
+
+    const findDeletedMilestonesFromTask = (oldMilestones: string[], newMilestones: string[], addedMilestones?: string[]) => {
+        
+        // base list
+        var deletedMilestones = [] as string[];
+
+        // add to list only milestones that are exclusively in old array, those are "deleted"
+        oldMilestones.map((old) => {
+            if(!newMilestones.includes(old)) {
+                deletedMilestones.push(old);
+            }
+        });
+
+        return deletedMilestones;
+
     }
 
 

@@ -221,7 +221,42 @@ namespace API.Controllers
                 return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
             }
 
-            return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
+            return BadRequest(new ProblemDetails{Title = "Problem adding task to milestone"});
+
+        }
+
+        // Delete a task from a milestone
+        [HttpDelete("{userId}/boards/{boardId}/milestones/{milestoneId}/sprints/{sprintId}/tasks/{taskId}/deleteTaskFromMilestone", Name = "DeleteTaskFromMilestone")]
+        public async Task<ActionResult> DeleteTaskFromMilestone(string userId, string boardId, string sprintId, string taskId, string milestoneId) {
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentMilestone = CurrentBoard.Milestones.Where(m => m.MilestoneEntityId == milestoneId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            if (CurrentSprint == null) {
+                return BadRequest(new ProblemDetails{Title = "Sprint not found"});
+            }
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if (CurrentTask == null) {
+                return BadRequest(new ProblemDetails{Title = "Task not found"});
+            }
+
+            CurrentMilestone.Tasks.Remove(CurrentTask);
+
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) {
+                return Ok();
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem deleting task from milestone"});
 
         }
 

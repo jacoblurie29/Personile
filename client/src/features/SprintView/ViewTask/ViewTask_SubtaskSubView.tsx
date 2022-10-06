@@ -94,20 +94,31 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
 
     const handleUpdateSubtask = (updateSubtaskId: string) => {
 
+        // null checks
         if(userId == null) return;
         if(currentSprint == null) return;
         if(currentBoard == null) return;
 
+        // retrieve subtask and undefined check
         var subtask = task.subTasks.find(s => s.subTaskEntityId == updateSubtaskId);
         if(subtask == undefined) return;
 
+        // create new subtask and null check
         var newSubTask = {...subtask};
         if(newSubTask == null) return;
         newSubTask.details = editSubtaskValue;
 
+        // stop from updating if value is the same
+        if(editSubtaskValue == subtask.details) {
+            cancelEditSubtask();
+            return;
+        }
+
+        // reset subtask state values
         setEditSubtaskValue("");
         setIsEditSubtask("");
 
+        // send update to server
         dispatch(updateSubtaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, subtaskId: updateSubtaskId, updatedSubtask: newSubTask}))
             .catch((error) => {console.log(error); toast.error("Failed to update subtask")});
 

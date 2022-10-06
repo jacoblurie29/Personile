@@ -83,7 +83,8 @@ const UserData = {
     addBoard: (userId: string, body: {}) => requests.post(`userdata/${userId}/addBoard`, body),
     updateBoard: (userId: string, boardId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/updateBoard`, body),
     deleteBoard: (userId: string, boardId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/deleteBoard`),
-    addTaskToMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/addTaskToMilestone`)
+    addTaskToMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/addTaskToMilestone`),
+    removeTaskFromMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/deleteTaskFromMilestone`)
 }
 
 const Account = {
