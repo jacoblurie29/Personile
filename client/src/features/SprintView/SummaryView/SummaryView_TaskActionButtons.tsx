@@ -11,11 +11,9 @@ interface Props {
 
 export default function TaskActionButtons () {
 
+    // Stops the accordian from opening due to the click in the summary area
     const onClickDelete = (event: any) => {
-
-        // Below stops the accordian from opening due to the click in the summary area
         event.stopPropagation();
-
     }
 
     return (

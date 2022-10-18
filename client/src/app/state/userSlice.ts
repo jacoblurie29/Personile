@@ -27,8 +27,6 @@ const initialState : UserState = {
 }
 
 
-
-
 export const addTaskToSprintAsync = createAsyncThunk<Sprint, {userId: string, boardId: string, sprintId: string, task: UpdateTask}>(
     'sprint/addTaskToSprintAsync',
     async ({userId, boardId, sprintId, task}, thunkAPI) => {

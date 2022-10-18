@@ -15,8 +15,10 @@ interface Props {
 
 export default function NewEditTaskOptionsButton({setNewTask, isEdit, task, toggleEditTask}: Props) {
 
+    // state variables
     const [alignment, setAlignment] = useState<string | null>('left');
 
+    // alignment of toggle button
     const handleAlignment = (
         event: React.MouseEvent<HTMLElement>,
         newAlignment: string | null,
@@ -40,9 +42,9 @@ export default function NewEditTaskOptionsButton({setNewTask, isEdit, task, togg
              <ArrowBackIcon sx={{color:"background.paper"}} />
             </ToggleButton>
           } 
-            <ToggleButton value="active" aria-label="centered" type="submit" sx={{background: 'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)', ":hover": {backgroundColor: "success.dark"}}}>
-            {isEdit ? <AddCircleIcon sx={{color:"background.paper"}}/> : <CheckCircleIcon sx={{color:"background.paper"}} />}
-            </ToggleButton>
+          <ToggleButton value="active" aria-label="centered" type="submit" sx={{background: 'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)', ":hover": {backgroundColor: "success.dark"}}}>
+          {isEdit ? <AddCircleIcon sx={{color:"background.paper"}}/> : <CheckCircleIcon sx={{color:"background.paper"}} />}
+          </ToggleButton>
       </ToggleButtonGroup>
     )
 }

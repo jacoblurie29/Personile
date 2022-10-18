@@ -10,7 +10,33 @@ interface formProps extends UseControllerProps {
 
 export default function NewEditTaskTextField(props: formProps) {
 
+    // react hook form
     const {fieldState, field} = useController({...props, defaultValue: props.editvalue || ""})
+
+    // text field styles
+    const fieldStyles = {
+        "& .MuiFormHelperText-root":{
+            color: 'grey.500'
+        },
+        "& .MuiInputLabel-root": { color: 'grey.500' },
+        "& .MuiOutlinedInput-root": {
+            "& > fieldset": { borderColor: 'grey.500' },
+        },
+        "& .MuiOutlinedInput-root:hover": {
+            "& > fieldset": {
+                borderColor: 'primary.main'
+            }
+        },
+        color: 'grey.800',
+        textArea: 
+            {color: 'grey.800'},
+        input:
+            {color: 'grey.800'},
+        marginLeft: '10px',
+        borderColor: 'grey.500',
+        borderRadius: '5px',
+        marginBottom: '15px'
+    }
 
     return (
         <TextField 
@@ -24,28 +50,6 @@ export default function NewEditTaskTextField(props: formProps) {
             label={props.label}
             id="outlined-size-small"
             size="small" 
-            sx={{
-                "& .MuiFormHelperText-root":{
-                    color: 'grey.500'
-                },
-                "& .MuiInputLabel-root": { color: 'grey.500' },
-                "& .MuiOutlinedInput-root": {
-                    "& > fieldset": { borderColor: 'grey.500' },
-                },
-                "& .MuiOutlinedInput-root:hover": {
-                    "& > fieldset": {
-                        borderColor: 'primary.main'
-                    }
-                },
-                color: 'grey.800',
-                textArea: 
-                    {color: 'grey.800'},
-                input:
-                    {color: 'grey.800'},
-                marginLeft: '10px',
-                borderColor: 'grey.500',
-                borderRadius: '5px',
-                marginBottom: '15px'
-        }} />
+            sx={fieldStyles} />
     )
 }

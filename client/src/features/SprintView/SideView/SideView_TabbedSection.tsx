@@ -13,20 +13,23 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function SideViewTabbedSection() {
 
-    // REDUX AND FORMS
+    // redux state
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);
-    const theme = useTheme();
     const board = boards?.find(b => b.boardEntityId == currentBoard)
 
-    // STATE CONSTANTS
+    // react state and theme
     const [currentTab, setCurrentTab] = useState<number>(0);
+    const theme = useTheme();
 
+    // populate the milestone headers with their tasks
     const getTasksForMilestone = (milestoneId: string) => {
 
+        // obtain sprint object and null check
         var sprints = board?.sprints;
         if (sprints == undefined) return;
 
+        // base task array
         var Tasks = [] as Task[];
         
         sprints.map(sprint => {
@@ -37,6 +40,7 @@ export default function SideViewTabbedSection() {
             })
         });
 
+        // Sort tasks based on current state
         Tasks.sort((a, b) => {
             return a.currentState - b.currentState;
         })
@@ -44,6 +48,7 @@ export default function SideViewTabbedSection() {
         return Tasks;
     }
 
+    // styles for tasks in milestone
     const getMilestoneTaskBorders = (index: number, tasks: Task[]) => {
         if(index === 0 && tasks.length > 1) return '5px 5px 0 0';
         if(index === 0 && tasks.length <= 1) return '5px';

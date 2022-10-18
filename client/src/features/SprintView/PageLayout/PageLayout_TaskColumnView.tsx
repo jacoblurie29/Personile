@@ -17,20 +17,22 @@ interface Props {
 
 export default function PageLayoutTaskColumnView({tasks, stateTitle, sprintId, toggleEditTask, tasksToBeEdited}: Props) {
 
+    // react state and theme
     const [newTask, setNewTask] = useState<boolean>(false);
     const theme = useTheme();
 
+    // default value of new task set to false upon sprintId being changed
     useEffect(() => {
         setNewTask(false)
     }, [sprintId])
 
+    // handle new task button selected
     const handleNewTask = () => {
         setNewTask(true)
     }
 
     return (
         <>
-
             <Card sx={{borderRadius: '5px 5px 0 0', background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
             <Typography variant='h2' sx={{fontWeight: '700', color: 'white', padding: '15px'}}>{stateTitle}</Typography>
             </Card>
@@ -49,7 +51,7 @@ export default function PageLayoutTaskColumnView({tasks, stateTitle, sprintId, t
                   
             ))}
 
-            {/* Below redundancy is for consistency of animation purposes */}
+            {/* Apparent redundancy below is for consistency of animation purposes */}
 
             {tasks.length === 0 && stateTitle === "New" && !newTask && <PageLayoutNewTaskButton addNewTaskOnClick={handleNewTask} index={tasks.length}/>}   
 

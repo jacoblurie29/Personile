@@ -10,18 +10,21 @@ interface Props {
     page: string
 }
 
-// "{tasks}: Props" destructures the props for the fields inside
 export default function SprintView({page}: Props) {
 
+    // redux state
     const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
     const sprints = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId == currentBoard)?.sprints);
+
+    // react state
     const [taskToBeEditedId, setTaskToBeEditedId] = useState<string[]>([]);
 
     
 
-
+        // handle edit task panel opened for task
         const toggleEditTask = (taskId: string) => {
 
+            // open or close edit panel for task in question
             if(taskToBeEditedId.includes(taskId)) {
                 var taskToBeEditedIdCopy = [...taskToBeEditedId];
                 var taskIndex = taskToBeEditedIdCopy.findIndex(t => t === taskId);

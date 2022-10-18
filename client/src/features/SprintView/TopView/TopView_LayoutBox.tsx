@@ -10,18 +10,20 @@ interface Props {
 
 export default function TopView_LayoutBox({title, setPage, component}: Props) {
 
+    // redux state
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);
 
+    // react state
     const [alignment, setAlignment] = useState<String>("sprint");
 
+    // handle change between sprint and summary view
     const handleChange = (
         event: React.MouseEvent<HTMLElement>,
         newAlignment: string,
     ) => {
         if(newAlignment !== null)
         {
-            console.log(newAlignment);
             setAlignment(newAlignment);
             setPage(newAlignment);
         }

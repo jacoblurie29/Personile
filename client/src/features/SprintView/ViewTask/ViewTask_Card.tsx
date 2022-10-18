@@ -22,12 +22,16 @@ interface Props {
 
 export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: Props) {
 
+    // redux state
     const {status} = useAppSelector(state => state.user)
     const {currentSprint, isExpanded: expanded, currentBoard } = useAppSelector(state => state.sprintView);
     const userEntityId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
+
+    // react state
     const [zoom, setZoom] = useState<boolean>(true);
 
+    // expanding of view panel
     const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
        if(expanded?.includes(panel)) {
@@ -37,23 +41,35 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: 
        }
     };
 
+    // handle state of task (new, current, completed)
     const handleStateChange = (currentTask: Task, currentState: number, newState: number) => {
         
+        // disallow change of state if state hasn't changed
         if(currentState != newState) {
 
+            // shape new state
             var newTask = {...currentTask};
-            var previousState  = {...newTask};
             newTask.currentState = newState;
             var newUpdateTask = mapTaskToUpdateTask(newTask);
+
+            // store previous state
+            var previousState  = {...newTask};
+            
+            // find current task id
             var currentTaskId = newTask.taskEntityId;
+
+            // current redux id variables
             var currentUserId = userEntityId;
             var currentSprintId = currentSprint;
             var currentBoardId = currentBoard;
 
+            // null check
             if (currentUserId == undefined || currentSprintId == null || currentBoardId == null ) return;
 
+            // update state
             dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
             
+            // close expanded panel
             dispatch(removeFromIsExpanded(currentTaskId));
         }
     }

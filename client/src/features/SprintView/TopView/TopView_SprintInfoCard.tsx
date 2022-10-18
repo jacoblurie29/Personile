@@ -9,24 +9,32 @@ import { setCurrentSprint } from "../Redux/sprintSlice";
 
 export default function TopViewSprintInfoCard() {
 
+    // redux state
     const dispatch = useAppDispatch();
     const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
     const sprints = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId === currentBoard)?.sprints);
+
+    // react theme
     const theme = useTheme();
 
-
-
+    // on click of backwards sprint change button
     const handleSprintChangeBackwards = () => {
         
+        // find number value of current sprint start date
         var currentSprintStartTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "");
-        var newSprint = sprints?.find(s => Date.parse(s.endDate) > currentSprintStartTime - 95040000 && Date.parse(s.endDate) < currentSprintStartTime);
 
+        // find new sprint based on start and end date
+        var newSprint = sprints?.find(s => Date.parse(s.endDate) > currentSprintStartTime - 95040000 && Date.parse(s.endDate) < currentSprintStartTime);
+    
+        // undefined check
         if (newSprint !== undefined) {
+            // set new sprint value
             dispatch(setCurrentSprint(newSprint.sprintEntityId));
         }
 
     }
 
+    // on click of forwards sprint change button
     const handleSprintChangeForwards = () => {
 
         var currentSprintEndTime = Date.parse(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "");
@@ -38,11 +46,14 @@ export default function TopViewSprintInfoCard() {
             future sprint that is 5 sprints away, we generate that in the background
         */
 
+        // undefined check
         if (newSprint !== undefined) {
+            // set new sprint value
             dispatch(setCurrentSprint(newSprint.sprintEntityId));
         }
     }
 
+    // styles for task status bar, new task section
     const calculateNewTaskBorder = () => {
         if (calculateTodayTaskNumber() === 0 && calculateCompletedTaskNumber() === 0) {
             return '5px'
@@ -51,6 +62,7 @@ export default function TopViewSprintInfoCard() {
         }
     }
 
+    // styles for task status bar, today task section
     const calculateTodayTaskBorder = () => {
         if (calculateNewTaskNumber() === 0 && calculateCompletedTaskNumber() === 0) {
             return '5px'
@@ -63,6 +75,7 @@ export default function TopViewSprintInfoCard() {
         }
     }
 
+    // styles for task status bar, completed task section
     const calculateCompletedTaskBorder = () => {
         if (calculateTodayTaskNumber() === 0 && calculateNewTaskNumber() === 0) {
             return '5px'
@@ -71,18 +84,21 @@ export default function TopViewSprintInfoCard() {
         }
     }
 
+    // calculate number of new tasks
     const calculateNewTaskNumber = () => {
         return sprints?.find(s => s.sprintEntityId === currentSprint)?.tasks.filter((task) => {
             return task.currentState === 0;
         }).length || 0;
     }
 
+    // calcuate number of today tasks
     const calculateTodayTaskNumber = () => {
         return sprints?.find(s => s.sprintEntityId === currentSprint)?.tasks.filter((task) => {
             return task.currentState === 1;
         }).length || 0;
     }
 
+    // calcuate number of completed tasks
     const calculateCompletedTaskNumber = () => {
         return sprints?.find(s => s.sprintEntityId === currentSprint)?.tasks.filter((task) => {
             return task.currentState === 2;

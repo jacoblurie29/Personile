@@ -10,10 +10,13 @@ interface formProps extends UseControllerProps {
 }
 export default function NewEditTaskDatePicker(props: formProps) {
 
+    // react hook form
     const {fieldState, field} = useController({...props, defaultValue: props.editvalue !== undefined ? new Date(props.editvalue) : ""});
 
+    // state values (date selected)
     const [value, setValue] = useState<Date | null>(props.editvalue !== undefined && props.editvalue !== "" ? new Date(props.editvalue) : new Date());
-
+    
+    // styles when switch is enabled
     const enabledStyles = { 
         "& .MuiInputLabel-root": {color: 'grey.500'},
         "& .MuiOutlinedInput-root": {
@@ -34,6 +37,7 @@ export default function NewEditTaskDatePicker(props: formProps) {
         borderRadius: '5px',
       };
 
+      // styles when switch is disabled
       const disabledStlyes = {
         color: 'grey.200',
         textArea: {color: 'grey.200'},

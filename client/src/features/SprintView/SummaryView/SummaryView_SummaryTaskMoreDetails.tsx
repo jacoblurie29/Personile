@@ -8,6 +8,7 @@ interface Props {
     focusedTask: Task,
 }
 
+// effort slider styles
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
@@ -22,7 +23,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 export default function SummaryTaskMoreDetails({ focusedTask }: Props) {
 
-
+    // redux state
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);
     const board = boards?.find(b => b.boardEntityId == currentBoard)

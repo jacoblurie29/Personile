@@ -7,6 +7,7 @@ interface formProps extends UseControllerProps {
 
 export default function NewEditTaskEffortSlider(props: formProps) {
 
+    // react hook form
     const {field} = useController({...props, defaultValue: props.editvalue || 5 })
 
     return (

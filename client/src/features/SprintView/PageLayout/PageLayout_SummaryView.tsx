@@ -4,7 +4,7 @@ import { Task } from "app/models/task";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
 import { removeTaskFromSprintAsync, updateTaskAsync } from "app/state/userSlice";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
 import ViewTaskStateToggleButton from "../ViewTask/ViewTask_StateToggleButton";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,23 +15,26 @@ import SummaryTaskMoreDetails from "../SummaryView/SummaryView_SummaryTaskMoreDe
 
 export default function SummaryView() {
 
+    // base task array
     const allTasks : Task[] = [];
 
+    // redux state
     const { currentSprint, currentBoard, isExpanded : expanded } = useAppSelector(state => state.sprintView);
     const tasks = useAppSelector(state => state.user.userData?.boards.find(b => b.boardEntityId == currentBoard)?.sprints?.flatMap(s => s.tasks)) || [];
-    const [taskToBeEditedId, setTaskToBeEditedId] = useState<string[]>([]);
     const {status} = useAppSelector(state => state.user)
     const userEntityId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
+
+    // react theme
     const theme = useTheme();
 
-    useEffect(() => {
-        console.log(tasks)
-    }, [])
-    
-
+    // react state (ids of tasks with edit panel open)
+    const [taskToBeEditedId, setTaskToBeEditedId] = useState<string[]>([]);
+ 
+    // set edit task state and open edit task panel
     const toggleEditTask = (taskId: string) => {
 
+        // close or open task edit panel
         if(taskToBeEditedId.includes(taskId)) {
             var taskToBeEditedIdCopy = [...taskToBeEditedId];
             var taskIndex = taskToBeEditedIdCopy.findIndex(t => t === taskId);
@@ -44,6 +47,7 @@ export default function SummaryView() {
         }
     }
 
+    // expanded state of panel
     const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
        if(expanded?.includes(panel)) {
@@ -53,23 +57,34 @@ export default function SummaryView() {
        }
     };
 
+    // change state of task (new, current, completed)
     const handleStateChange = (currentTask: Task, currentState: number, newState: number) => {
         
         if(currentState != newState) {
 
+            // shape new state
             var newTask = {...currentTask};
-            var previousState  = {...newTask};
             newTask.currentState = newState;
             var newUpdateTask = mapTaskToUpdateTask(newTask);
+
+            // store previous state
+            var previousState  = {...newTask};
+            
+            // find current task id
             var currentTaskId = newTask.taskEntityId;
+
+            // current redux id variables
             var currentUserId = userEntityId;
             var currentSprintId = currentSprint;
             var currentBoardId = currentBoard;
 
+            // null checks
             if (currentUserId == undefined || currentSprintId == null || currentBoardId == null ) return;
 
+            // update state
             dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
             
+            // close expanded panel
             dispatch(removeFromIsExpanded(currentTaskId));
         }
     }

@@ -20,69 +20,85 @@ interface Props {
 
 export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
 
-    // REDUX AND FORMS
+    // react hook form
     const methods = useForm();
-    const dispatch = useAppDispatch();
     const { control, handleSubmit } = useForm();
-    const userId = useAppSelector(state => state.user.userData?.userEntityId);
 
-    // STATE CONSTANTS
+    // redux state
+    const dispatch = useAppDispatch();
+    const userId = useAppSelector(state => state.user.userData?.userEntityId);
+    const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
+
+    // react state
     const [newSubTask, setNewSubTask] = useState<boolean>(false);
     const [newSubTaskValue, setNewSubTaskValue] = useState<string>("");
     const [isEditSubtask, setIsEditSubtask] = useState<string>("");
     const [editSubtaskValue, setEditSubtaskValue] = useState<string>("");
-    const { currentSprint, currentBoard } = useAppSelector(state => state.sprintView);
 
+    // subtask state (completed or incomplete)
     const handleSubtaskState = (value: number) => () => {
 
+        // null checks
         if(userId == null) return;
         if(currentSprint == null) return;
         if(currentBoard == null) return;
 
+        // construct subtask and null check
+        // FIX THIS: obtain guid id of subtask rather than find through calculation
         var subTaskId = (value + 1) + "-" + task.taskEntityId;
         var subtask = task.subTasks.find(s => s.subTaskEntityId == subTaskId);
         if(subtask == undefined) return;
 
+        // copy old subtask and null check
         var newSubTask = {...subtask};
         if(newSubTask == null) return;
 
+        // update subtask state
         if(newSubTask.status == "Incomplete") {
             newSubTask.status = "Completed";
         } else {
             newSubTask.status = "Incomplete";
         }
 
+        // update subtask
         dispatch(updateSubtaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, subtaskId: subTaskId, updatedSubtask: newSubTask}))
 
     };
 
     const handleNewSubtask = (data: FieldValues) => {
         
+        // null checks
         if(userId == null) return;
         if(currentSprint == null) return;
         if(currentBoard == null) return;
 
+        // construct new subtask
         var newSubtask = {
+            // FIX THIS: need subtask ID to be full random GUID to avoid collisions
             subTaskEntityId: (task.subTasks.length + 1) + "-" + task.taskEntityId,
             status: "Incomplete",
             details: newSubTaskValue
         }
 
+        // disallow creation of new subtask without details
         if(newSubTaskValue === "") {
             setNewSubTask(false);
             setNewSubTaskValue("");
             return;
         }
 
+        // close new subtask bar
         setNewSubTask(false);
         setNewSubTaskValue("");
 
+        // add subtask
         dispatch(addSubTaskToTaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, newSubtask: newSubtask}))
             .catch((error) => {console.log(error); toast.error("Failed to create task")});
 
 
     }
 
+    // toggles edit bar on click of subtask
     const handleEditSubtaskToggle = (subtaskId: string) => {
         if(isEditSubtask !== subtaskId) {
             setEditSubtaskValue(task.subTasks.find(s => s.subTaskEntityId === subtaskId)?.details || "")
@@ -124,16 +140,21 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
 
     }
 
+    // close subtask edit bar
     const cancelEditSubtask = () => {
         setEditSubtaskValue("");
         setIsEditSubtask("");
     }
 
+    // remove subtask from list and db
     const deleteSubtask = (deleteSubtaskId: string) => {
+
+        // null checks
         if(userId == null) return;
         if(currentSprint == null) return;
         if(currentBoard == null) return;
 
+        // find subtask
         var subtask = task.subTasks.find(s => s.subTaskEntityId == deleteSubtaskId);
         if(subtask == undefined) return;
 
@@ -141,8 +162,10 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
             .catch((error) => {console.log(error); toast.error("Failed to delete subtask")});
     }
 
+    // styles for add subtask
     const addTaskBorders = task.subTasks.length > 0 ? '0 0 5px 5px' : '5px';
 
+    // styles for edit task
     const getEditTaskBorders = (index: number) => {
         if(index === 0 && task.subTasks.length > 1) return '5px 5px 0 0';
         if(index === 0 && task.subTasks.length <= 1) return '5px';

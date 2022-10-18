@@ -8,6 +8,7 @@ interface Props {
     focusedTask: Task,
 }
 
+// effort slider object and styles
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
@@ -22,7 +23,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 export default function ViewTaskMoreDetails({ focusedTask }: Props) {
 
-
+    // redux state
     const { currentBoard } = useAppSelector(state => state.sprintView);
     const boards = useAppSelector(state => state.user.userData?.boards);
     const board = boards?.find(b => b.boardEntityId == currentBoard)
@@ -32,7 +33,6 @@ export default function ViewTaskMoreDetails({ focusedTask }: Props) {
             {focusedTask.tags !== '' && 
             <>
                 <Typography variant="caption" sx={{color: 'grey.600'}}>Tags&nbsp;({focusedTask.tags !== '' ? focusedTask.tags.split("|").length : 0})</Typography>
-                
                 <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
                 
                     <Grid item justifyContent='center' sx={{margin: 'auto'}}>
@@ -46,9 +46,7 @@ export default function ViewTaskMoreDetails({ focusedTask }: Props) {
             {focusedTask.links !== '' && 
             <Box sx={{paddingBottom: '5px'}}>
                 <Typography variant="caption" sx={{color: 'grey.600'}}>Links&nbsp;({focusedTask.links !== '' ? focusedTask.links.split("|").length : 0})</Typography>
-                
                 <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
-                
                     <Grid item justifyContent='center' sx={{margin: 'auto'}}>
                     {focusedTask?.links.split('|').map((tag, index) => (
                         <Chip key={tag} label={tag} onClick={()=> window.open(tag, "_blank")} sx={{margin: '2px', backgroundColor: 'primary.light'}} />

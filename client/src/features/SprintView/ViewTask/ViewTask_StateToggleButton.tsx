@@ -13,8 +13,10 @@ interface Props {
 
 export default function ViewTaskStateToggleButton({task, startingState, handleChangeState} : Props) {
 
+    // react state
     const [alignment, setAlignment] = useState<string | null>('left');
 
+    // handle toggled button state
     const handleAlignment = (
         event: React.MouseEvent<HTMLElement>,
         newAlignment: string | null,

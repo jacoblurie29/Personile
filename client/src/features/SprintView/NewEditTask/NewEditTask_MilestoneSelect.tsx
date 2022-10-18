@@ -10,6 +10,7 @@ interface formProps extends UseControllerProps {
     board: Board
 }
 
+// styles for select
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -26,8 +27,10 @@ const MenuProps = {
 
 export default function NewEditTaskMilestoneSelect(props: formProps) {
 
+    // react hook form
     const {fieldState, field} = useController({...props, defaultValue: props.editvalue?.split("|") || []});
 
+    // on change of select value
     const handleChange = (event: SelectChangeEvent<typeof field.value>) => {
         const {
           target: { value },
@@ -37,14 +40,25 @@ export default function NewEditTaskMilestoneSelect(props: formProps) {
 
       };
 
+    const selectStyles = { 
+      label: { color: 'grey.500' }, 
+      "& .MuiOutlinedInput-root:hover": {
+        "& > fieldset": { borderColor: 'primary.main'},
+      },
+      color: 'primary.main',
+      textArea: {color: 'grey.500'},
+      input: {color: 'grey.500'},
+      marginLeft: '10px',
+      borderColor: 'grey.500',
+      borderRadius: '5px',
+      marginBottom: '15px'
+    }
+
+
 
     return (
-        <FormControl variant="outlined" fullWidth sx={{ label: { color: 'grey.500' }, 
-            "& .MuiOutlinedInput-root:hover": {
-                "& > fieldset": { borderColor: 'primary.main'},
-            },
-            color: 'primary.main', textArea: {color: 'grey.500'}, input: {color: 'grey.500'}, marginLeft: '10px', borderColor: 'grey.500', borderRadius: '5px', marginBottom: '15px'}}
-   >
+        <FormControl variant="outlined" fullWidth sx={selectStyles}
+        >
         <InputLabel id="demo-multiple-checkbox-label" key='label'>Milestones</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
