@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link, useHistory } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
@@ -15,12 +14,16 @@ import { signInUserAsync } from 'app/state/userSlice';
 
 export default function LoginView() {
 
+  // redux
   const history = useHistory();
   const dispatch = useAppDispatch();
+
+  // react hook form
   const {register, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
       mode: 'all'
   });
 
+  // submit the form to sign in
   async function submitForm(data: FieldValues) {
     await dispatch(signInUserAsync(data));
     history.push('/sprint')     

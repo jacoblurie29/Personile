@@ -28,15 +28,17 @@ interface Props {
 
 export default function NewBoardCard(props: Props) {
 
-    // REDUX AND ROUTER
+    // redux state
     const history = useHistory();
     const userId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
+
+    // react hook form
     const {register, handleSubmit, setValue, formState: {isSubmitting, errors, isValid}} = useForm({
         mode: 'onSubmit'
     });
 
-    // STATE CONSTANTS
+    // react state
     const [open, setOpen] = useState(true);
     const [currentName, setCurrentName] = useState<string>(props.editBoard?.name || "");
     const [currentDescription, setCurrentDecription] = useState<string>(props.editBoard?.description || "");
@@ -56,10 +58,7 @@ export default function NewBoardCard(props: Props) {
     const [secondScreenAnimation, setSecondScreenAnimation] = useState<boolean>(true);
     
 
-    const handleClose = () => {
-      setOpen(false);
-    };
-
+    // add a new goal field to the interface
     const handleAddGoalField = () => {
       if(newGoals[newGoals.length - 1] !== "") {
         var oldArray = [...newGoals];
@@ -68,18 +67,21 @@ export default function NewBoardCard(props: Props) {
       }
     }
 
+    // remove a goal field from the interface
     const handleDeleteGoal = (index: number) => {
       var oldArray = [...newGoals];
       oldArray.splice(index, 1)
       setNewGoals(oldArray);
     }
 
+    // change the value of a goal field
     const handleChangeGoal = (index: number, value: string) => {
       var oldArray = [...newGoals];
       oldArray[index] = value;
       setNewGoals(oldArray);
     }
 
+    // add a new milestone field
     const handleAddMilestoneField = () => {
       if(newMilestones[newMilestones.length - 1] !== "") {
         var oldMilestoneArray = [...newMilestones];
@@ -100,18 +102,21 @@ export default function NewBoardCard(props: Props) {
       }
     }
 
+    // delete a milestone field
     const handleDeleteMilestone = (index: number) => {
       var oldArray = [...newMilestones];
       oldArray.splice(index, 1)
       setNewMilestones(oldArray);
     }
 
+    // change a milestone field value
     const handleChangeMilestone = (index: number, value: string) => {
       var oldArray = [...newMilestones];
       oldArray[index] = value;
       setNewMilestones(oldArray);
     }
 
+    // remove a date from a milestone
     const handleDeleteMilestoneDate = (index: number) => {
       var oldMilestoneDateArray = [...newMilestoneDates];
       oldMilestoneDateArray.splice(index, 1)
@@ -126,6 +131,7 @@ export default function NewBoardCard(props: Props) {
       setNewMilestoneHardDeadline(oldHardDeadlineArray);
     }
 
+    // change a date of a milestone
     const handleChangeMilestoneDate = (index: number, value: string) => {
       var oldArray = [...newMilestoneDates];
       oldArray[index] = value;
@@ -138,33 +144,32 @@ export default function NewBoardCard(props: Props) {
       setEnableMilestoneDates(oldArray);
     }
 
+    // enable/disable hard deadline option
     const handleChangeHardDeadline = (index: number, value: boolean) => {
       var oldArray = [...newMilestoneHardDeadline];
       oldArray[index] = value;
       setNewMilestoneHardDeadline(oldArray);
     }
 
+    // change board end date value
     const handleChangeBoardEndDate = (index: number, value: string) => {
       var oldArray = [...boardEndDate];
       oldArray[index] = value;
       setBoardEndDate(oldArray);
     }
 
-    
-
+    // submit data for board creation
     async function submitForm(data: FieldValues) {
 
-      console.log("ONE");
-
-      // NULL CHECKS
+      // null checks
       if(userId == null) return;
       if (currentName === undefined || currentDescription === undefined) return;
 
-      console.log("TWO");
-
+      // base object arrays for goals and milestones
       var goalArray: Goal[] = [];
       var milestoneArray: Milestone[] = [];
 
+      // map goal data to array
       newGoals.forEach(goal => {
         if(goal !== "") {
           goalArray.push( {
@@ -176,6 +181,7 @@ export default function NewBoardCard(props: Props) {
         }
       });
 
+      // map milestone data to array
       newMilestones.forEach((milestone, index) => {
           if(milestone !== "")  {
             milestoneArray.push( {
@@ -193,9 +199,10 @@ export default function NewBoardCard(props: Props) {
       })
 
 
-      // NEW BOARD
+      // new board
       if(props.editBoard == undefined) {
 
+          // calculate length of sprint
           var sprintDaysLength = () => {
               if (customLengthChecked) {
                 return currentCustomSprintLength;
@@ -217,6 +224,7 @@ export default function NewBoardCard(props: Props) {
               }
           }
 
+          // map data to board object
           var newBoard = {
             boardEntityId: uuidv4(),
             name: data.name,
@@ -231,17 +239,19 @@ export default function NewBoardCard(props: Props) {
 
           }
 
+        // close new board window
         props.setNewBoardState(false);
 
+        // submit data for new board creation
         dispatch(addBoardAsync({userId: userId, board: newBoard})).catch(error => console.log(error));
 
-      // EDIT BOARD
+      // edit board
       } else {
 
-        console.log("FUCK")
-
+        // copy previous state of board
         var prevState = props.editBoard;
 
+        // map form data and past data to future board object for redux
         var futureState = {
             boardEntityId: props.editBoard.boardEntityId,
             name: data.name,
@@ -255,6 +265,7 @@ export default function NewBoardCard(props: Props) {
             milestones: milestoneArray
         };
 
+        // map form data for board update
         var editBoard = {
           boardEntityId: props.editBoard.boardEntityId,
           name: data.name,
@@ -263,45 +274,65 @@ export default function NewBoardCard(props: Props) {
           milestones: milestoneArray
         }
 
-        
+        // close edit board window
         props.setNewBoardState(false);
+
+        // submit data for board update
         dispatch(updateBoardAsync({userId: userId, boardId: props.editBoard.boardEntityId, updateBoardDto: editBoard, previousState: prevState, futureState: futureState}))
 
       }
 
     }
 
+    // delete board from user account
     const handleDeleteBoard = (boardId: string) => {
 
-        if(userId == null || boardId == "") return;
+      // null checks
+      if(userId == null || boardId == "") return;
 
-        props.setNewBoardState(false);
+      // close edit board window
+      props.setNewBoardState(false);
 
-        dispatch(deleteBoardAsync({boardId: boardId, userId: userId}));
+      // delete board from data
+      dispatch(deleteBoardAsync({boardId: boardId, userId: userId}));
 
     }
     
-
+    // move from first to second screen in board creation
     async function handleNextScreen(data: FieldValues) {
 
+        // assign data values from first screen
         setCurrentName(data.name);
         setCurrentDecription(data.description);
+
+        // animate panel
         setFirstScreenAnimation(false)
         setSecondScreenAnimation(true);
+
+        // timeout for looks
         await new Promise<void>(done => setTimeout(() => done(), 400));
+
+        // move to next screen
         setCurrentScreen(2);
 
     }
 
+    // move from second back to first board screen
     async function handleGoBack() {
 
+      // animate panel
       setSecondScreenAnimation(false);
       setFirstScreenAnimation(true)
+
+      // timeout for looks
       await new Promise<void>(done => setTimeout(() => done(), 400));
+
+      // move to previous screen
       setCurrentScreen(1);
 
     }
 
+    // use total sprint length to calculate recommended short length
     const calculateSprintShortLength = (totalLength: number) => {
 
       if(totalLength === 0) return 7;
@@ -311,6 +342,7 @@ export default function NewBoardCard(props: Props) {
       return Math.round(estimation);
     }
 
+    // use total sprint length to calculate recommended mid length
     const calculateSprintRecommendedLength = (totalLength: number) => {
 
       if(totalLength === 0) return 14;
@@ -320,6 +352,7 @@ export default function NewBoardCard(props: Props) {
       return Math.round(estimation);
     }
 
+    // use total sprint length to calculate recommended long length
     const calculateSprintLongLength = (totalLength: number) => {
 
       if(totalLength === 0) return 30;
@@ -329,6 +362,7 @@ export default function NewBoardCard(props: Props) {
       return Math.round(estimation);
     }
 
+    // calculate the length of a board in days based on start and end date
     const calculateTotalLength = (endDate: string) => {
 
       var milliseconds = Date.parse(endDate) - Date.parse(new Date().toString());
@@ -344,6 +378,7 @@ export default function NewBoardCard(props: Props) {
 
     }
 
+    // calcuate integer number of sprints from board data
     const calculateNumberOfSprints= (totalDays: number, sprintLength: number) => {
       
       if(totalDays % sprintLength > Math.floor(sprintLength / 2)) {
@@ -355,6 +390,7 @@ export default function NewBoardCard(props: Props) {
 
     }
 
+    // set initial values of name and description
     useEffect(() => {
         if(props.editBoard !== undefined) {
           setValue('name', props.editBoard.name);

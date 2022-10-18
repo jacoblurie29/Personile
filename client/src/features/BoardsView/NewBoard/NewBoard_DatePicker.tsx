@@ -15,6 +15,7 @@ interface Props {
 }
 export default function NewBoardDatePicker(formProps: Props) {
 
+    // styles for date picker enabled
     const enabledStyles = { 
         "& .MuiInputLabel-root": {color: 'grey.500'},
         "& .MuiOutlinedInput-root": {
@@ -35,12 +36,13 @@ export default function NewBoardDatePicker(formProps: Props) {
         backgroundColor: 'background.paper'
       };
 
-      const disabledStlyes = {
-        color: 'grey.200',
-        textArea: {color: 'grey.200'},
-        input: {color: 'grey.200'},
-        borderRadius: '5px'
-      }
+    // styles for disabled date picker
+    const disabledStlyes = {
+    color: 'grey.200',
+    textArea: {color: 'grey.200'},
+    input: {color: 'grey.200'},
+    borderRadius: '5px'
+    }
     
     
     return (

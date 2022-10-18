@@ -8,12 +8,14 @@ import NewBoardCard from "../NewBoard/NewBoard_Card";
 
 export default function BoardView() {
 
+    // redux state
     const boards = useAppSelector(state => state.user.userData?.boards);
 
+    // react state
     const [newBoard, setNewBoard] = useState<boolean>(false);
     const [editBoard, setEditBoard] = useState<Board | undefined>(undefined);
-    //const [animationBooleans, setAnimationBooleans] = useState<boolean[]>(boards?.map(b => true) || []);
 
+    // open the new board panel and populate fields if edit is selected
     const setNewBoardState = (state: boolean, editBoard?: Board, index?: number) => {
         setNewBoard(state);
         setEditBoard(editBoard);

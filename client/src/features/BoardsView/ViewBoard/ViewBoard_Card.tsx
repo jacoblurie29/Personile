@@ -20,26 +20,31 @@ interface Props {
 
 export default function ViewBoardCard({board, setNewBoardState, indexForAnimation, animationBoolean}: Props) {
 
-    const dispatch = useAppDispatch();
+    // redux
     const history = useHistory();
     const boards = useAppSelector(state => state.user.userData?.boards)
+    const dispatch = useAppDispatch();
 
+    // open the sprint view of a board
     const handleOpenBoard = (boardId: string) => {
 
-        dispatch(setCurrentBoard(boardId));
-        
-        var currentBoardSprints = boards?.find(b => b.boardEntityId === boardId)?.sprints;
+      // set redux value of current board
+      dispatch(setCurrentBoard(boardId));
+      
+      // find sprints of board and undefined check
+      var currentBoardSprints = boards?.find(b => b.boardEntityId === boardId)?.sprints;
+      if(currentBoardSprints === undefined) return;
 
-        if(currentBoardSprints === undefined) return;
+      // find the first sprint to be opened to
+      var setSprint =  currentBoardSprints.find(s => {
+          return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 86396400) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 86396400
+      })?.sprintEntityId || currentBoardSprints[0]; 
 
-        var setSprint =  currentBoardSprints.find(s => {
-            return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 86396400) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 86396400
-        })?.sprintEntityId || currentBoardSprints[0]; 
+      // set the current sprint
+      dispatch(setCurrentSprint(setSprint));
 
-
-        dispatch(setCurrentSprint(setSprint));
-
-        history.push("/sprint")
+      // change location to sprint view
+      history.push("/sprint")
 
         
     }

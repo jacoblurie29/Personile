@@ -17,7 +17,28 @@ interface Props {
 
 export default function NewBoardTextField(formProps: Props) {
     
-
+    const textFieldStyles = {
+        "& .MuiFormHelperText-root":{
+            color: 'grey.500'
+        },
+        "& .MuiInputLabel-root": { color: 'grey.500' },
+        "& .MuiOutlinedInput-root": {
+            "& > fieldset": { borderColor: 'grey.500' },
+        },
+        "& .MuiOutlinedInput-root:hover": {
+            "& > fieldset": {
+                borderColor: 'primary.main'
+            }
+        },
+        color: 'grey.800',
+        textArea: 
+            {color: 'grey.800'},
+        input:
+            {color: 'grey.800'},
+        borderColor: 'grey.500',
+        borderRadius: '5px',
+        marginBottom: '15px',
+    }
 
     return (
         <TextField
@@ -32,27 +53,6 @@ export default function NewBoardTextField(formProps: Props) {
             {...formProps.register(formProps.name, {required: formProps.label + ' is required!'})}
             error={!!formProps.error}
             helperText={formProps.helperText}
-            sx={{
-            "& .MuiFormHelperText-root":{
-                color: 'grey.500'
-            },
-            "& .MuiInputLabel-root": { color: 'grey.500' },
-            "& .MuiOutlinedInput-root": {
-                "& > fieldset": { borderColor: 'grey.500' },
-            },
-            "& .MuiOutlinedInput-root:hover": {
-                "& > fieldset": {
-                    borderColor: 'primary.main'
-                }
-            },
-            color: 'grey.800',
-            textArea: 
-                {color: 'grey.800'},
-            input:
-                {color: 'grey.800'},
-            borderColor: 'grey.500',
-            borderRadius: '5px',
-            marginBottom: '15px',
-        }}/>
+            sx={textFieldStyles}/>
     )
 }

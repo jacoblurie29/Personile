@@ -7,17 +7,25 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link, useHistory } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import agent from 'app/api/agent';
 const theme = createTheme();
 
 export default function RegisterView() {
 
-  
+  // react hook form
   const {register, watch, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
       mode: 'all'
   });
+
+  // register the use on submit
+  const handleSubmitRegister = (data: FieldValues) =>   {
+    var registerData = {...data};
+    registerData.email = data.username;
+    agent.Account.register(registerData);
+  }
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -50,12 +58,7 @@ export default function RegisterView() {
             <Typography component="h1" variant="h5">
               Register
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit((data) =>   {
-                var registerData = {...data};
-                registerData.email = data.username;
-                agent.Account.register(registerData);
-            }
-            )} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={(data) => handleSubmitRegister(data)} sx={{ mt: 1 }}>
             <TextField
                 margin="normal"
                 required
