@@ -17,11 +17,11 @@ export default function TaskActionButtons () {
     }
 
     return (
-        <Grid container display='flex' justifyContent="center" flexGrow={1} sx={{padding: '5px'}} >
+        <Grid container display='flex' justifyContent="right" flexGrow={1} sx={{padding: '5px'}} >
             <Grid item lg={8} sm= {6}
                     display="flex" 
                     alignItems="center"
-                    justifyContent="center">
+                    justifyContent="right">
                 <ToggleButtonGroup
                 sx={{backgroundColor:'white'}}
                 exclusive
@@ -32,12 +32,6 @@ export default function TaskActionButtons () {
                     </ToggleButton>
                     <ToggleButton value="completed" aria-label="right aligned" onClick={onClickDelete}>
                         <KeyboardArrowDownIcon />
-                    </ToggleButton>
-                    <ToggleButton value="new" aria-label="left aligned" onClick={onClickDelete}>
-                        <EditIcon />
-                    </ToggleButton>
-                    <ToggleButton value="active" aria-label="centered" onClick={onClickDelete}>
-                        <DeleteIcon />
                     </ToggleButton>
             </ToggleButtonGroup>
         </Grid>

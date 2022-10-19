@@ -58,7 +58,7 @@ export default function RegisterView() {
             <Typography component="h1" variant="h5">
               Register
             </Typography>
-            <Box component="form" noValidate onSubmit={(data) => handleSubmitRegister(data)} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={(data: FieldValues) => handleSubmitRegister(data)} sx={{ mt: 1 }}>
             <TextField
                 margin="normal"
                 required

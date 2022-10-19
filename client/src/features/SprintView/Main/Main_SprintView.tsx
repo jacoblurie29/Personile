@@ -59,7 +59,7 @@ export default function SprintView({page}: Props) {
                         >
                             {page == "summary" &&
                             <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
-                                <SummaryView /> 
+                                <SummaryView taskToBeEditedId={taskToBeEditedId} toggleEditTask={toggleEditTask} /> 
                             </Grid>
                             }
                             {page == "sprint" &&
