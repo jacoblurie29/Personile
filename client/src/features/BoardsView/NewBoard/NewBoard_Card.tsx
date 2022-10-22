@@ -19,6 +19,7 @@ import { Board } from "app/models/board";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import NewBoardDatePicker from "./NewBoard_DatePicker";
+import SprintVisualizer from "./NewBoard_SprintVisualizer";
 
 
 interface Props {
@@ -52,7 +53,7 @@ export default function NewBoardCard(props: Props) {
     const [currentScreen, setCurrentScreen] = useState<number>(1);
     const [customLengthChecked, setCustomLengthChecked] = useState<boolean>(false);
     const [currentCustomSprintLength, setCurrentCustomSprintLength] = useState<number | undefined>(undefined);
-    const [overflow, setOverflow] = useState<string>("even");
+    const [overflow, setOverflow] = useState<string>("start");
     const [sprintOptionSelected, setSprintOptionSelected] = useState<number | undefined>(undefined);
     const [firstScreenAnimation, setFirstScreenAnimation] = useState<boolean>(true);
     const [secondScreenAnimation, setSecondScreenAnimation] = useState<boolean>(true);
@@ -284,6 +285,30 @@ export default function NewBoardCard(props: Props) {
 
     }
 
+    // find sprint length
+    const findSprintLength = () => {
+
+        if (customLengthChecked) {
+          return currentCustomSprintLength;
+        } else {
+          switch (sprintOptionSelected) {
+            case 0:
+              return calculateSprintShortLength(calculateTotalLength(boardEndDate[0]));
+              break;
+            case 1:
+              return calculateSprintRecommendedLength(calculateTotalLength(boardEndDate[0]));
+              break;
+            case 2:
+              return calculateSprintLongLength(calculateTotalLength(boardEndDate[0]));
+              break;
+            default:
+              return 14;
+              break;
+          }
+        }
+      
+    }
+
     // delete board from user account
     const handleDeleteBoard = (boardId: string) => {
 
@@ -374,7 +399,7 @@ export default function NewBoardCard(props: Props) {
       total_hours = Math.floor(total_minutes / 60);
       days = Math.floor(total_hours / 24);
 
-      return Math.round(days) + 1;
+      return Math.round(days) + 2;
 
     }
 
@@ -621,7 +646,6 @@ export default function NewBoardCard(props: Props) {
                           <Select defaultValue={'start'} value={overflow} size='small' onChange={(event) => setOverflow(event.target.value)}>
                             <MenuItem value={'start'}>Attach to start</MenuItem>
                             <MenuItem value={'end'}>Attach to end</MenuItem>
-                            <MenuItem value={'even'}>Evenly Distribute</MenuItem>
                           </Select>
                         </Box>
                       </Grid>
@@ -644,6 +668,10 @@ export default function NewBoardCard(props: Props) {
                   </Grid>
                 </Box>
                 <Divider />
+                <Box padding='20px'>
+                  <Typography variant="caption">Board sprints:</Typography>
+                  <SprintVisualizer overflowOption={overflow} sprintLength={findSprintLength() || 0} totalLength={calculateTotalLength(boardEndDate[0]) || 0} />
+                </Box>
                 <Box>
                   <Grid container>
                       <Grid item xs={3}>

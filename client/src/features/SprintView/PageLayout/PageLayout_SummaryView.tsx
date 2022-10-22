@@ -1,9 +1,11 @@
-import { Box, Card, Typography, useTheme } from "@mui/material";
+import { Box, Card, Grid, IconButton, Typography, useTheme } from "@mui/material";
 import { Task } from "app/models/task";
 import { useAppSelector } from "app/store/configureStore";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
+import AddIcon from '@mui/icons-material/Add';
 import SummaryCard from "../SummaryView/SummaryView_SummaryCard";
 import SummaryNewEditTaskCard from "../SummaryView/SummaryView_SummaryNewEditTaskCard";
+import { fontSize } from "@mui/system";
 
 interface Props {
     taskToBeEditedId: string[],
@@ -25,22 +27,52 @@ export default function SummaryView({taskToBeEditedId, toggleEditTask}: Props) {
     // react state
     const [newTask, setNewTask] = useState<boolean>(false);
 
+    // styles
+    const iconButtonStyles = {
+        boxShadow: '0.1rem 0.1rem 0.1rem 0.1rem rgba(100,100,100, 0.2)',
+        height: 'fit-content',
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        backgroundColor: theme.palette.background.paper,
+        '&:hover': {
+            boxShadow: 'none',
+            backgroundColor: '#DDDDDD',
+        }
+    }
+    const cardStyles = {
+        borderRadius: '5px 5px 0 0',
+        background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
+    }
+
     return (
             <Box sx={{width: "100%"}}>
                 <>
-                <Card sx={{borderRadius: '5px 5px 0 0', background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
-                    <Typography variant='h2' sx={{fontWeight: '700', color: 'white', padding: '15px'}}>{"Tasks"}</Typography>
-                </Card>
-                <>
-                {tasks.map((task, index) => (
-                    <Fragment key={"Fragment" + task.taskEntityId + index}>
-                    {!taskToBeEditedId.includes(task.taskEntityId) ? 
-                        (<SummaryCard task={task} index={index} key={"SummaryCard-" + index} toggleEditTask={toggleEditTask} />)
-                            :
-                        (<SummaryNewEditTaskCard toggleEditTask={toggleEditTask} key={"Editor" + task.taskEntityId + index} setNewTask={setNewTask} editTask={task}/>)}
-                    </Fragment>
-                ))}
-                </>
+                    <Card sx={cardStyles}>
+                        <Box flexGrow={1}>
+                            <Grid container>
+                                <Grid item xs={8}>
+                                    <Typography variant='h2' sx={{fontWeight: '700', color: 'white', padding: '15px'}}>{"Tasks"}</Typography>
+                                </Grid>
+                                <Grid item xs={4} display='flex' justifyContent="right" flexGrow={1} sx={{paddingRight: '25px'}}>
+                                    <IconButton 
+                                        sx={iconButtonStyles} onClick={() => setNewTask(!newTask)}>
+                                        <AddIcon />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Card>
+                    <>
+                        {newTask && <SummaryNewEditTaskCard setNewTask={setNewTask} toggleEditTask={toggleEditTask}/>}
+                        {tasks.map((task, index) => (
+                            <Fragment key={"Fragment" + task.taskEntityId + index}>
+                            {!taskToBeEditedId.includes(task.taskEntityId) ? 
+                                (<SummaryCard task={task} index={index} key={"SummaryCard-" + index} toggleEditTask={toggleEditTask} />)
+                                    :
+                                (<SummaryNewEditTaskCard toggleEditTask={toggleEditTask} key={"Editor" + task.taskEntityId + index} setNewTask={setNewTask} editTask={task}/>)}
+                            </Fragment>
+                        ))}
+                    </>
                 </>
                  
               {  

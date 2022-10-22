@@ -12,6 +12,7 @@ import ViewTaskSubtaskTextView from "./ViewTask_SubtaskTextView";
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Task } from "app/models/task";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
     task: Task,
@@ -36,7 +37,7 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
     const [editSubtaskValue, setEditSubtaskValue] = useState<string>("");
 
     // subtask state (completed or incomplete)
-    const handleSubtaskState = (value: number) => () => {
+    const handleSubtaskState = (subtaskId: string) => () => {
 
         // null checks
         if(userId == null) return;
@@ -45,7 +46,7 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
 
         // construct subtask and null check
         // FIX THIS: obtain guid id of subtask rather than find through calculation
-        var subTaskId = (value + 1) + "-" + task.taskEntityId;
+        var subTaskId = subtaskId;
         var subtask = task.subTasks.find(s => s.subTaskEntityId == subTaskId);
         if(subtask == undefined) return;
 
@@ -64,6 +65,23 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         dispatch(updateSubtaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, subtaskId: subTaskId, updatedSubtask: newSubTask}))
 
     };
+    
+    // Allows for correct ordering of subtasks (ordered by creation)
+    const findNonCollidingSubtaskPrefix = (task: Task) => {
+
+        // base value
+        var maxValue = 0;
+
+        // Find the greatest prefix value
+        task.subTasks.forEach((subtask) => {
+            if(subtask.subTaskEntityId.substring(0, 1) > maxValue.toString()) {
+                maxValue = Number(subtask.subTaskEntityId.split("-")[0]);
+            }
+        })
+
+        // Return the next value which should be unused
+        return maxValue + 1;
+    }
 
     const handleNewSubtask = (data: FieldValues) => {
         
@@ -75,7 +93,7 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         // construct new subtask
         var newSubtask = {
             // FIX THIS: need subtask ID to be full random GUID to avoid collisions
-            subTaskEntityId: (task.subTasks.length + 1) + "-" + task.taskEntityId,
+            subTaskEntityId: (findNonCollidingSubtaskPrefix(task)   ) + "-" + uuidv4(),
             status: "Incomplete",
             details: newSubTaskValue
         }
@@ -90,6 +108,8 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         // close new subtask bar
         setNewSubTask(false);
         setNewSubTaskValue("");
+
+        console.log(task.subTasks);
 
         // add subtask
         dispatch(addSubTaskToTaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, newSubtask: newSubtask}))
@@ -189,7 +209,7 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
                                     key={subTask.subTaskEntityId + '-checkbox'}
                                     edge="end"
                                     checked={subTask.status === "Completed"}
-                                    onChange={handleSubtaskState(index)}
+                                    onChange={handleSubtaskState(subTask.subTaskEntityId)}
                                     sx ={{
                                         color: 'grey',
                                         '&.Mui-checked': {

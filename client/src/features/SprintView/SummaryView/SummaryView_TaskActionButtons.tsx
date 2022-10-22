@@ -1,7 +1,5 @@
 import { ToggleButtonGroup, ToggleButton, Grid } from "@mui/material";
 import { Task } from "app/models/task";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 

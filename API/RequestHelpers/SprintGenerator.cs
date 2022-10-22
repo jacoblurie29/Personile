@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
+using SQLitePCL;
 
 namespace API.RequestHelpers
 {
@@ -45,7 +46,6 @@ namespace API.RequestHelpers
 
             var sprintList = new List<SprintDto>();
 
-        
 
             
             if(boardDto.EndDate == "") {
@@ -73,25 +73,32 @@ namespace API.RequestHelpers
 
             } else {
                 
+                // end date (as number)
                 var stringEndDate = boardDto.EndDate.Substring(0, 15);
                 var endDate = DateTime.ParseExact(stringEndDate,
                                   "ddd MMM dd yyyy",
                                   CultureInfo.InvariantCulture);
+                
+                // total days of board
                 var totalDays = (endDate - startDate).Days;
-                var overflowDays = totalDays % sprintLength == sprintLength ? 0 : (totalDays % sprintLength) + 1;
 
+                // overflow days
+                var overflowDays = totalDays % sprintLength;
+
+                // current date placeholder (will move with calculation)
                 var currentDate = startDate;
 
                 while (totalDays > 0) {
                     
+                    // value to be added to sprint if it gets extra days
                     var overflowAddition = 0;
-
                     if(overflow == "start" && currentDate == startDate) {
                         overflowAddition = overflowDays;
                     } else if(overflow == "end" && (endDate - currentDate).Days <= sprintLength * 2) {
                         overflowAddition = overflowDays;
                     }
 
+                    // build sprint object
                     var sprint = new SprintDto {
                         SprintEntityId = Guid.NewGuid().ToString(),
                         StartDate = currentDate.ToString("ddd MMM dd yyyy"),
@@ -99,8 +106,10 @@ namespace API.RequestHelpers
                         Tasks = new List<TaskDto>(),
                     };
 
+                    // add sprint to list
                     sprintList.Add(sprint);
-
+    
+                    // update currentDate and total days left to be allocated
                     if(overflow == "start" && currentDate == startDate) {
                         currentDate = currentDate.AddDays(sprintLength + overflowDays);
                         totalDays -= sprintLength + overflowDays;
@@ -114,9 +123,6 @@ namespace API.RequestHelpers
 
                     
                 }
-                
-                
-
             }
 
             return sprintList;
