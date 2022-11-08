@@ -64,8 +64,7 @@ const requests = {
     put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
     delete: (url: string) => axios.delete(url).then(responseBody),
 }
-
-// Futute: edit the tasks to have a sprint id
+    
 const UserData = {
     getSprints: (userId: string, boardId: string) => requests.get(`userdata/${userId}/boards/${boardId}/sprints`),
     getSprint: (userId: string, boardId: string, sprintId: string) => requests.get(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}`),
@@ -73,7 +72,7 @@ const UserData = {
     titles: (userId: string, boardId: string) => requests.get(`userdata/${userId}/boards/${boardId}/sprints/titles`),
     addTask: (userId: string, boardId: string, sprintId: string, body: {}) => requests.post(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/addTask`, body),
     removeTask: (userId: string, boardId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/deleteTask`),
-    updateTaskState: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
+    updateTask: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/updateTask`, body),
     addSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, body: {}) => requests.post(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/addSubtask`, body),
     updateSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/updateSubtask`, body),
     removeSubtask: (userId: string, boardId: string, sprintId: string, taskId: string, subtaskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/subtasks/${subtaskId}/deleteSubtask`),
@@ -81,7 +80,10 @@ const UserData = {
     updateBoard: (userId: string, boardId: string, body: {}) => requests.put(`userdata/${userId}/boards/${boardId}/updateBoard`, body),
     deleteBoard: (userId: string, boardId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/deleteBoard`),
     addTaskToMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/addTaskToMilestone`),
-    removeTaskFromMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/deleteTaskFromMilestone`)
+    removeTaskFromMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/deleteTaskFromMilestone`),
+    changeTaskOrder: (userId: string, boardId: string, sprintId: string, taskId: string, newOrder: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskOrder/${newOrder}`),
+    changeTaskState: (userId: string, boardId: string, sprintId: string, taskId: string, newState: string, newOrder: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskState/${newState}/newOrder/${newOrder}`),
+    changeTaskSprint: (userId: string, boardId: string, sprintId: string, taskId: string, newSprintId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskSprint/${newSprintId}`)
 }
 
 const Account = {

@@ -67,17 +67,17 @@ export default function SprintView({page}: Props) {
                                 <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
                                     <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                         return task.currentState === 0;
-                                    }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId} />
+                                    }).sort((a ,b) => a.order - b.order) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId} />
                                 </Grid>  
                                 <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} margin='10px'>
                                     <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                         return task.currentState === 1;
-                                    }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
+                                    }).sort((a ,b) => a.order - b.order) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                                 </Grid>
                                 <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} margin='10px'>
                                     <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                         return task.currentState === 2;
-                                    }) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
+                                    }).sort((a ,b) => a.order - b.order) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                                 </Grid>
                             </>
                             }

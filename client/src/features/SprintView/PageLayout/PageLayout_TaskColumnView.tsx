@@ -31,6 +31,24 @@ export default function PageLayoutTaskColumnView({tasks, stateTitle, sprintId, t
         setNewTask(true)
     }
 
+    const calculatePreviousTaskOrderNumber = (taskEntityId: string) => {
+        var index = tasks.findIndex(t => t.taskEntityId == taskEntityId);
+        if(index == 0) {
+            return 0;
+        } else {
+            return tasks[index - 1].order;
+        }
+    }
+
+    const calculateNextTaskOrderNumber = (taskEntityId: string) => {
+        var index = tasks.findIndex(t => t.taskEntityId == taskEntityId);
+        if(index == tasks.length - 1) {
+            return tasks.length - 1;
+        } else {
+            return tasks[index + 1].order;
+        }
+    }
+
     return (
         <>
             <Card sx={{borderRadius: '5px 5px 0 0', background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
@@ -40,7 +58,7 @@ export default function PageLayoutTaskColumnView({tasks, stateTitle, sprintId, t
             {tasks.map((task, index) => (
                 <Fragment key={"Fragment" + task.taskEntityId + index + sprintId}>
                 {!tasksToBeEdited.includes(task.taskEntityId) ? 
-                    (<ViewTaskCard task={task} key={"Task" + task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} indexForAnimation={index} />)
+                    (<ViewTaskCard task={task} sprintId={sprintId} key={"Task" + task.taskEntityId + index + sprintId} toggleEditTask={toggleEditTask} indexForAnimation={index} index={index} max={tasks.length - 1} previousIndex={calculatePreviousTaskOrderNumber(task.taskEntityId)} nextIndex={calculateNextTaskOrderNumber(task.taskEntityId)} />)
                         :
                     (<NewEditTaskCard toggleEditTask={toggleEditTask} key={"Editor" + task.taskEntityId + index + sprintId} setNewTask={setNewTask} editTask={task}/>)}
 

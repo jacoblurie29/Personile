@@ -10,16 +10,19 @@ import TaskStateTitle from "./SummaryView_TaskStateTitle";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { mapTaskToUpdateTask } from "app/models/updateTask";
-import { useEffect, useState } from "react";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
 
 interface Props { 
     task: Task,
-    index: number,
-    toggleEditTask: (value: string) => void
+    animationIndex: number,
+    orderIndex: number,
+    max: number,
+    sprintId: string,
+    toggleEditTask: (value: string) => void,
+    handleMoveTask: (taskId: string, sprintId: string, oldOrder: number, newOrder: number) => void
 }
 
-export default function SummaryCard({task, index, toggleEditTask}: Props) {
+export default function SummaryCard({task, animationIndex, toggleEditTask, handleMoveTask, max, orderIndex, sprintId}: Props) {
 
     // redux state
     const { currentSprint, currentBoard, isExpanded: expanded } = useAppSelector(state => state.sprintView);
@@ -64,19 +67,14 @@ export default function SummaryCard({task, index, toggleEditTask}: Props) {
 
             // update state
             dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
-            
+
             // close expanded panel
             dispatch(removeFromIsExpanded(currentTaskId));
         }
     }
 
-    useEffect(() => {
-        console.log("PASS");
-    }, [])
-
-
     return (
-        <Zoom in={true} timeout={true ? (index) * 250 : 250} key={"SummaryCard-" + index}>  
+        <Zoom in={true} timeout={true ? (animationIndex) * 250 : 250} key={"SummaryCard-" + animationIndex}>  
             <Accordion elevation={3} expanded={expanded?.includes(task.taskEntityId)} onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
                 <AccordionSummary  sx={{borderRadius: "0px"}}>
                     <Box flexGrow={1}>
@@ -85,7 +83,7 @@ export default function SummaryCard({task, index, toggleEditTask}: Props) {
                                 <TaskStateTitle title={task.name} currentState={task.currentState} description={task.description}/>
                             </Grid>
                             <Grid item xs={4}>
-                                <TaskActionButtons />
+                                <TaskActionButtons handleMoveTask={handleMoveTask} sprintId={sprintId} task={task} index={orderIndex} max={max} />
                             </Grid>
                         </Grid>
                     </Box>
@@ -96,7 +94,7 @@ export default function SummaryCard({task, index, toggleEditTask}: Props) {
                     <Grid container sx={{display: 'flex', width: 'auto'}}>
                         <Grid item xs={6}>
                             <Box sx={{flexGrow: 1, textAlign: 'left'}}>
-                                <ViewTaskStateToggleButton startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
+                                <ViewTaskStateToggleButton startingState={task.currentState} sprintId={sprintId} task={task} handleChangeState={handleStateChange}/>
                             </Box>
                         </Grid>
                         <Grid item xs={6}>

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20220722193255_MilestonesManyToMany")]
-    partial class MilestonesManyToMany
+    [Migration("20221024210602_OrderDatapoint")]
+    partial class OrderDatapoint
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,6 +180,9 @@ namespace API.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("SprintEntityId")
                         .HasColumnType("TEXT");
 
@@ -311,15 +314,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1172dcfb-f42a-4c4b-a570-4bcba9430eff",
-                            ConcurrencyStamp = "41bf18e8-bb61-461f-bc92-76086822fb20",
+                            Id = "7ebd61f1-6f2d-414a-b6c5-4dcf4ef7b347",
+                            ConcurrencyStamp = "1e043429-aea2-40f2-b48d-c922f8f5e111",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "5583eaaa-c29a-43a7-9a9a-3b622eec01e0",
-                            ConcurrencyStamp = "0c33b8b8-c3f1-4868-bbe3-25a543d96392",
+                            Id = "bd61ef5a-fc1c-4a88-80ef-b17cc3737240",
+                            ConcurrencyStamp = "82078f2d-ab59-4539-8e67-80e70b8b3814",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

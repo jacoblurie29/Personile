@@ -10,6 +10,8 @@ import { Link, useHistory } from 'react-router-dom';
 import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import agent from 'app/api/agent';
+import { registerUserAsync, signInUserAsync } from 'app/state/userSlice';
+import { useAppDispatch } from 'app/store/configureStore';
 const theme = createTheme();
 
 export default function RegisterView() {
@@ -19,12 +21,19 @@ export default function RegisterView() {
       mode: 'all'
   });
 
+  // redux
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+
   // register the use on submit
-  const handleSubmitRegister = (data: FieldValues) =>   {
-    var registerData = {...data};
-    registerData.email = data.username;
-    agent.Account.register(registerData);
+  async function handleSubmitRegister(data: FieldValues)  {
+    console.log("TEST PASSED");
+    var registerData = {...data, username: data.email};
+    console.log(registerData);
+    await dispatch(registerUserAsync(registerData));
+    history.push('/sprint');
   }
+
 
 
   return (
@@ -58,7 +67,7 @@ export default function RegisterView() {
             <Typography component="h1" variant="h5">
               Register
             </Typography>
-            <Box component="form" noValidate onSubmit={(data: FieldValues) => handleSubmitRegister(data)} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit(handleSubmitRegister)} sx={{ mt: 1 }}>
             <TextField
                 margin="normal"
                 required
@@ -89,7 +98,7 @@ export default function RegisterView() {
                 id="email"
                 label="Email Address"
                 autoComplete="email"
-                {...register('username', {required: 'Email is required!'})}
+                {...register('email', {required: 'Email is required!'})}
                 error={!!errors.username}
                 helperText={errors?.username?.message?.toString()}
               />

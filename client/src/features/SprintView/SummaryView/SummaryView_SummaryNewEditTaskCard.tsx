@@ -83,6 +83,13 @@ export default function SummaryNewEditTaskCard({setNewTask, editTask, toggleEdit
         if(currentSprint == null) return;
         if(currentBoard == null) return;
 
+        // retrieve entities and undefined check
+        var currentSprintEntity = sprints?.find(s => s.sprintEntityId === currentSprint);
+        var taskEntities = currentSprintEntity?.tasks;
+
+        // undefined check
+        if(taskEntities == undefined) return;
+
         // create new task object
         var newTask = {
             taskEntityId: newTaskId,
@@ -96,6 +103,7 @@ export default function SummaryNewEditTaskCard({setNewTask, editTask, toggleEdit
             tags: tags || "",
             effort: formData.effort || 0,
             color: 0,
+            order: taskEntities.length,
             milestoneIds: milestones || ""
          }
 
@@ -151,6 +159,7 @@ export default function SummaryNewEditTaskCard({setNewTask, editTask, toggleEdit
             tags: tags,
             effort: formData.effort,
             color: 0,
+            order: editTask.order,
             milestoneIds: milestones
         }
 

@@ -1,26 +1,33 @@
-import { Accordion, AccordionSummary, Box, Typography, Divider, AccordionDetails, Grid, Zoom } from "@mui/material";
+import { Accordion, AccordionSummary, Box, Typography, Divider, AccordionDetails, Grid, Zoom, IconButton } from "@mui/material";
 import { LoadingButton } from '@mui/lab';
 import ViewTaskMoreDetails from "./ViewTask_MoreDetails";
 import { Task } from "../../../app/models/task";
 import { useAppSelector, useAppDispatch } from "../../../app/store/configureStore";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
-import { removeTaskFromSprintAsync, updateTaskAsync } from "../../../app/state/userSlice";
+import { moveTaskOrderAsync, removeTaskFromSprintAsync, updateTaskAsync } from "../../../app/state/userSlice";
 import ViewTaskStateToggleButton from "./ViewTask_StateToggleButton";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import ViewTaskStateDisplay from "./ViewTask_StateDisplay";
 import { useState } from "react";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ViewTaskActionButton from "./ViewTask_ActionButton";
+import TaskChangeSprintCard from "../ChangeTaskSprint/TaskChangeSprint_Card";
 
 interface Props {
     task: Task,
     toggleEditTask: (taskId: string) => void,
-    indexForAnimation: number
+    indexForAnimation: number,
+    sprintId: string,
+    index: number,
+    max: number,
+    previousIndex: number,
+    nextIndex: number
 }
 
 
 
-export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: Props) {
+export default function ViewTaskCard({task, toggleEditTask, indexForAnimation, sprintId, index, max, previousIndex, nextIndex}: Props) {
 
     // redux state
     const {status} = useAppSelector(state => state.user)
@@ -30,6 +37,7 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: 
 
     // react state
     const [zoom, setZoom] = useState<boolean>(true);
+    const [moveSprint, setMoveSprint] = useState<boolean>(false);
 
     // expanding of view panel
     const handleChange =
@@ -40,6 +48,22 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: 
           dispatch(addToIsExpanded(panel));
        }
     };
+
+    const descriptionStylesNotExpanded = {
+        fontSize: 14,
+        marginLeft: '4%',
+        width:'90%',
+        display: '-webkit-box',
+        overflow: 'hidden',
+        WebkitBoxOrient: 'vertical',
+        WebkitLineClamp: 2
+    }
+
+    const descriptionStylesExpanded = {
+        fontSize: 14,
+        marginLeft: '4%',
+        width:'90%',
+    }
 
     // handle state of task (new, current, completed)
     const handleStateChange = (currentTask: Task, currentState: number, newState: number) => {
@@ -74,20 +98,46 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: 
         }
     }
 
+    const changeOrderOfTask = (taskId: string, sprintId: string, oldOrderLocation: number, newOrderLocation: number) => {
+        // null checks
+        if(userEntityId == null) return;
+        if(currentSprint == null) return;
+        if(currentBoard == null) return;
+
+        dispatch(moveTaskOrderAsync({userId: userEntityId, boardId: currentBoard, sprintId: sprintId, taskId: taskId, oldOrder: oldOrderLocation.toString(), newOrder: newOrderLocation.toString()})).catch((error: any) => console.log(error))
+    }
+
+    // Stops the accordian from opening due to the click in the summary area
+    const onClickDelete = (event: any) => {
+        event.stopPropagation();
+    }
+
 
     return (
         <Zoom in={zoom} timeout={zoom ? (indexForAnimation + 1) * 500 : 500}>  
             <Accordion elevation={2} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
-                <AccordionSummary>
+                <AccordionSummary sx={{'.MuiAccordionSummary-content': {margin: '10px 0px !important'}}}>
                     <Box flexGrow={1}>
                         <Grid container columns={1}>
                             <Grid item xs = {6}>
                                 <ViewTaskStateDisplay title={task.name} currentState={task.currentState}/>
                             </Grid>
                             <Grid item xs = {6}>
-                                <Typography sx={{ fontSize: 14, marginLeft: '4%', width:'90%' }} color="grey.500">
-                                    {task.description}
-                                </Typography>     
+                                <Grid container>
+                                    <Grid item xl={9} lg={9} md={10} sm={10} xs={10}>
+                                        <Typography sx={expanded?.includes(task.taskEntityId) ? descriptionStylesExpanded : descriptionStylesNotExpanded} color="grey.500">
+                                            {task.description}
+                                        </Typography>   
+                                    </Grid>    
+                                    <Grid item xl={3} lg={3} md={2} sm={2} xs={2} display={"flex"} justifyContent={'flex-end'} sx={{fontSize: '20px'}}>
+                                        <IconButton disabled={index == 0 || status.includes("pending")} sx={{height: 'fit-content',  margin: 'auto'}} onClick={(event) => {onClickDelete(event); changeOrderOfTask(task.taskEntityId, sprintId, task.order, previousIndex)}}>
+                                            <KeyboardArrowUpIcon sx={{ fontSize: '20px'}} />
+                                        </IconButton>
+                                        <IconButton disabled={index == max || status.includes("pending")} sx={{height: 'fit-content',  margin: 'auto'}} onClick={(event) => {onClickDelete(event); changeOrderOfTask(task.taskEntityId, sprintId, task.order, nextIndex)}}>
+                                            <KeyboardArrowDownIcon sx={{fontSize: '20px'}} />
+                                        </IconButton>
+                                    </Grid>
+                                </Grid>  
                             </Grid>
                         </Grid>
 
@@ -98,14 +148,14 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation}: 
                 <ViewTaskMoreDetails focusedTask={task} />
                 <Grid container sx={{display: 'flex', width: 'auto'}}>
                     <Grid item xs={6}>
-                        <Box sx={{flexGrow: 1, textAlign: 'left'}}>
-                            <ViewTaskStateToggleButton startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
+                        <Box sx={{flexGrow: 1, textAlign: 'left', marginRight: '5px', marginTop: '5px'}}>
+                            <ViewTaskStateToggleButton sprintId={sprintId} startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
                         </Box>
                     </Grid>
                     <Grid item xs={6}>
                         <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                            <LoadingButton key={"edit-" + task.taskEntityId} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={async () => {setZoom(false); await new Promise<void>(done => setTimeout(() => done(), 300)); toggleEditTask(task.taskEntityId)}}><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
-                            <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)'}} onClick={() => {dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", boardId: currentBoard || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                            <ViewTaskActionButton task={task} toggleEditTask={toggleEditTask} setZoom={setZoom} setMoveSprint={setMoveSprint} />
+                            {moveSprint && <TaskChangeSprintCard setMoveSprint={setMoveSprint} task={task} oldSprintId={sprintId || ""} />}
                         </Box>
                     </Grid>
                 </Grid>

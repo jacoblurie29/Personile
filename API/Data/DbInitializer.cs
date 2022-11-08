@@ -81,6 +81,7 @@ namespace API.Data
                     Tags = "App|Frontend|Development|Personal",
                     Effort = 6,
                     Color = 0,
+                    Order = 0,
                     Milestones = new List<MilestoneEntity>()
                 },
                 new TaskEntity {
@@ -95,6 +96,7 @@ namespace API.Data
                     Tags = "App|Backend|Development|Personal",
                     Effort = 8,
                     Color = 0,
+                    Order = 1,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_2",
@@ -108,6 +110,7 @@ namespace API.Data
                     Tags = "App|Database|Development|Personal",
                     Effort = 4,
                     Color = 0,
+                    Order = 2,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_3",
@@ -121,6 +124,7 @@ namespace API.Data
                     Tags = "App|Marketing|Business|Team",
                     Effort = 9,
                     Color = 1,
+                    Order = 3,
                     Milestones = new List<MilestoneEntity>()
                 }
         };
@@ -138,6 +142,7 @@ namespace API.Data
                     Tags = "App|Social|Business|Team",
                     Effort = 3,
                     Color = 1,
+                    Order = 0,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_5",
@@ -151,6 +156,7 @@ namespace API.Data
                     Tags = "App|Development|Team",
                     Effort = 6,
                     Color = 2,
+                    Order = 1,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_6",
@@ -164,6 +170,7 @@ namespace API.Data
                     Tags = "App|Development|Team",
                     Effort = 6,
                     Color = 2,
+                    Order = 2,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_7",
@@ -177,6 +184,7 @@ namespace API.Data
                     Tags = "App|Money|Team",
                     Effort = 6,
                     Color = 2,
+                    Order = 3,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_8",
@@ -190,6 +198,7 @@ namespace API.Data
                     Tags = "App|Usage|Documentation",
                     Effort = 6,
                     Color = 2,
+                    Order = 4,
                     Milestones = new List<MilestoneEntity>()
                 },
         };

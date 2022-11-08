@@ -17,6 +17,7 @@ namespace API.DTOs
         public string Tags { get; set; }
         public int Effort { get; set; }
         public int Color { get; set; }
+        public int Order { get; set; }
         public List<SubTaskDto> SubTasks { get; set; }
         public string MilestoneIds { get; set; }
 

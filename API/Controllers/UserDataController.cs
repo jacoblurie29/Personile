@@ -12,6 +12,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace API.Controllers
 {
@@ -214,7 +215,6 @@ namespace API.Controllers
 
             CurrentMilestone.Tasks.Add(CurrentTask);
 
-
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
@@ -224,6 +224,128 @@ namespace API.Controllers
             return BadRequest(new ProblemDetails{Title = "Problem adding task to milestone"});
 
         }
+        
+        [HttpPatch("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/changeTaskOrder/{newOrder}", Name = "MoveTask")]
+        public async Task<ActionResult<SprintDto>> ChangeTaskOrder(string userId, string boardId, string sprintId, string taskId, string newOrder) {
+
+            var newOrderNumber = Int32.Parse(newOrder);
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if (CurrentTask == null) {
+                return BadRequest(new ProblemDetails{Title = "Task not found"});
+            }
+
+            List<int> orderList = new List<int>();
+            CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { orderList.Add(task.Order); });
+
+
+            orderList.Remove(newOrderNumber);
+            orderList.Insert(CurrentTask.Order, newOrderNumber);
+
+            var index = 0;
+            CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { task.Order = orderList[index]; index++; });
+
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) {
+                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem moving task order"});
+        }
+
+        [HttpPatch("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/changeTaskSprint/{newSprintId}")]
+        public async Task<ActionResult<SprintDto>> ChangeTaskSprint(string userId, string boardId, string sprintId, string taskId, string newSprintId) {
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+            var NewSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == newSprintId).FirstOrDefault();
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if (CurrentTask == null) {
+                return BadRequest(new ProblemDetails{Title = "Task not found"});
+            }
+
+            CurrentSprint.Tasks.Remove(CurrentTask);
+            NewSprint.Tasks.Add(CurrentTask);
+
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) {
+                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem changing task sprint"});
+        }
+
+        [HttpPatch("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/changeTaskState/{newState}/newOrder/{newOrder}")]
+        public async Task<ActionResult<SprintDto>> ChangeTaskState(string userId, string boardId, string sprintId, string taskId, string newOrder, string newState) {
+
+            var newOrderNumber = Int32.Parse(newOrder);
+
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            if (CurrentTask == null) {
+                return BadRequest(new ProblemDetails{Title = "Task not found"});
+            }
+
+
+            if(newOrderNumber > CurrentSprint.Tasks.Count) {
+
+
+                List<int> orderList = new List<int>();
+                CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { orderList.Add(task.Order); });
+
+
+                orderList.Remove(newOrderNumber);
+                orderList.Add(newOrderNumber);
+
+                var index = 0;
+                CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { task.Order = orderList[index]; index++; });
+                
+            } else if(newOrderNumber != CurrentTask.Order) {
+
+                List<int> orderList = new List<int>();
+                CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { orderList.Add(task.Order); });
+
+
+                orderList.Remove(newOrderNumber);
+                orderList.Insert(CurrentTask.Order, newOrderNumber);
+
+                var index = 0;
+                CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { task.Order = orderList[index]; index++; });
+            }
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) {
+                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem changing task state"});
+
+        }
+
+        
 
         // Delete a task from a milestone
         [HttpDelete("{userId}/boards/{boardId}/milestones/{milestoneId}/sprints/{sprintId}/tasks/{taskId}/deleteTaskFromMilestone", Name = "DeleteTaskFromMilestone")]

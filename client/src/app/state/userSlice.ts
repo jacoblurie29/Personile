@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current, isAnyOf } from "@reduxjs/toolkit";
 import { UpdateTask } from "app/models/updateTask";
 import { toast } from "react-toastify";
 import agent from "../api/agent";
@@ -13,6 +13,7 @@ import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
+import { integerPropType } from "@mui/utils";
 
 interface UserState {
     userData: User | null;
@@ -53,7 +54,7 @@ export const updateTaskAsync = createAsyncThunk<Task, {userId: string, boardId: 
     'sprint/updateTask',
     async ({userId, boardId, sprintId, taskId, updatedTaskDto}, thunkAPI) => {
         try {
-            return await agent.UserData.updateTaskState(userId, boardId, sprintId, taskId, updatedTaskDto);
+            return await agent.UserData.updateTask(userId, boardId, sprintId, taskId, updatedTaskDto);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data})
         }
@@ -103,6 +104,24 @@ export const signInUserAsync = createAsyncThunk<User, FieldValues>(
 
             store.dispatch(setCurrentBoard(userDto.boards[0].boardEntityId))
             store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
+            return userDto;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data});
+        }
+    }
+)
+
+export const registerUserAsync = createAsyncThunk<User, FieldValues>(
+    'account/registerUser',
+    async (data, thunkAPI) => {
+        try {
+            const userDto = await agent.Account.register(data);
+            if (userDto) thunkAPI.dispatch(setUser(userDto));
+            localStorage.setItem('user', JSON.stringify(userDto));
+
+            store.dispatch(setCurrentBoard(userDto.boards[0].boardEntityId))
+            store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
+
             return userDto;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data});
@@ -194,6 +213,43 @@ export const removeTaskFromMilestoneAsync = createAsyncThunk<void, {userId: stri
     }
 )
 
+export const moveTaskOrderAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string, oldOrder: string, newOrder: string}>(
+    'sprint/moveTaskOrder',
+    async ({userId, boardId, sprintId, taskId, newOrder}, thunkAPI) => {
+        try {
+            return await agent.UserData.changeTaskOrder(userId, boardId, sprintId, taskId, newOrder);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+
+export const changeTaskStateAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string, newState: string, oldOrder: string, newOrder: string}>(
+    'sprint/changeTaskState',
+    async ({userId, boardId, sprintId, taskId, newState, newOrder}, thunkAPI) => {
+        try {
+            return await agent.UserData.changeTaskState(userId, boardId, sprintId, taskId, newState, newOrder);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+
+export const changeTaskSprintAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string, newSprintId: string}>(
+    'sprint/changeTaskSprint',
+    async ({userId, boardId, sprintId, taskId, newSprintId}, thunkAPI) => {
+        try {
+            return await agent.UserData.changeTaskSprint(userId, boardId, sprintId, taskId, newSprintId);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+
+
 
 
 
@@ -219,6 +275,208 @@ export const userSlice = createSlice({
     },
     extraReducers: (builder => {
 
+        // CHANGE TASK SPRINT
+        builder.addCase(changeTaskSprintAsync.pending, (state, action) => {
+            const {sprintId, taskId, newSprintId, boardId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const newSprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === newSprintId);
+            if (newSprintIndex === undefined || newSprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var currentTask = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex];
+            var currentSprint = state.userData?.boards[boardIndex].sprints[sprintIndex];
+            var newSprint = state.userData?.boards[boardIndex].sprints[newSprintIndex];
+
+            newSprint.tasks.push(currentTask);
+            currentSprint.tasks.splice(taskIndex, 1);
+            
+            state.status = 'pendingMoveTaskSprint';
+        });
+        builder.addCase(changeTaskSprintAsync.fulfilled, (state, action) => {
+
+
+            state.status = 'idle';
+
+            toast.success('Task sprint changed!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+        });
+        builder.addCase(changeTaskSprintAsync.rejected, (state, action) => {
+
+            toast.error('Failed to change sprint!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+                
+        state.status = 'idle';
+
+            
+        });
+
+        // CHANGE TASK STATE
+        builder.addCase(changeTaskStateAsync.pending, (state, action) => {
+            const {sprintId, taskId, newState, newOrder, oldOrder, boardId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var currentTask = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex];
+            currentTask.currentState = Number.parseInt(newState);
+
+            var allTaskOrders = [] as number[]
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.sort((a, b) => a.order - b.order).map((task) => allTaskOrders.push(task.order));
+
+            var newPosition = Number.parseInt(newOrder);
+            var oldPosition =  Number.parseInt(oldOrder);
+
+            allTaskOrders.splice(oldPosition, 1);
+            allTaskOrders.splice(newPosition, 0, oldPosition);
+            
+            if(state.userData !== null) {
+                
+                var index = 0;
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks.sort((a, b) => a.order - b.order).map(task => {task.order = allTaskOrders[index]; index++;});
+                
+            }
+
+            state.status = 'pendingMoveTaskState';
+        });
+        builder.addCase(changeTaskStateAsync.fulfilled, (state, action) => {
+
+
+            state.status = 'idle';
+
+            toast.success('Task state and order changed!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+        });
+        builder.addCase(changeTaskStateAsync.rejected, (state, action) => {
+
+            toast.error('Failed to change state and order!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+                
+        state.status = 'idle';
+
+            
+        });
+
+        // SWAP TASK ORDERS
+        builder.addCase(moveTaskOrderAsync.pending, (state, action) => {
+            const {sprintId, taskId, newOrder, oldOrder, boardId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var allTaskOrders = [] as number[]
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.sort((a, b) => a.order - b.order).map((task) => allTaskOrders.push(task.order));
+
+            var newPosition = Number.parseInt(newOrder);
+            var oldPosition =  Number.parseInt(oldOrder);
+
+            allTaskOrders.splice(oldPosition, 1);
+            allTaskOrders.splice(newPosition, 0, oldPosition);
+            
+            if(state.userData !== null) {
+                
+                var index = 0;
+                state.userData.boards[boardIndex].sprints[sprintIndex].tasks.sort((a, b) => a.order - b.order).map(task => {task.order = allTaskOrders[index]; index++;});
+                
+            }
+
+            state.status = 'pendingMoveTaskOrder';
+        });
+        builder.addCase(moveTaskOrderAsync.fulfilled, (state, action) => {
+
+
+            state.status = 'idle';
+
+            toast.success('Task order changed!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+        });
+        builder.addCase(moveTaskOrderAsync.rejected, (state, action) => {
+
+            toast.error('Failed to change order!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+                
+        state.status = 'idle';
+
+            
+        });
         // REMOVE TASK FROM MILESTONE
         builder.addCase(removeTaskFromMilestoneAsync.pending, (state, action) => {
 
@@ -240,13 +498,13 @@ export const userSlice = createSlice({
 
             if(state.userData !== null) {
                 var milestoneIds = [...state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds.split("|")];
-                //console.log("TEST ONE: " + milestoneIds);
+
                 var indexOfDelete = milestoneIds.indexOf(milestoneId);
-                //console.log("TEST TWO: " + indexOfDelete);
+
                 milestoneIds.splice(indexOfDelete, 1);
-                //console.log("TEST THREE: " + milestoneIds)
+
                 state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = milestoneIds.join("|");
-                //console.log("TEST FOUR: " + milestoneIds.join("|"));
+
             }
 
             state.status = 'pendingRemoveTaskFromMilestone';
@@ -810,7 +1068,7 @@ export const userSlice = createSlice({
         });
 
 
-        // LOGIN USER
+        // FETCH USER
 
         builder.addCase(fetchCurrentUserAsync.rejected, (state) => {
             state.userData = null;
@@ -827,12 +1085,14 @@ export const userSlice = createSlice({
                 });
             history.push('/');
         })
-        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled, fetchCurrentUserAsync.fulfilled), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled, registerUserAsync.fulfilled, fetchCurrentUserAsync.fulfilled), (state, action) => {
             state.userData = action.payload
         });
         builder.addMatcher(isAnyOf(signInUserAsync.rejected), (state, action) => {
             throw action.payload;
         });
+
+
 
         
         

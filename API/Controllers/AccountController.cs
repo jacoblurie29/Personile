@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.RequestHelpers;
 using API.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -58,9 +59,14 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(RegisterDto registerDto) {
+        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto) {
 
-            var user = new UserEntity{UserName = registerDto.Username, Email = registerDto.Email, FirstName = registerDto.FirstName, LastName = registerDto.LastName};
+            var user = new UserEntity{
+                UserName = registerDto.Username,
+                Email = registerDto.Email,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName
+            };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
@@ -73,31 +79,7 @@ namespace API.Controllers
 
             }
 
-            
             await _userManager.AddToRoleAsync(user, "Member");
-
-            /*
-                 HERE IS WHERE THE BASE CONDITIONS WILL BE ADDED. This includes:
-
-                 Default sprints and their dates
-                 Example tasks
-                 User settings
-                 
-            */
-
-            BoardEntity defaultBoard = new BoardEntity{
-                BoardEntityId = Guid.NewGuid().ToString(),
-                StartDate = null,
-                EndDate = null,
-                Sprints = new List<SprintEntity>()
-            };
-
-            SprintEntity defaultSprint = new SprintEntity{
-                SprintEntityId = Guid.NewGuid().ToString(),
-                StartDate = null,
-                EndDate = null,
-                Tasks = new List<TaskEntity>(),
-            };
 
             var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
@@ -107,27 +89,58 @@ namespace API.Controllers
                 .FirstOrDefaultAsync();
 
 
-            defaultBoard.Sprints.Add(defaultSprint);
+            var initializer = new AccountInitializer();
+
+            /*
+                Boards DONE
+                Goals DONE
+                Sprints DONE
+                Tasks
+                Milestones
+                Tasks to Sprints
+                Milestones to Tasks
+                Sprint to board
+                Milestones to Board Milestones
+                Board to user
+            */
+
+            var defaultBoard = initializer.generateInitialUserBoard();
+
+            var dtoBoard = _mapper.Map<BoardDto>(defaultBoard);
+            var dtoSprints = dtoBoard.generateSprints();
+
+            foreach(SprintDto generatedSprint in dtoSprints) {
+                var currentSprint = _mapper.Map<SprintEntity>(generatedSprint);
+                defaultBoard.Sprints.Add(currentSprint);
+            }
+            defaultBoard.Sprints[0].Tasks.Add(initializer.generateInitialUserTask());
+            var generatedMilestone1 = initializer.generateInitialUserMilestone("Make milestones!", 10);
+            var generatedMilestone2 = initializer.generateInitialUserMilestone("Track progress!", 20);
+            defaultBoard.Sprints[0].Tasks[0].Milestones.Add(generatedMilestone1);
+            defaultBoard.Milestones.Add(generatedMilestone1);
+            defaultBoard.Sprints[0].Tasks[0].Milestones.Add(generatedMilestone2);
+            defaultBoard.Milestones.Add(generatedMilestone2);
+
             CurrentUserEntity.Boards.Add(defaultBoard);
             
-            
             await _context.SaveChangesAsync();
+            
+            var mappedUser = _mapper.Map<UserDto>(CurrentUserEntity);
 
-
-            return StatusCode(201);
+            return new UserDto {
+                UserEntityId = user.Id,
+                Email = user.Email,
+                Token = await _tokenService.GenerateToken(user),
+                Boards = mappedUser.Boards,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
         }
 
         [Authorize]
         [HttpGet("currentUser", Name = "GetCurrentUser")]
         public async Task<ActionResult<UserDto>> GetCurrentUser() {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            
-            var CurrentUserEntity = await _context.Users.Where(u => u.Id == user.Id)
-                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
-                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
-                .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
-                .Include(b => b.Boards).ThenInclude(g => g.Goals)
-                .FirstOrDefaultAsync();
             
             var mappedUser = _mapper.Map<UserDto>(user);
 

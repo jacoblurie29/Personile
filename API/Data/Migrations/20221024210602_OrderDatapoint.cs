@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class MilestonesManyToMany : Migration
+    public partial class OrderDatapoint : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -255,6 +255,7 @@ namespace API.Data.Migrations
                     Tags = table.Column<string>(type: "TEXT", nullable: true),
                     Effort = table.Column<int>(type: "INTEGER", nullable: false),
                     Color = table.Column<int>(type: "INTEGER", nullable: false),
+                    Order = table.Column<int>(type: "INTEGER", nullable: false),
                     SprintEntityId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -319,12 +320,12 @@ namespace API.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1172dcfb-f42a-4c4b-a570-4bcba9430eff", "41bf18e8-bb61-461f-bc92-76086822fb20", "Member", "MEMBER" });
+                values: new object[] { "7ebd61f1-6f2d-414a-b6c5-4dcf4ef7b347", "1e043429-aea2-40f2-b48d-c922f8f5e111", "Member", "MEMBER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "5583eaaa-c29a-43a7-9a9a-3b622eec01e0", "0c33b8b8-c3f1-4868-bbe3-25a543d96392", "Admin", "ADMIN" });
+                values: new object[] { "bd61ef5a-fc1c-4a88-80ef-b17cc3737240", "82078f2d-ab59-4539-8e67-80e70b8b3814", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

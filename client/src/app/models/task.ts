@@ -13,5 +13,6 @@ export interface Task {
     effort: number;
     color: number;
     subTasks: SubTask[];
+    order: number;
     milestoneIds: string;
 }
