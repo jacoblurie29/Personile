@@ -5,7 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Task } from "app/models/task";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { formatDateStringNoYear } from "app/util/dateUtil";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { changeTaskSprintAsync } from "app/state/userSlice";
 
 interface Props {
@@ -50,7 +50,7 @@ export default function TaskChangeSprintCard({setMoveSprint, task, oldSprintId}:
                         </Typography>
                         <Divider sx={{paddingTop: '10px'}} />
                         {sprints?.map((sprint, index) => (
-                            <>
+                            <Fragment key={index}>
                                 <Grid container width={'100%'} columns={18}>
                                     <Grid item xs={6} padding={'0px 20px'}>
                                         <Typography variant="h3" paddingTop='25px' margin='auto' flexGrow={1}>
@@ -89,7 +89,7 @@ export default function TaskChangeSprintCard({setMoveSprint, task, oldSprintId}:
                                     </Grid>
                                 </Grid>
                                 <Divider sx={{paddingTop: '10px'}} />
-                            </>
+                            </Fragment>
                         ))}
                         <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px', padding: '10px'}}>
                             <LoadingButton key={"cancel"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => setMoveSprint(false)}><ArrowBackIcon sx={{color: 'background.paper'}} /></LoadingButton>

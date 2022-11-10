@@ -11,6 +11,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { mapTaskToUpdateTask } from "app/models/updateTask";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
+import ViewTaskActionButton from "../ViewTask/ViewTask_ActionButton";
+import { useState } from "react";
+import TaskChangeSprintCard from "../ChangeTaskSprint/TaskChangeSprint_Card";
 
 interface Props { 
     task: Task,
@@ -29,6 +32,10 @@ export default function SummaryCard({task, animationIndex, toggleEditTask, handl
     const userEntityId = useAppSelector(state => state.user.userData?.userEntityId);
     const dispatch = useAppDispatch();
     const {status} = useAppSelector(state => state.user);
+
+    // react state
+    const [zoom, setZoom] = useState<boolean>(true);
+    const [moveSprint, setMoveSprint] = useState<boolean>(false);
 
 
     // expanded state of panel
@@ -99,8 +106,8 @@ export default function SummaryCard({task, animationIndex, toggleEditTask, handl
                         </Grid>
                         <Grid item xs={6}>
                             <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                                <LoadingButton key={"edit-" + task.taskEntityId} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={async () => {await new Promise<void>(done => setTimeout(() => done(), 300)); toggleEditTask(task.taskEntityId)}}><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
-                                <LoadingButton key={"delete-" + task.taskEntityId} loading={status.includes("pendingDeleteTask")} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)'}} onClick={() => {dispatch(removeTaskFromSprintAsync({userId: userEntityId || "", boardId: currentBoard || "", sprintId: currentSprint || "", taskId: task.taskEntityId}))}}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                                <ViewTaskActionButton task={task} toggleEditTask={toggleEditTask} setZoom={setZoom} setMoveSprint={setMoveSprint} />
+                                {moveSprint && <TaskChangeSprintCard setMoveSprint={setMoveSprint} task={task} oldSprintId={sprintId || ""} />}
                             </Box>
                         </Grid>
                     </Grid>

@@ -38,7 +38,7 @@ export default function ViewBoardCard({board, setNewBoardState, indexForAnimatio
       // find the first sprint to be opened to
       var setSprint =  currentBoardSprints.find(s => {
           return Date.parse(s.startDate || "") <= Date.parse(new Date().toString() + 86396400) && Date.parse(s.endDate || "") >= Date.parse(new Date().toString()) - 86396400
-      })?.sprintEntityId || currentBoardSprints[0]; 
+      })?.sprintEntityId || currentBoardSprints[0].sprintEntityId; 
 
       // set the current sprint
       dispatch(setCurrentSprint(setSprint));

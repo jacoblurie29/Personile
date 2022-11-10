@@ -49,7 +49,7 @@ export default function NewBoardCard(props: Props) {
     const [newMilestoneDates, setNewMilestoneDates] = useState<string[]>(props.editBoard?.milestones.map(m => m.dueDate) || []);
     const [enableMilestoneDates, setEnableMilestoneDates] = useState<boolean[]>(props.editBoard?.milestones.map(m => m.dueDate !== "") || []);
     const [newMilestoneHardDeadline, setNewMilestoneHardDeadline] = useState<boolean[]>(props.editBoard?.milestones.map(m => m.hardDeadline) || []);
-    const [boardEndDate, setBoardEndDate] = useState<string[]>(props.editBoard?.endDate !== "" && props.editBoard?.endDate !== undefined ? [props.editBoard?.endDate] : [new Date().toString()]);
+    const [boardEndDate, setBoardEndDate] = useState<string[]>(props.editBoard?.endDate !== "" && props.editBoard?.endDate !== undefined ? [props.editBoard?.endDate] : [""]);
     const [currentScreen, setCurrentScreen] = useState<number>(1);
     const [customLengthChecked, setCustomLengthChecked] = useState<boolean>(false);
     const [currentCustomSprintLength, setCurrentCustomSprintLength] = useState<number | undefined>(undefined);
@@ -286,10 +286,10 @@ export default function NewBoardCard(props: Props) {
     }
 
     // find sprint length
-    const findSprintLength = () => {
+    const findSprintLength = () : number => {
 
         if (customLengthChecked) {
-          return currentCustomSprintLength;
+          return currentCustomSprintLength!;
         } else {
           switch (sprintOptionSelected) {
             case 0:
@@ -364,6 +364,10 @@ export default function NewBoardCard(props: Props) {
 
       var estimation = (Math.log(totalLength) * 2.985) - 6.5728;
 
+      if(Math.round(estimation) < 1) {
+        return 1;
+      }
+
       return Math.round(estimation);
     }
 
@@ -373,6 +377,10 @@ export default function NewBoardCard(props: Props) {
       if(totalLength === 0) return 14;
 
       var estimation = (Math.log(totalLength) * 6.972) - 16.524;
+
+      if(Math.round(estimation) < 1) {
+        return Math.round(totalLength / 3);
+      }
 
       return Math.round(estimation);
     }
@@ -384,11 +392,19 @@ export default function NewBoardCard(props: Props) {
 
       var estimation = (Math.log(totalLength) * 14.331) - 33.6;
 
+      if(Math.round(estimation) < 1) {
+        return Math.round(totalLength / 2);
+      }
+
       return Math.round(estimation);
     }
 
     // calculate the length of a board in days based on start and end date
     const calculateTotalLength = (endDate: string) => {
+
+      if(endDate == "") {
+        return 0;
+      }
 
       var milliseconds = Date.parse(endDate) - Date.parse(new Date().toString());
 
@@ -448,7 +464,7 @@ export default function NewBoardCard(props: Props) {
                       {props.editBoard == undefined &&
                         <Grid container  alignItems='center'>
                           <Grid item xs={1} textAlign='left'>
-                              <Switch sx={{color: 'primary.light'}} checked={endDateEnabled} onChange={(event, checked) => setEndDateEnabled(checked)} />
+                              <Switch sx={{color: 'primary.light'}} checked={endDateEnabled} onChange={(event, checked) => {setEndDateEnabled(checked); setBoardEndDate([""]);}} />
                           </Grid>
                           <Grid item xs={11} paddingTop='10px' paddingBottom='10px'>
                             <NewBoardDatePicker disabled={!endDateEnabled} id={"boardEndDate"} label={"Board End Date"} name={"boardEndDate"} value={boardEndDate[0]} index={0} onChange={handleChangeBoardEndDate} />

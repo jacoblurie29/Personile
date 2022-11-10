@@ -90,20 +90,7 @@ namespace API.Controllers
 
 
             var initializer = new AccountInitializer();
-
-            /*
-                Boards DONE
-                Goals DONE
-                Sprints DONE
-                Tasks
-                Milestones
-                Tasks to Sprints
-                Milestones to Tasks
-                Sprint to board
-                Milestones to Board Milestones
-                Board to user
-            */
-
+            
             var defaultBoard = initializer.generateInitialUserBoard();
 
             var dtoBoard = _mapper.Map<BoardDto>(defaultBoard);
