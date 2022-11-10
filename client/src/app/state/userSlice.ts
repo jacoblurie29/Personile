@@ -13,7 +13,6 @@ import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
-import { integerPropType } from "@mui/utils";
 
 interface UserState {
     userData: User | null;
@@ -140,7 +139,6 @@ export const fetchCurrentUserAsync = createAsyncThunk<User>(
             
             store.dispatch(setCurrentBoard(userDto.boards[0].boardEntityId))
             store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
-
             return userDto;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data});
@@ -249,10 +247,6 @@ export const changeTaskSprintAsync = createAsyncThunk<void, {userId: string, boa
 )
 
 
-
-
-
-
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -298,8 +292,14 @@ export const userSlice = createSlice({
             var currentSprint = state.userData?.boards[boardIndex].sprints[sprintIndex];
             var newSprint = state.userData?.boards[boardIndex].sprints[newSprintIndex];
 
+            var index = 1;
+            state.userData?.boards[boardIndex].sprints[newSprintIndex].tasks.sort((a, b) => a.order - b.order).forEach((task) => {task.order = index; index++;});
+            currentTask.order = 0;
             newSprint.tasks.push(currentTask);
+
             currentSprint.tasks.splice(taskIndex, 1);
+            index = 0;
+            state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.sort((a, b) => a.order - b.order).forEach((task) => {task.order = index; index++;});
             
             state.status = 'pendingMoveTaskSprint';
         });

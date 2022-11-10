@@ -279,6 +279,12 @@ namespace API.Controllers
             }
 
             CurrentSprint.Tasks.Remove(CurrentTask);
+            int index = 0;
+            CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { task.Order = index; index++; });
+
+            CurrentTask.Order = 0;
+            int indexNew = 1;
+            NewSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { task.Order = indexNew; indexNew++; });
             NewSprint.Tasks.Add(CurrentTask);
 
 
