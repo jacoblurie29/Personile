@@ -1,3 +1,4 @@
+import { ActivityEvent } from "./activityEvent";
 import { Goal } from "./goal";
 import { Milestone } from "./milestone";
 import { Sprint } from "./sprint";
@@ -13,4 +14,5 @@ export interface Board {
     sprints: Sprint[];
     goals: Goal[];
     milestones: Milestone[];
+    activityEvents: ActivityEvent[];
 }

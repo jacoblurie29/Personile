@@ -109,8 +109,6 @@ export default function ViewTaskSubtaskSubView({task, isDialog}: Props) {
         setNewSubTask(false);
         setNewSubTaskValue("");
 
-        console.log(task.subTasks);
-
         // add subtask
         dispatch(addSubTaskToTaskAsync({userId: userId, boardId: currentBoard, sprintId: currentSprint, taskId: task.taskEntityId, newSubtask: newSubtask}))
             .catch((error) => {console.log(error); toast.error("Failed to create task")});

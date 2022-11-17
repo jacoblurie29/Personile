@@ -103,6 +103,7 @@ export default function SummaryNewEditTaskCard({setNewTask, editTask, toggleEdit
             tags: tags || "",
             effort: formData.effort || 0,
             color: 0,
+            focused: false,
             order: taskEntities.length,
             milestoneIds: milestones || ""
          }
@@ -160,6 +161,7 @@ export default function SummaryNewEditTaskCard({setNewTask, editTask, toggleEdit
             effort: formData.effort,
             color: 0,
             order: editTask.order,
+            focused: editTask.focused,
             milestoneIds: milestones
         }
 

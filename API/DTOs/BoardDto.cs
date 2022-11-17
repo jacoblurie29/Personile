@@ -17,6 +17,7 @@ namespace API.DTOs
         public List<SprintDto> Sprints { get; set; }
         public List<GoalDto> Goals { get; set; }
         public List<MilestoneDto> Milestones { get; set; }
+        public List<ActivityEventDto> ActivityEvents { get; set; }
 
     }
 }

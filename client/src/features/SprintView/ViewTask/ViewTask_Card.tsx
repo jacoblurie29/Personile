@@ -4,7 +4,7 @@ import ViewTaskMoreDetails from "./ViewTask_MoreDetails";
 import { Task } from "../../../app/models/task";
 import { useAppSelector, useAppDispatch } from "../../../app/store/configureStore";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
-import { moveTaskOrderAsync, removeTaskFromSprintAsync, updateTaskAsync } from "../../../app/state/userSlice";
+import { changeTaskStateAsync, moveTaskOrderAsync, removeTaskFromSprintAsync, updateTaskAsync } from "../../../app/state/userSlice";
 import ViewTaskStateToggleButton from "./ViewTask_StateToggleButton";
 import { mapTaskToUpdateTask } from "app/models/updateTask";
 import ViewTaskStateDisplay from "./ViewTask_StateDisplay";
@@ -74,10 +74,6 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation, s
             // shape new state
             var newTask = {...currentTask};
             newTask.currentState = newState;
-            var newUpdateTask = mapTaskToUpdateTask(newTask);
-
-            // store previous state
-            var previousState  = {...newTask};
             
             // find current task id
             var currentTaskId = newTask.taskEntityId;
@@ -91,8 +87,12 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation, s
             if (currentUserId == undefined || currentSprintId == null || currentBoardId == null ) return;
 
             // update state
-            dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
+            //dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
             
+            // Will work on this in future -> stand alone patch request for state change of task.
+            dispatch(changeTaskStateAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, newState: newState.toString(), newOrder: currentTask.order!.toString(), oldOrder: currentTask.order!.toString()}))
+
+
             // close expanded panel
             dispatch(removeFromIsExpanded(currentTaskId));
         }

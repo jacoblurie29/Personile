@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Data.Migrations
 {
-    public partial class OrderDatapoint : Migration
+    public partial class ActivityEventsAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -180,6 +180,28 @@ namespace API.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ActivityEvents",
+                columns: table => new
+                {
+                    ActivityEventEntityId = table.Column<string>(type: "TEXT", nullable: false),
+                    Message = table.Column<string>(type: "TEXT", nullable: true),
+                    Date = table.Column<string>(type: "TEXT", nullable: true),
+                    Time = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
+                    UserName = table.Column<string>(type: "TEXT", nullable: true),
+                    BoardEntityId = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivityEvents", x => x.ActivityEventEntityId);
+                    table.ForeignKey(
+                        name: "FK_ActivityEvents_Boards_BoardEntityId",
+                        column: x => x.BoardEntityId,
+                        principalTable: "Boards",
+                        principalColumn: "BoardEntityId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Goals",
                 columns: table => new
                 {
@@ -256,6 +278,7 @@ namespace API.Data.Migrations
                     Effort = table.Column<int>(type: "INTEGER", nullable: false),
                     Color = table.Column<int>(type: "INTEGER", nullable: false),
                     Order = table.Column<int>(type: "INTEGER", nullable: false),
+                    Focused = table.Column<bool>(type: "INTEGER", nullable: false),
                     SprintEntityId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -320,12 +343,17 @@ namespace API.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "7ebd61f1-6f2d-414a-b6c5-4dcf4ef7b347", "1e043429-aea2-40f2-b48d-c922f8f5e111", "Member", "MEMBER" });
+                values: new object[] { "017a5fe4-2e1c-4eac-a8ed-eb60545d17fd", "3c55fe07-b161-4fce-a678-928ff2d3d1c4", "Member", "MEMBER" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "bd61ef5a-fc1c-4a88-80ef-b17cc3737240", "82078f2d-ab59-4539-8e67-80e70b8b3814", "Admin", "ADMIN" });
+                values: new object[] { "b7878edc-0dc6-41bf-91fb-2452b7e87e1d", "4dd7deb4-f67f-4e9a-ae0d-63443e46a808", "Admin", "ADMIN" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivityEvents_BoardEntityId",
+                table: "ActivityEvents",
+                column: "BoardEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -407,6 +435,9 @@ namespace API.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActivityEvents");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

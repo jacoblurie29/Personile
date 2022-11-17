@@ -43,6 +43,7 @@ namespace API.Controllers
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
                 .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
+                .Include(b => b.Boards).ThenInclude(b => b.ActivityEvents)
                 .Include(b => b.Boards).ThenInclude(g => g.Goals)
                 .FirstOrDefaultAsync();
 
@@ -85,13 +86,14 @@ namespace API.Controllers
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
                 .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
+                .Include(b => b.Boards).ThenInclude(b => b.ActivityEvents)
                 .Include(b => b.Boards).ThenInclude(g => g.Goals)
                 .FirstOrDefaultAsync();
 
 
             var initializer = new AccountInitializer();
             
-            var defaultBoard = initializer.generateInitialUserBoard();
+            var defaultBoard = initializer.generateInitialUserBoard(user.Id, user.FirstName + " " + user.LastName);
 
             var dtoBoard = _mapper.Map<BoardDto>(defaultBoard);
             var dtoSprints = dtoBoard.generateSprints();
@@ -133,6 +135,7 @@ namespace API.Controllers
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
                 .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
                 .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
+                .Include(b => b.Boards).ThenInclude(b => b.ActivityEvents)
                 .Include(b => b.Boards).ThenInclude(g => g.Goals)
                 .FirstOrDefaultAsync();
             

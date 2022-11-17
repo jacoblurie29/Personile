@@ -14,6 +14,7 @@ export interface UpdateTask {
     effort: number;
     color: number;
     order: number;
+    focused: boolean;
 }
 
 export function mapTaskToUpdateTask(task: Task) {
@@ -29,7 +30,8 @@ export function mapTaskToUpdateTask(task: Task) {
         tags: task.tags,
         effort: task.effort,
         color: task.color,
-        order: task.order
+        order: task.order,
+        focused: task.focused
     } 
 }
 
@@ -50,6 +52,7 @@ export function mapUpdateTaskToTask(task: UpdateTask) {
         effort: task.effort,
         color: task.color,
         order: task.order,
+        focused: task.focused,
         milestoneIds: "",
         subTasks: emptySubtaskArr
     } 

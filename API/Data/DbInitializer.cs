@@ -30,7 +30,17 @@ namespace API.Data
                     HandleOverflow = "start",
                     Sprints= new List<SprintEntity> {},
                     Goals= new List<GoalEntity> {},
-                    Milestones = new List<MilestoneEntity> {}
+                    Milestones = new List<MilestoneEntity> {},
+                    ActivityEvents = new List<ActivityEventEntity> {
+                        new ActivityEventEntity {
+                            ActivityEventEntityId = Guid.NewGuid().ToString(),
+                            Message = "New account created",
+                            Date = "Mon Nov 14 2022",
+                            Time = DateTime.Now.ToLongTimeString(),
+                            UserId = "TEST_NEW_DB_ID",
+                            UserName = "John Doe"
+                        }
+                    }
                 }
             };
 
@@ -82,6 +92,7 @@ namespace API.Data
                     Effort = 6,
                     Color = 0,
                     Order = 0,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 },
                 new TaskEntity {
@@ -97,6 +108,7 @@ namespace API.Data
                     Effort = 8,
                     Color = 0,
                     Order = 1,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_2",
@@ -111,6 +123,7 @@ namespace API.Data
                     Effort = 4,
                     Color = 0,
                     Order = 2,
+                    Focused = true,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_3",
@@ -125,6 +138,7 @@ namespace API.Data
                     Effort = 9,
                     Color = 1,
                     Order = 3,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 }
         };
@@ -143,6 +157,7 @@ namespace API.Data
                     Effort = 3,
                     Color = 1,
                     Order = 0,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_5",
@@ -157,6 +172,7 @@ namespace API.Data
                     Effort = 6,
                     Color = 2,
                     Order = 1,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_6",
@@ -171,6 +187,7 @@ namespace API.Data
                     Effort = 6,
                     Color = 2,
                     Order = 2,
+                    Focused = true,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_7",
@@ -185,6 +202,7 @@ namespace API.Data
                     Effort = 6,
                     Color = 2,
                     Order = 3,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 },new TaskEntity {
                     TaskEntityId = "TASK_ID_8",
@@ -199,6 +217,7 @@ namespace API.Data
                     Effort = 6,
                     Color = 2,
                     Order = 4,
+                    Focused = false,
                     Milestones = new List<MilestoneEntity>()
                 },
         };

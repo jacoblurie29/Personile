@@ -20,6 +20,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import NewBoardDatePicker from "./NewBoard_DatePicker";
 import SprintVisualizer from "./NewBoard_SprintVisualizer";
+import { ActivityEvent } from "app/models/activityEvent";
 
 
 interface Props {
@@ -32,6 +33,7 @@ export default function NewBoardCard(props: Props) {
     // redux state
     const history = useHistory();
     const userId = useAppSelector(state => state.user.userData?.userEntityId);
+    const userName = useAppSelector(state => state.user.userData?.firstName + " " + state.user.userData?.lastName);
     const dispatch = useAppDispatch();
 
     // react hook form
@@ -225,6 +227,7 @@ export default function NewBoardCard(props: Props) {
               }
           }
 
+
           // map data to board object
           var newBoard = {
             boardEntityId: uuidv4(),
@@ -236,8 +239,8 @@ export default function NewBoardCard(props: Props) {
             endDate: endDateEnabled ? boardEndDate.toString() === "" ? new Date().toString() : boardEndDate.toString() : "",
             sprints: [],
             goals: goalArray,
-            milestones: milestoneArray
-
+            milestones: milestoneArray,
+            activityEvents: []
           }
 
         // close new board window
@@ -263,7 +266,8 @@ export default function NewBoardCard(props: Props) {
             endDate: props.editBoard.endDate,
             sprints: props.editBoard.sprints,
             goals: goalArray,
-            milestones: milestoneArray
+            milestones: milestoneArray,
+            activityEvents: []
         };
 
         // map form data for board update
@@ -272,7 +276,8 @@ export default function NewBoardCard(props: Props) {
           name: data.name,
           description: data.description,
           goals: goalArray,
-          milestones: milestoneArray
+          milestones: milestoneArray,
+          activityEvents: []
         }
 
         // close edit board window

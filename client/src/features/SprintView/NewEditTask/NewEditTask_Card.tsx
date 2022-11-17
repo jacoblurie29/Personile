@@ -106,6 +106,7 @@ export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: 
             effort: formData.effort || 0,
             color: 0,
             order: taskEntities.length,
+            focused: false,
             milestoneIds: milestones || ""
          }
 
@@ -162,6 +163,7 @@ export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: 
             effort: formData.effort,
             color: 0,
             order: editTask.order,
+            focused: editTask.focused,
             milestoneIds: formData.milestones.join("|")
         }
 

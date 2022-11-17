@@ -19,6 +19,7 @@ namespace API.Entities
         public int Effort { get; set; }
         public int Color { get; set; }
         public int Order { get; set; }
+        public bool Focused { get; set; }
         public List<SubTaskEntity> SubTasks { get; set; }
         public SprintEntity SprintEntity { get; set; }
         public string SprintEntityId { get; set; }

@@ -13,7 +13,6 @@ axios.interceptors.request.use(config => {
     config.headers = config.headers ?? {};
     const token = store.getState().user.userData?.token;
     if (token) config.headers.Authorization = `Bearer ${token}`;
-    console.log(store.getState())
     return config;
 })
 
@@ -84,7 +83,9 @@ const UserData = {
     removeTaskFromMilestone: (userId: string, boardId: string, milestoneId: string, sprintId: string, taskId: string) => requests.delete(`userdata/${userId}/boards/${boardId}/milestones/${milestoneId}/sprints/${sprintId}/tasks/${taskId}/deleteTaskFromMilestone`),
     changeTaskOrder: (userId: string, boardId: string, sprintId: string, taskId: string, newOrder: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskOrder/${newOrder}`),
     changeTaskState: (userId: string, boardId: string, sprintId: string, taskId: string, newState: string, newOrder: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskState/${newState}/newOrder/${newOrder}`),
-    changeTaskSprint: (userId: string, boardId: string, sprintId: string, taskId: string, newSprintId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskSprint/${newSprintId}`)
+    changeTaskSprint: (userId: string, boardId: string, sprintId: string, taskId: string, newSprintId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskSprint/${newSprintId}`),
+    changeTaskFocused: (userId: string, boardId: string, sprintId: string, taskId: string) => requests.patch(`userdata/${userId}/boards/${boardId}/sprints/${sprintId}/tasks/${taskId}/changeTaskFocused`),
+    getRecentActivity: (userId: string) => requests.get(`userdata/${userId}/getRecentActivity`)
 }
 
 const Account = {

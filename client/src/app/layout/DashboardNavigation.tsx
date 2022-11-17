@@ -20,7 +20,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import SprintView from 'features/SprintView/Main/Main_SprintView';
-import TodayView from 'features/TodayView/TodayView';
+import TodayView from 'features/TodayView/Main/TodayView';
 import NotFound from 'app/errors/NotFound';
 import ServerError from 'app/errors/ServerError';
 import SettingsView from 'features/SettingsView/SettingsView';
@@ -117,6 +117,7 @@ export default function DashboardNavigation({component}: Props) {
 
   const { currentBoard } = useAppSelector(state => state.sprintView);
   const boards = useAppSelector(state => state.user.userData?.boards);
+  const user = useAppSelector(state => state.user.userData);
   const board = boards?.find(b => b.boardEntityId == currentBoard);
   const [currentSprintPage, setCurrentSprintPage] = useState<string>("sprint");
   const [open, setOpen] = useState(false); 
@@ -232,7 +233,7 @@ export default function DashboardNavigation({component}: Props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
         <Box sx={{backgroundColor: 'background.default', width: '100%', height: '8%'}}>     
-          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "sprint" ? board?.name || "" : component === "today" ? "Today" : "Your boards"} />}
+          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "sprint" ? board?.name || "" : component === "today" ? "Welcome back, " + user?.firstName : "Your boards"} />}
         </Box>
         {/* Below handles the routing */}
           {loading && <LoadingComponent />}       

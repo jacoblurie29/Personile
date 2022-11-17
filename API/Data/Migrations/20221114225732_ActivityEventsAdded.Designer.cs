@@ -11,13 +11,43 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(PersonileContext))]
-    [Migration("20221024210602_OrderDatapoint")]
-    partial class OrderDatapoint
+    [Migration("20221114225732_ActivityEventsAdded")]
+    partial class ActivityEventsAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
+
+            modelBuilder.Entity("API.Entities.ActivityEventEntity", b =>
+                {
+                    b.Property<string>("ActivityEventEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BoardEntityId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Time")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ActivityEventEntityId");
+
+                    b.HasIndex("BoardEntityId");
+
+                    b.ToTable("ActivityEvents");
+                });
 
             modelBuilder.Entity("API.Entities.BoardEntity", b =>
                 {
@@ -174,6 +204,9 @@ namespace API.Data.Migrations
                     b.Property<int>("Effort")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Focused")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Links")
                         .HasColumnType("TEXT");
 
@@ -314,15 +347,15 @@ namespace API.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7ebd61f1-6f2d-414a-b6c5-4dcf4ef7b347",
-                            ConcurrencyStamp = "1e043429-aea2-40f2-b48d-c922f8f5e111",
+                            Id = "017a5fe4-2e1c-4eac-a8ed-eb60545d17fd",
+                            ConcurrencyStamp = "3c55fe07-b161-4fce-a678-928ff2d3d1c4",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "bd61ef5a-fc1c-4a88-80ef-b17cc3737240",
-                            ConcurrencyStamp = "82078f2d-ab59-4539-8e67-80e70b8b3814",
+                            Id = "b7878edc-0dc6-41bf-91fb-2452b7e87e1d",
+                            ConcurrencyStamp = "4dd7deb4-f67f-4e9a-ae0d-63443e46a808",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -428,6 +461,16 @@ namespace API.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("API.Entities.ActivityEventEntity", b =>
+                {
+                    b.HasOne("API.Entities.BoardEntity", "BoardEntity")
+                        .WithMany("ActivityEvents")
+                        .HasForeignKey("BoardEntityId")
+                        .OnDelete(DeleteBehavior.ClientCascade);
+
+                    b.Navigation("BoardEntity");
                 });
 
             modelBuilder.Entity("API.Entities.BoardEntity", b =>
@@ -566,6 +609,8 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.BoardEntity", b =>
                 {
+                    b.Navigation("ActivityEvents");
+
                     b.Navigation("Goals");
 
                     b.Navigation("Milestones");

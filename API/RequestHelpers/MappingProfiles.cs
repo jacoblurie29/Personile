@@ -27,6 +27,9 @@ namespace API.RequestHelpers
             CreateMap<SubTaskDto, SubTaskEntity>();
             CreateMap<UpdateTaskDto, TaskEntity>();
             CreateMap<UpdateBoardDto, BoardEntity>();
+            CreateMap<ActivityEventEntity, ActivityEventDto>();
+            CreateMap<ActivityEventDto, ActivityEventEntity>();
+
             
         }
     }

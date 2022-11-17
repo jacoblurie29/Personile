@@ -17,6 +17,7 @@ namespace API.Entities
         public List<SprintEntity> Sprints { get; set; }
         public List<GoalEntity> Goals { get; set; }
         public List<MilestoneEntity> Milestones { get; set; }
+        public List<ActivityEventEntity> ActivityEvents { get; set; }
         public string UserEntityId { get; set; }
         public UserEntity UserEntity { get; set; }
 

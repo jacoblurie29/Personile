@@ -13,17 +13,20 @@ import { store } from "app/store/configureStore";
 import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/sprintSlice";
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
+import { ActivityEvent } from "app/models/activityEvent";
 
 interface UserState {
     userData: User | null;
     loading: boolean | null;
     status: string;
+    recentActivity: ActivityEvent[] | null
 }
 
 const initialState : UserState = {
     userData: null,
     loading: false,
-    status: "idle"
+    status: "idle",
+    recentActivity: []
 }
 
 
@@ -122,6 +125,17 @@ export const registerUserAsync = createAsyncThunk<User, FieldValues>(
             store.dispatch(setCurrentSprint(userDto.boards[0].sprints[0].sprintEntityId));
 
             return userDto;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data});
+        }
+    }
+)
+
+export const getRecentActivityAsync = createAsyncThunk<ActivityEvent[], {userId: string}>(
+    'account/getRecentActivity',
+    async ({userId}, thunkAPI) => {
+        try {
+            return await agent.UserData.getRecentActivity(userId);
         } catch (error: any) {
             return thunkAPI.rejectWithValue({error: error.data});
         }
@@ -246,6 +260,18 @@ export const changeTaskSprintAsync = createAsyncThunk<void, {userId: string, boa
     }
 )
 
+export const changeTaskFocusedAsync = createAsyncThunk<void, {userId: string, boardId: string, sprintId: string, taskId: string}>(
+    'sprint/changeTaskFocused',
+    async ({userId, boardId, sprintId, taskId}, thunkAPI) => {
+        try {
+            return await agent.UserData.changeTaskFocused(userId, boardId, sprintId, taskId);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
+
 
 export const userSlice = createSlice({
     name: 'user',
@@ -268,6 +294,123 @@ export const userSlice = createSlice({
         }
     },
     extraReducers: (builder => {
+
+        // GET RECENT ACTIVITY
+        builder.addCase(getRecentActivityAsync.pending, (state, action) => {
+            state.status = 'pendingGetRecentActivity';
+        });
+        builder.addCase(getRecentActivityAsync.fulfilled, (state, action) => {
+
+            state.recentActivity = action.payload;
+
+            state.status = 'idle';
+
+            toast.success('Recent activity loaded!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+        });
+        builder.addCase(getRecentActivityAsync.rejected, (state, action) => {
+            
+            state.status = 'idle';
+
+            toast.error('Failed to load recent actibity!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+                
+            state.status = 'idle';
+
+            
+        });
+
+        // CHANGE TASK FOCUSED
+        builder.addCase(changeTaskFocusedAsync.pending, (state, action) => {
+            const {sprintId, taskId, boardId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var currentTask = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex];
+
+            currentTask.focused = !currentTask.focused
+            
+            state.status = 'pendingChangeTaskFocused';
+        });
+        builder.addCase(changeTaskFocusedAsync.fulfilled, (state, action) => {
+
+
+            state.status = 'idle';
+
+            toast.success('Task focused changed!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+        });
+        builder.addCase(changeTaskFocusedAsync.rejected, (state, action) => {
+
+            const {sprintId, taskId, boardId} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            const boardIndex = state.userData?.boards.findIndex(b => b.boardEntityId === boardId);
+            if (boardIndex === undefined || boardIndex < 0) return;
+
+
+            const sprintIndex = state.userData?.boards[boardIndex].sprints.findIndex(s => s.sprintEntityId === sprintId);
+            if (sprintIndex === undefined || sprintIndex < 0) return;
+
+            const taskIndex = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks.findIndex(t => t.taskEntityId === taskId);
+            if (taskIndex === undefined || taskIndex < 0) return;
+
+            var currentTask = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex];
+
+            currentTask.focused = !currentTask.focused
+            
+            state.status = 'idle';
+
+            toast.error('Failed to change task focused!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+                
+            state.status = 'idle';
+
+            
+        });
 
         // CHANGE TASK SPRINT
         builder.addCase(changeTaskSprintAsync.pending, (state, action) => {
@@ -380,7 +523,7 @@ export const userSlice = createSlice({
 
             state.status = 'idle';
 
-            toast.success('Task state and order changed!', {
+            toast.success('Task state changed!', {
                 position: "bottom-right",
                 autoClose: 1500,
                 hideProgressBar: false,
@@ -393,7 +536,7 @@ export const userSlice = createSlice({
         });
         builder.addCase(changeTaskStateAsync.rejected, (state, action) => {
 
-            toast.error('Failed to change state and order!', {
+            toast.error('Failed to change state!', {
                 position: "bottom-right",
                 autoClose: 1500,
                 hideProgressBar: false,
@@ -563,8 +706,6 @@ export const userSlice = createSlice({
             if (taskIndex === undefined || taskIndex < 0) return;
 
             var pastMilestoneIds = state.userData?.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds;
-
-            console.log("PAST IDs: " + pastMilestoneIds);
 
             if(state.userData !== null) {
                 state.userData.boards[boardIndex].sprints[sprintIndex].tasks[taskIndex].milestoneIds = pastMilestoneIds === milestoneId ? milestoneId : pastMilestoneIds +=  "|" + milestoneId;

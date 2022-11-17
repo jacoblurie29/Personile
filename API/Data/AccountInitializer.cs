@@ -9,7 +9,9 @@ namespace API.Data
 {
     public class AccountInitializer
     {
-        public BoardEntity generateInitialUserBoard() {
+        public BoardEntity generateInitialUserBoard(string userId, string userName) {
+
+
             BoardEntity defaultBoard = new BoardEntity{
                     BoardEntityId = Guid.NewGuid().ToString(),
                     Name = "Main board",
@@ -26,7 +28,17 @@ namespace API.Data
                             Status = "Incomplete"
                         }
                     },
-                    Milestones = new List<MilestoneEntity> {}
+                    Milestones = new List<MilestoneEntity> {},
+                    ActivityEvents = new List<ActivityEventEntity> {
+                        new ActivityEventEntity {
+                            ActivityEventEntityId = Guid.NewGuid().ToString(),
+                            Message = "New account created",
+                            Date = DateTime.Today.ToString("ddd MMM dd yyyy"),
+                            Time = DateTime.Now.ToLongTimeString(),
+                            UserId = userId,
+                            UserName = userName
+                        }
+                    }
             };
 
             return defaultBoard;
@@ -47,6 +59,7 @@ namespace API.Data
                 Effort = 6,
                 Color = 2,
                 Order = 0,
+                Focused = false,
                 Milestones = new List<MilestoneEntity>()
             };
 

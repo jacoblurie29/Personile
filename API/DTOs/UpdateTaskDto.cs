@@ -19,5 +19,6 @@ namespace API.DTOs
         public int Effort { get; set; }
         public int Color { get; set; }
         public int Order { get; set; }
+        public bool Focused { get; set; }
     }
 }

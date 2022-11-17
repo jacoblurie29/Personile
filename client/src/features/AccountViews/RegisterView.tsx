@@ -27,9 +27,7 @@ export default function RegisterView() {
 
   // register the use on submit
   async function handleSubmitRegister(data: FieldValues)  {
-    console.log("TEST PASSED");
     var registerData = {...data, username: data.email};
-    console.log(registerData);
     await dispatch(registerUserAsync(registerData));
     history.push('/sprint');
   }

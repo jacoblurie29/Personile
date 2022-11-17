@@ -170,7 +170,7 @@ function App() {
 
         <Switch>
             <Route exact path='/'>
-                {userData !== null ? <Redirect to="/sprint" /> : <Redirect to="/home" />} 
+                {userData !== null ? <Redirect to="/today" /> : <Redirect to="/home" />} 
             </Route>
             <Route exact path='/home'>
                 <HomeView />

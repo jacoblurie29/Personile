@@ -20,6 +20,7 @@ namespace API.Data
         public DbSet<SprintEntity> Sprints { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
         public DbSet<SubTaskEntity> SubTasks { get; set; }
+        public DbSet<ActivityEventEntity> ActivityEvents { get; set; }
 
         // The following is necessary for cascade deleting (EF Core orphans rows and does not support true cascading)
         // Will have to implement for ANY deleted object with a parent or child
@@ -27,7 +28,7 @@ namespace API.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            /* For anyone reading this, you have no idea how long it took me to figure out the code below XD */
+            // For anyone reading this, you have no idea how long it took me to figure out the code below XD 
 
             modelBuilder
             .Entity<SubTaskEntity>()
@@ -51,6 +52,12 @@ namespace API.Data
             .Entity<BoardEntity>()
             .HasOne(u => u.UserEntity)
             .WithMany(b => b.Boards)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder
+            .Entity<ActivityEventEntity>()
+            .HasOne(a => a.BoardEntity)
+            .WithMany(b => b.ActivityEvents)
             .OnDelete(DeleteBehavior.ClientCascade);
 
             modelBuilder

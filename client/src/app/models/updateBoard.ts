@@ -1,3 +1,4 @@
+import { ActivityEvent } from "./activityEvent";
 import { Goal } from "./goal";
 import { Milestone } from "./milestone";
 import { Sprint } from "./sprint";
@@ -8,4 +9,5 @@ export interface UpdateBoard {
     description: string;
     goals: Goal[];
     milestones: Milestone[];
+    activityEvents: ActivityEvent[];
 }

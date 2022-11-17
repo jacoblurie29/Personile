@@ -1,15 +1,11 @@
-import { LoadingButton } from "@mui/lab";
 import { Accordion, AccordionSummary, Box, Grid, Divider, AccordionDetails, Zoom } from "@mui/material";
 import { Task } from "app/models/task";
-import { removeTaskFromSprintAsync, updateTaskAsync } from "app/state/userSlice";
+import { changeTaskStateAsync } from "app/state/userSlice";
 import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import ViewTaskStateToggleButton from "../ViewTask/ViewTask_StateToggleButton";
 import SummaryTaskMoreDetails from "./SummaryView_SummaryTaskMoreDetails";
 import TaskActionButtons from "./SummaryView_TaskActionButtons";
 import TaskStateTitle from "./SummaryView_TaskStateTitle";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { mapTaskToUpdateTask } from "app/models/updateTask";
 import { removeFromIsExpanded, addToIsExpanded } from "../Redux/sprintSlice";
 import ViewTaskActionButton from "../ViewTask/ViewTask_ActionButton";
 import { useState } from "react";
@@ -49,31 +45,27 @@ export default function SummaryCard({task, animationIndex, toggleEditTask, handl
     };
 
     // change state of task (new, current, completed)
-    const handleStateChange = (currentTask: Task, currentState: number, newState: number) => {
+    const handleStateChange = (currentTask: Task, currentState: number, newState: number, sprintId: string) => {
         
         if(currentState != newState) {
 
             // shape new state
             var newTask = {...currentTask};
             newTask.currentState = newState;
-            var newUpdateTask = mapTaskToUpdateTask(newTask);
-
-            // store previous state
-            var previousState  = {...newTask};
             
             // find current task id
             var currentTaskId = newTask.taskEntityId;
 
             // current redux id variables
             var currentUserId = userEntityId;
-            var currentSprintId = currentSprint;
+            var currentSprintId = sprintId;
             var currentBoardId = currentBoard;
 
             // null checks
             if (currentUserId == undefined || currentSprintId == null || currentBoardId == null ) return;
 
             // update state
-            dispatch(updateTaskAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, updatedTaskDto: newUpdateTask, previousState: previousState, futureState: newTask}));
+            dispatch(changeTaskStateAsync({userId: currentUserId, boardId: currentBoardId, sprintId: currentSprintId, taskId: currentTaskId, newState: newState.toString(), newOrder: currentTask.order!.toString(), oldOrder: currentTask.order!.toString()}))
 
             // close expanded panel
             dispatch(removeFromIsExpanded(currentTaskId));

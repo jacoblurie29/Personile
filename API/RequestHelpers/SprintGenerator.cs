@@ -9,28 +9,6 @@ namespace API.RequestHelpers
     {
         public static List<SprintDto> generateSprints(this BoardDto boardDto) {
 
-            /* 
-                TODO: GENERATE SPRINTS BASED ON SPRINT LENGTH SELECTED 
-
-                TWO ROADS HERE: End date or no date
-
-                END DATE: GENERATE ALL SPRINTS (WILL WORK ON EXTREME CASES LATER)
-
-                NO END DATE: GENERATE FIRST 10 SPRINTS (WILL WORK ON GENERATION LATER)
-
-                Will abstract these later
-
-                Based on sprint length - use a while loop and continually generate sprints until the end date is passed or the number of sprints is = 10
-
-                For adding sprints, three cases:
-
-                EVEN: Evenly distribute the overflow days (no idea how this is going to work yet)
-
-                START: Tack on days to the first sprint (use modulo)
-
-                END: Tack on days to last sprint (if days left is less than 2 * sprint length, add all days)
-            
-            */
 
             var stringStartDate = boardDto.StartDate.Substring(0, 15);
             var startDate = DateTime.ParseExact(stringStartDate,

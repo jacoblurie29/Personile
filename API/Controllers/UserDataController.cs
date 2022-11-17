@@ -115,6 +115,23 @@ namespace API.Controllers
 
         }
 
+        // Gets a list of all recent activity for the user's boards
+        [HttpGet("{userId}/getRecentActivity", Name = "GetRecentActivity")]
+        public async Task<ActionResult<List<ActivityEventDto>>> GetRecentActivity(string userId) {
+            var CurrentUserEntity = await RetrieveUserEntity(userId);
+
+            var ActivityEvents = new List<ActivityEventDto>();
+
+            foreach(var board in CurrentUserEntity.Boards) {
+                foreach(var eventActivity in board.ActivityEvents) {
+                    ActivityEvents.Add(_mapper.Map<ActivityEventDto>(eventActivity));
+                }
+            }
+
+            return ActivityEvents;
+
+        }
+
         // MARK: - POSTS
         
         [HttpPost("{userId}/addBoard", Name = "AddBoard")]
@@ -133,7 +150,11 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) {
-                return CreatedAtRoute("GetBoard", new { userId = userId, boardId = mappedBoard.BoardEntityId }, _mapper.Map<UserDto>(CurrentUserEntity));
+                var logResult = await LogUserAction("New board added: \"" + mappedBoard.Name + "\"", userId, mappedBoard.BoardEntityId);
+
+                if(logResult) return CreatedAtRoute("GetBoard", new { userId = userId, boardId = mappedBoard.BoardEntityId }, _mapper.Map<UserDto>(CurrentUserEntity));
+
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem creating new board"});
@@ -181,7 +202,11 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                var logResult = await LogUserAction("New task added: \"" + MappedTask.Name + "\"", userId, CurrentBoard.BoardEntityId);
+                
+                if(logResult) return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
@@ -218,7 +243,9 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
+                var logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" added to milestone \"" + CurrentBoard.Name + "\"", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem adding task to milestone"});
@@ -256,7 +283,9 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                var logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" order changed.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem moving task order"});
@@ -291,7 +320,11 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                
+                var logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" moved to different sprint.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem changing task sprint"});
@@ -314,6 +347,9 @@ namespace API.Controllers
                 return BadRequest(new ProblemDetails{Title = "Task not found"});
             }
 
+            var oldState = CurrentTask.CurrentState;
+
+            CurrentTask.CurrentState = Int32.Parse(newState);
 
             if(newOrderNumber > CurrentSprint.Tasks.Count) {
 
@@ -344,10 +380,44 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                var logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" changed from state \"" + getStateString(oldState) + "\" to \"" + getStateString(CurrentTask.CurrentState) + "\"", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return CreatedAtRoute("GetSprintById", new { sprintId = sprintId, boardId = boardId, userId = userId }, _mapper.Map<SprintDto>(CurrentSprint));
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem changing task state"});
+
+        }
+
+        [HttpPatch("{userId}/boards/{boardId}/sprints/{sprintId}/tasks/{taskId}/changeTaskFocused")]
+        public async Task<ActionResult> ChangeTaskFocused(string userId, string boardId, string sprintId, string taskId) {
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            var CurrentSprint = CurrentBoard.Sprints.Where(s => s.SprintEntityId == sprintId).FirstOrDefault();
+
+            var CurrentTask = CurrentSprint.Tasks.Where(t => t.TaskEntityId == taskId).FirstOrDefault();
+
+            CurrentTask.Focused = !CurrentTask.Focused;
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) {
+                var logResult = false;
+                if(CurrentTask.Focused) {
+                    logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" moved to today's tasks.", userId, CurrentBoard.BoardEntityId);
+                } else {
+                    logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" removed from today's tasks.", userId, CurrentBoard.BoardEntityId);
+                }
+
+                if (logResult) return Ok();
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
+
+            return BadRequest(new ProblemDetails{Title = "Problem changing task focused state"});
+
 
         }
 
@@ -381,7 +451,9 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return Ok();
+                var logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" deleted from milestone \"" + CurrentBoard.Name + "\"", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok();
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem deleting task from milestone"});
@@ -412,7 +484,9 @@ namespace API.Controllers
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) {
-                return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
+                var logResult = await LogUserAction("Subtask \"" + MappedSubtask.Details + "\" added to task \"" + CurrentTask.Name + "\"", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return CreatedAtRoute("GetTaskById", new { sprintId = sprintId, boardId = boardId, userId = userId, taskId = taskId }, _mapper.Map<TaskDto>(CurrentTask));
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
             }
 
             return BadRequest(new ProblemDetails{Title = "Problem saving new task"});
@@ -428,7 +502,9 @@ namespace API.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok();
+            if (result) {
+                return Ok();
+            } 
 
             return BadRequest(new ProblemDetails {Title = "Problem deleting board"});
             
@@ -450,7 +526,11 @@ namespace API.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok();
+            if (result) {
+                var logResult = await LogUserAction("Task \"" + TaskToBeDeleted.Name + "\" deleted from sprint.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok();
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
 
             return BadRequest(new ProblemDetails {Title = "Problem removing task"});
             
@@ -480,7 +560,11 @@ namespace API.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok();
+            if (result) {
+                var logResult = await LogUserAction("Subtask \"" + SubtaskToBeDeleted.Details + "\" deleted from task \"" + CurrentTask.Name + "\".", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok();
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
 
             return BadRequest(new ProblemDetails {Title = "Problem removing subtask"});
             
@@ -501,7 +585,11 @@ namespace API.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok(updateBoardDto);
+            if (result) {
+                var logResult = await LogUserAction("Board \"" + CurrentBoard.Name + "\" updated.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok(updateBoardDto);
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
 
             return BadRequest(new ProblemDetails { Title = "Problem updating board" });
 
@@ -530,7 +618,11 @@ namespace API.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok(updateTaskDto);
+            if (result) {
+                var logResult = await LogUserAction("Task \"" + CurrentTask.Name + "\" updated.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok(updateTaskDto);
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
 
             return BadRequest(new ProblemDetails { Title = "Problem updating task" });
 
@@ -562,7 +654,11 @@ namespace API.Controllers
 
             var result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return Ok(subTaskDto);
+            if (result) {
+                var logResult = await LogUserAction("Subtask \"" + CurrentSubtask.Details + "\" updated.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok(subTaskDto);
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
 
             return BadRequest(new ProblemDetails { Title = "Problem updating subtask" });
 
@@ -571,12 +667,54 @@ namespace API.Controllers
 
  
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {
-                return await _context.Users.Where(u => u.Id == userEntityId)
-                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
-                .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
-                .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
-                .Include(b => b.Boards).ThenInclude(g => g.Goals)
-                .FirstOrDefaultAsync();
+            return await _context.Users.Where(u => u.Id == userEntityId)
+            .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.SubTasks)
+            .Include(b => b.Boards).ThenInclude(u => u.Sprints).ThenInclude(s => s.Tasks).ThenInclude(t => t.Milestones)
+            .Include(b => b.Boards).ThenInclude(m => m.Milestones).ThenInclude(t => t.Tasks)
+            .Include(b => b.Boards).ThenInclude(b => b.ActivityEvents)
+            .Include(b => b.Boards).ThenInclude(g => g.Goals)
+            .FirstOrDefaultAsync();
+        }
+
+        private async Task<bool> LogUserAction(string message, string userId, string boardId) {
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            if(CurrentUser == null) return false;
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            if(CurrentBoard == null) return false;
+
+            var newActivityEvent = new ActivityEventDto {
+                ActivityEventEntityId = Guid.NewGuid().ToString(),
+                Message = message,
+                Date = DateTime.Today.ToString("ddd MMM dd yyyy"),
+                Time = DateTime.Now.ToLongTimeString(),
+                UserId = userId,
+                UserName = CurrentUser.FirstName + " " + CurrentUser.LastName
+            };
+
+            var mappedNewActivityEvent = _mapper.Map<ActivityEventEntity>(newActivityEvent);
+
+            CurrentBoard.ActivityEvents.Add(mappedNewActivityEvent);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if(result) return true;
+
+            return false;
+
+        }
+
+        private string getStateString(int state) {
+            if(state == 0) {
+                return "Incomplete";
+            }
+            if(state == 1) {
+                return "In-Progress";
+            }
+
+            return "Completed";
         }
 
 

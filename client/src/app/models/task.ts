@@ -15,4 +15,5 @@ export interface Task {
     subTasks: SubTask[];
     order: number;
     milestoneIds: string;
+    focused: boolean;
 }
