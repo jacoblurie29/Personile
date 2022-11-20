@@ -2,8 +2,7 @@ import { styled, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
+import { useTimer, TimerSettings } from 'react-timer-hook';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -16,9 +15,10 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
+import TimerIcon from '@mui/icons-material/Timer';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SprintView from 'features/SprintView/Main/Main_SprintView';
 import TodayView from 'features/TodayView/Main/TodayView';
 import NotFound from 'app/errors/NotFound';
@@ -30,6 +30,9 @@ import { signOut } from 'app/state/userSlice';
 import BoardView from 'features/BoardsView/Main/Main_BoardView';
 import { Typography } from '@mui/material';
 import TopView_LayoutBox from 'features/SprintView/TopView/TopView_LayoutBox';
+import HomeIcon from '@mui/icons-material/Home';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import HomeView from 'features/HomeView/HomeView';
 
 const drawerWidth = 230;
 
@@ -47,7 +50,8 @@ const navButtonStyles = {
 }
 
 const sprintLinks = [
-  {linkTitle: "Today", linkRoute: '/today'},
+  {linkTitle: "Home", linkRoute: '/home'},
+  {linkTitle: "Dashboard", linkRoute: '/dashboard'},
   {linkTitle: "Sprint", linkRoute: '/sprint'},
   {linkTitle: "Boards", linkRoute: '/boards'}
 ]
@@ -121,6 +125,7 @@ export default function DashboardNavigation({component}: Props) {
   const board = boards?.find(b => b.boardEntityId == currentBoard);
   const [currentSprintPage, setCurrentSprintPage] = useState<string>("sprint");
   const [open, setOpen] = useState(false); 
+  const [currentTimerMax, setCurrentTimerMax] = useState<number>(25);
   
 
   const handleDrawerOpen = () => {
@@ -135,7 +140,44 @@ export default function DashboardNavigation({component}: Props) {
     setCurrentSprintPage(pageSelection);
 }
 
+const time = new Date();
+time.setSeconds(time.getSeconds() + currentTimerMax * 60); 
 
+const {
+    seconds,
+    minutes,
+    pause,
+    restart,
+    resume,
+    isRunning,
+} = useTimer({ expiryTimestamp: time, onExpire: () => console.warn('onExpire called') });
+
+useEffect(() => {
+  pause();
+}, [])
+
+useEffect(() => {
+  if(minutes == 0 && seconds == 0 && currentTimerMax == 25) {
+    setCurrentTimerMax(5);
+    restartTimerNum(5);
+  } else if(minutes == 0 && seconds == 0 && currentTimerMax == 5) {
+    setCurrentTimerMax(25);
+    restartTimerNum(25);
+  }
+}, [minutes, seconds])
+
+const restartTimer = () => {
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 25 * 60);
+  setCurrentTimerMax(25);
+  restart(time);
+}
+
+const restartTimerNum = (val: number) => {
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + val * 60);
+  restart(time);
+}
 
 
   return (
@@ -172,7 +214,7 @@ export default function DashboardNavigation({component}: Props) {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <TodayIcon /> : index === 1 ? <DateRangeIcon /> : <AccessTimeIcon />}
+                  {index == 0 ? <HomeIcon /> : index == 1 ? <DashboardIcon /> : index === 2 ? <DateRangeIcon /> : <AccessTimeIcon />}
                 </ListItemIcon>
                 <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -229,16 +271,25 @@ export default function DashboardNavigation({component}: Props) {
                 <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+            {isRunning && 
+            <Box sx={{paddingLeft: '10px', paddingTop: '40px', textAlign: 'center'}}>
+              <TimerIcon sx={{color: currentTimerMax == 25 ? "success.dark" : "error.dark"}} />
+              <Typography sx={{color: currentTimerMax == 25 ? "success.dark" : "error.dark"}} variant='h5'> {minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)}</Typography>
+              <Typography variant="h5" sx={{color: currentTimerMax == 25 ? "success.dark" : "error.dark", textAlign: 'center', paddingBottom: '20px'}}>{currentTimerMax == 25 ? "Work" : "Rest"}</Typography>
+
+            </Box>
+            }
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
         <Box sx={{backgroundColor: 'background.default', width: '100%', height: '8%'}}>     
-          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "sprint" ? board?.name || "" : component === "today" ? "Welcome back, " + user?.firstName : "Your boards"} />}
+          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "home" ? "" : component === "sprint" ? board?.name || "" : component === "dashboard" ? "Welcome back, " + user?.firstName : "Your boards"} />}
         </Box>
         {/* Below handles the routing */}
-          {loading && <LoadingComponent />}       
+          {loading && <LoadingComponent />}      
           {!loading && component === "sprint" && <SprintView page={currentSprintPage} />}
-          {!loading && component === "today" && <TodayView />}
+          {!loading && component === "home" && <HomeView />}
+          {!loading && component === "dashboard" && <TodayView seconds={seconds} minutes={minutes} pause={pause} restartTimer={restartTimer} resume={resume} currentMax={currentTimerMax} isRunning={isRunning} />}
           {!loading && component === "boards" && <BoardView />}
           {!loading && component === "settings" && <SettingsView />}
           {!loading && component === "serverError" && <ServerError />}

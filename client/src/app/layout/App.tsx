@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from 'app/store/configureStore';
 import { useEffect } from 'react';
 import { fetchCurrentUserAsync } from 'app/state/userSlice';
 import { setLoading } from 'features/SprintView/Redux/sprintSlice';
-import HomeView from 'features/HomeView/HomeView';
+import HomeView from 'features/WelcomeView/WelcomeView';
 import LoginView from 'features/AccountViews/LoginView';
 import RegisterView from 'features/AccountViews/RegisterView';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -170,9 +170,9 @@ function App() {
 
         <Switch>
             <Route exact path='/'>
-                {userData !== null ? <Redirect to="/today" /> : <Redirect to="/home" />} 
+                {userData !== null ? <Redirect to="/home" /> : <Redirect to="/welcome" />} 
             </Route>
-            <Route exact path='/home'>
+            <Route exact path='/welcome'>
                 <HomeView />
             </Route>
             <Route path='/login'>
@@ -181,13 +181,17 @@ function App() {
             <Route path='/register'>
                 <RegisterView />
             </Route>
+            <Route path='/home'>
+                {userData == null && <Redirect to="/" />}
+                <DashboardNavigation component='home' />
+            </Route>
             <Route path='/sprint'>
                 {userData == null && <Redirect to="/" />}
                 <DashboardNavigation component='sprint' />
             </Route>
-            <Route path='/today'>
+            <Route path='/dashboard'>
                 {userData == null && <Redirect to="/" />}
-                <DashboardNavigation component='today' />
+                <DashboardNavigation component='dashboard' />
             </Route>
             <Route path='/boards'>
                 {userData == null && <Redirect to="/" />}

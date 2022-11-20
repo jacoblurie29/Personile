@@ -1,27 +1,18 @@
 import { Box, Button, Card, CircularProgress, CircularProgressProps, circularProgressClasses, Grid, Typography } from "@mui/material";
-import { useAppSelector } from "app/store/configureStore";
-import { useTimer, TimerSettings } from 'react-timer-hook';
-import React, { useEffect, useState } from 'react';
 
-export default function TimerWidgetCard() {
+interface Props {
+    seconds: number,
+    minutes: number,
+    pause: () => void,
+    restartTimer: () => void,
+    resume: () => void,
+    isRunning: boolean
+    currentMax: number
+}
 
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + 600); 
+export default function TimerWidgetCard({seconds, minutes, pause, restartTimer, resume, currentMax, isRunning}: Props) {
 
-    const {
-        seconds,
-        minutes,
-        pause,
-        restart,
-        resume,
-      } = useTimer({ expiryTimestamp: time, onExpire: () => console.warn('onExpire called') });
 
-      useEffect(() => {
-        const time = new Date();
-        time.setSeconds(time.getSeconds() + 25 * 60);
-        restart(time);
-        pause();
-      }, [])
 
       function CircularProgressWithLabel(
         props: CircularProgressProps & { value: number, print: string },
@@ -58,6 +49,7 @@ export default function TimerWidgetCard() {
                 component="div"
                 color={"grey.600"}
               >{`${props.print}`}</Typography>
+                
             </Box>
           </Box>
         );
@@ -67,20 +59,20 @@ export default function TimerWidgetCard() {
 
     return (
         <Card elevation={3} sx={{height: '95%', width: '95%', overflowY: 'auto'}}>
-            <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>{"Productivity Clock"}</Typography>
+            <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>{"Focus Timer"}</Typography>
             <Box sx={{paddingTop: '15px'}}>
-                <Box sx={{textAlign: 'center', display: 'flex', justifyContent: 'center', paddingBottom: '25px'}}>
-                    <CircularProgressWithLabel value={100 - (((seconds + (minutes * 60)) /  (25 * 60)) * 100)} print={minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)} />
+                <Box sx={{textAlign: 'center', display: 'flex', justifyContent: 'center', paddingBottom: '20px'}}>
+                    <CircularProgressWithLabel value={100 - (((seconds + (minutes * 60)) /  (currentMax * 60)) * 100)} print={minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)} />
                 </Box>
-                {/* <p>{isRunning ? 'Running' : 'Not running'}</p> */}
+                <Typography variant="h5" sx={{color: !isRunning ? "grey.600" : currentMax == 25 ? "success.dark" : "error.dark", textAlign: 'center', paddingBottom: '20px'}}>{!isRunning ? "Paused" : currentMax == 25 ? "Work!" : "Rest!"}</Typography>
                 <Box sx={{textAlign: 'center', display: 'flex', justifyContent: 'center'}}>
-                    <Button onClick={pause}>Pause</Button>
-                    <Button onClick={resume}>Go!</Button>
-                    <Button onClick={() => {
+                    <Button variant="contained" onClick={pause}>Pause</Button>
+                    <Button sx={{margin: '0px 10px'}} variant="contained" onClick={resume}>Go!</Button>
+                    <Button variant="contained" onClick={() => {
                         // Restarts to 25 minutes timer
                         const time = new Date();
                         time.setSeconds(time.getSeconds() + 25 * 60);
-                        restart(time);
+                        restartTimer();
                         pause();
                     }}>Reset</Button>
                 </Box>

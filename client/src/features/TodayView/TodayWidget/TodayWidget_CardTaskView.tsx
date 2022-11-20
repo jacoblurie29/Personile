@@ -6,9 +6,10 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { setCurrentBoard, setCurrentSprint, setLoading } from "features/SprintView/Redux/sprintSlice";
 import { useHistory } from "react-router-dom";
-import { useAppDispatch } from "app/store/configureStore";
+import { useAppDispatch, useAppSelector } from "app/store/configureStore";
 import { convertDateToMilliseconds } from "app/util/dateUtil";
-
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { changeTaskFocusedAsync } from "app/state/userSlice";
 
 interface Props {
     task: Task,
@@ -23,6 +24,8 @@ export default function TodayWidgetCardTaskView({task, index, max, boardTitle, b
 
     const dispatch = useAppDispatch();
     const history = useHistory();
+    const userId = useAppSelector(state => state.user.userData?.userEntityId);
+
 
     // invert colors on state selected
     const boxStyles = {
@@ -59,6 +62,13 @@ export default function TodayWidgetCardTaskView({task, index, max, boardTitle, b
         return convertDateToMilliseconds(dueDate) - convertDateToMilliseconds(new Date().toDateString()) < 0;
     }
 
+    const removeTaskFromToday = () => {
+
+        if(userId == undefined || boardId == undefined || sprintId == undefined) return;
+
+        dispatch(changeTaskFocusedAsync({userId: userId, boardId: boardId, sprintId: sprintId, taskId: task.taskEntityId}))
+    }
+
 
     return (
         <Card elevation={1} sx={{width: '92%', border: '0.01px solid', borderColor: 'grey.400', margin: '0px 10px', borderRadius: calculateBorderRadius(index)}}>
@@ -72,19 +82,29 @@ export default function TodayWidgetCardTaskView({task, index, max, boardTitle, b
                         {task.currentState === 0 ? <HighlightOffIcon sx={{fontSize: '25px', color: 'grey.50'}}/> : task.currentState === 1 ? <PunchClockIcon sx={{fontSize: '25px', color: 'grey.50'}} /> : <CheckCircleOutlineIcon sx={{fontSize: '25px', color: 'grey.50'}} />}
                     </Box>
                 </Grid>
-                <Grid item padding='0px 5px' xs={9} alignItems="center" textAlign={'left'}>
+                <Grid item padding='0px 5px' xs={8} alignItems="center" textAlign={'left'}>
                     <Typography variant="body1" sx={{margin: '0px 15px', fontSize: '15px'}}>{task.name}</Typography> 
                     {boardTitle != "" && <Typography variant="subtitle2" sx={{margin: '0px 15px', fontSize: '12px'}}>{"Board: " + boardTitle}</Typography>    }     
                     {calculateOverdue(task.dueDate) ? 
                         <Typography variant="subtitle2" sx={{margin: '0px 15px', fontSize: '12px', color: '#e43329'}}>{"Past due: " + task.dueDate}</Typography>     
                     :
                         <Typography variant="subtitle2" sx={{margin: '0px 15px', fontSize: '12px'}}>{"Due date: " + task.dueDate}</Typography>     
-                    }                 </Grid>
+                    }                 
+                </Grid>
+                <Grid item xs={1}
+                        display="flex" 
+                        alignItems="center"
+                        justifyContent="flex-end">
+                        <IconButton sx={{padding: '0px', margin: '0px'}}
+                            onClick={() => removeTaskFromToday()}>
+                            <RemoveCircleIcon sx={{color: 'grey.400'}} />
+                        </IconButton>
+                </Grid>
                 <Grid item xs={2}
                         display="flex" 
                         alignItems="center"
                         justifyContent="flex-end"
-                        paddingRight='10px' >
+                        paddingRight='15px' >
                     <IconButton sx={{backgroundColor: 'grey.400',
                             width: 'fit-content',
                             borderRadius: '8px',

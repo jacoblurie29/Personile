@@ -7,7 +7,17 @@ import TimerWidgetCard from "../TimerWidget/TimerWidget_Card";
 import TodayWidgetCard from "../TodayWidget/TodayWidget_Card";
 import UpcomingWidgetCard from "../UpcomingWidget/UpcomingWidget_Card";
 
-export default function TodayView() {
+interface TimerProps {
+    seconds: number,
+    minutes: number,
+    pause: () => void,
+    restartTimer: () => void,
+    resume: () => void,
+    currentMax: number,
+    isRunning: boolean
+}
+
+export default function TodayView({seconds, minutes, pause, restartTimer, resume, currentMax, isRunning}: TimerProps) {
 
     const boards = useAppSelector(state => state.user.userData?.boards) || [];
 
@@ -15,28 +25,32 @@ export default function TodayView() {
         margin: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', maxHeight: '100%'
     }
 
+    const xLargeCardSize = 6;
+    const largeCardSize = 6;
+    const mediumCardSize = 9;
+    const xSmallCardSize = 18;
+    const cardHeight = '360px'
+
     return (
         <Box height={'85%'} sx={{backgroundColor: '#D9E8F9', borderRadius: '15px', margin: '10px'}}>
-            <Grid container height={'45%'} columns={19}>
-                <Grid item xs={6} sx={cardStyles}>
+            <Grid container columns={19}>
+                <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize} sx={cardStyles}>
                     <CurrentWidgetCard boards={boards} />
                 </Grid>
-                <Grid item xs={6} sx={cardStyles}>
+                <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize}  sx={cardStyles}>
                     <ProgressWidgetCard boards={boards} />
                 </Grid>
-                <Grid item xs={6} sx={cardStyles}>
+                <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize}  sx={cardStyles}>
                     <UpcomingWidgetCard boards={boards} />
                 </Grid>
-            </Grid>
-            <Grid container height={'45%'} columns={19}>
-                <Grid item xs={6} sx={cardStyles}>
+                <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize}  sx={cardStyles}>
                     <TodayWidgetCard boards={boards} />
                 </Grid>
-                <Grid item xs={6} sx={cardStyles}>
+                <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize}  sx={cardStyles}>
                     <RecentActivityCard boards={boards} />
                 </Grid>
-                <Grid item xs={6} sx={cardStyles}>
-                    <TimerWidgetCard />
+                <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize}  sx={cardStyles}>
+                    <TimerWidgetCard seconds={seconds} minutes={minutes} pause={pause} restartTimer={restartTimer} resume={resume} currentMax={currentMax} isRunning={isRunning} />
                 </Grid>
             </Grid>
         </Box>

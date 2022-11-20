@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -127,6 +128,7 @@ namespace API.Controllers
                     ActivityEvents.Add(_mapper.Map<ActivityEventDto>(eventActivity));
                 }
             }
+
 
             return ActivityEvents;
 
@@ -375,6 +377,12 @@ namespace API.Controllers
 
                 var index = 0;
                 CurrentSprint.Tasks.OrderBy(t => t.Order).ToList().ForEach((task) => { task.Order = orderList[index]; index++; });
+            }
+
+            if (newState == "2") {
+                CurrentTask.DateFinished = DateTime.Today.ToString("ddd MMM dd yyyy");
+            } else {
+                CurrentTask.DateFinished = "";
             }
 
             var result = await _context.SaveChangesAsync() > 0;
@@ -698,6 +706,12 @@ namespace API.Controllers
 
             CurrentBoard.ActivityEvents.Add(mappedNewActivityEvent);
 
+            var minimumAE = CurrentBoard.ActivityEvents.Where(a => calculateMilliseconds(a.Date, a.Time) == CurrentBoard.ActivityEvents.Min(a => calculateMilliseconds(a.Date, a.Time))).FirstOrDefault();
+            
+            if(CurrentBoard.ActivityEvents.Count > 100) {
+                CurrentBoard.ActivityEvents.Remove(minimumAE);
+            }
+
             var result = await _context.SaveChangesAsync() > 0;
 
             if(result) return true;
@@ -715,6 +729,20 @@ namespace API.Controllers
             }
 
             return "Completed";
+        }
+
+        private double calculateMilliseconds(string date, string time) {
+            return DateTime.Parse(date).ToUniversalTime().Subtract(
+                            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                        ).TotalMilliseconds + (
+                            DateTime.Parse(time).ToUniversalTime().Subtract(
+                            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                            ).TotalMilliseconds
+                                -
+                            DateTime.Today.ToUniversalTime().Subtract(
+                            new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                            ).TotalMilliseconds
+                        );
         }
 
 

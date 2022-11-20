@@ -10,7 +10,7 @@ interface Props {
 export default function SprintVisualizer({overflowOption, sprintLength, totalLength}: Props) {
 
     // calculated constants
-    const numberOfSprints = Math.ceil(totalLength / sprintLength);
+    const numberOfSprints = totalLength % sprintLength > Math.floor(sprintLength / 2) ? Math.ceil(totalLength / sprintLength) : Math.floor(totalLength / sprintLength);
     
     // calculated predicted sprint lengths
     const calculateSprintValues = (sprintNum: number) => {

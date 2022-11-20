@@ -60,17 +60,14 @@ export default function SideViewTabbedSection() {
 
         <Card  sx={{background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`, height: '100%', width: '100%'}}>
             <Grid container columns={12}> 
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <Button onClick={() => setCurrentTab(0)} fullWidth sx={{height: '50px', borderRadius: '0px', backgroundColor: currentTab === 0 ? 'rgba(0,0,0,0)' : 'background.paper', ":hover": {backgroundColor: currentTab !== 0 ? 'grey.200' : "rgba(0,0,0,0)"}}}><InfoIcon sx={{ color: currentTab === 0 ? 'background.paper' : 'primary.dark'}}/></Button>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <Button onClick={() => setCurrentTab(1)} fullWidth sx={{height: '50px', borderRadius: '0px', backgroundColor: currentTab === 1 ? 'rgba(0,0,0,0)' : 'background.paper', ":hover": {backgroundColor: currentTab !== 1 ? 'grey.200' : "rgba(0,0,0,0)"}}}><EventAvailableIcon sx={{ color: currentTab === 1 ? 'background.paper' : 'primary.dark'}}/></Button>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                     <Button onClick={() => setCurrentTab(2)} fullWidth sx={{height: '50px', borderRadius: '0px', backgroundColor: currentTab === 2 ? 'rgba(0,0,0,0)' : 'background.paper', ":hover": {backgroundColor: currentTab !== 2 ? 'grey.200' : "rgba(0,0,0,0)"}}}><MessageIcon sx={{ color: currentTab === 2 ? 'background.paper' : 'primary.dark'}}/></Button>
-                </Grid>
-                <Grid item xs={3}>
-                    <Button onClick={() => setCurrentTab(3)} fullWidth sx={{height: '50px', borderRadius: '0px', backgroundColor: currentTab === 3 ? 'rgba(0,0,0,0)' : 'background.paper', ":hover": {backgroundColor: currentTab !== 3 ? 'grey.200' : "rgba(0,0,0,0)"}}}><SettingsIcon sx={{ color: currentTab === 3 ? 'background.paper' : 'primary.dark'}}/></Button>
                 </Grid>
             </Grid>
             {currentTab === 0 ? 
@@ -135,7 +132,11 @@ export default function SideViewTabbedSection() {
                     </List>
                 </Box>
 
-            : null      
+            : 
+                <Box height={'70%'} width={'100%'} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <Typography variant='body2' sx={{color: 'background.paper', marginBottom: '5px'}}>Messages coming soon!</Typography>
+                </Box>
+
             }
 
         </Card>
