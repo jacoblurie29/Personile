@@ -26,22 +26,23 @@ export default function TodayWidgetAddTasksDialog({boards, handleOpenDialog}: Pr
                         <Divider sx={{margin: '5px 5px 0px 5px'}} />
                         <Grid container>
                             <Grid item xs={6}>
-                                <Typography textAlign={'center'} variant="h4" sx={{fontSize: '16px', padding: '10px 5px 5px 5px'}}>{"All tasks"}</Typography>
+                                <Typography textAlign={'center'} variant="h4" sx={{fontSize: '16px', padding: '6px'}}>{"All tasks"}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography textAlign={'center'} variant="h4" sx={{fontSize: '16px', padding: '10px 5px 5px 5px'}}>{"Today's focused tasks"}</Typography>
+                                <Typography textAlign={'center'} variant="h4" sx={{fontSize: '16px', padding: '6px'}}>{"Today's focused tasks"}</Typography>
                             </Grid>
                         </Grid>
-                        <Divider sx={{margin: '5px 5px 5px 5px'}} />
                         <Grid container>
-                            <Grid item xs={6} borderRight={1} borderColor={'grey.200'} sx={{overflowY: 'auto', maxHeight: '300px'}}>
+                            <Grid item xs={6} borderRight={1} borderColor={'grey.200'} sx={{overflowY: 'auto', maxHeight: '300px', padding: '0px 10px 10px 10px'}}>
                                 {allTasks.filter((task) => task.focused != true).map((task, index) => (
-                                    <TodayWidgetTaskView task={task} index={index} max={allTasks.filter((task) => task.focused != true).length - 1} boardTitle={boards.find(b => b.sprints.flatMap(s => s.tasks.flatMap(t => t.taskEntityId == task.taskEntityId)))?.name || ""} isLeftSide={true} boards={boards} />
+                                    <TodayWidgetTaskView task={task} index={index} max={allTasks.filter((task) => task.focused != true).length - 1} boardTitle={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) !== undefined) !== undefined)?.name || ""}
+                                    isLeftSide={true} boards={boards} />
                                 ))}
                             </Grid>
-                            <Grid item xs={6} sx={{overflowY: 'auto', maxHeight: '300px'}}>
+                            <Grid item xs={6} sx={{overflowY: 'auto', maxHeight: '300px', padding: '0px 10px 10px 10px'}}>
                                 {allTasks.filter((task) => task.focused == true).map((task, index) => (
-                                    <TodayWidgetTaskView task={task} index={index} max={allTasks.filter((task) => task.focused == true).length - 1} boardTitle={boards.find(b => b.sprints.flatMap(s => s.tasks.flatMap(t => t.taskEntityId == task.taskEntityId)))?.name || ""} isLeftSide={false} boards={boards} />
+                                    <TodayWidgetTaskView task={task} index={index} max={allTasks.filter((task) => task.focused == true).length - 1} boardTitle={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) !== undefined) !== undefined)?.name || ""}
+                                    isLeftSide={false} boards={boards} />
                                 ))}
                             </Grid>
                         </Grid>

@@ -1,4 +1,4 @@
-import { Card, Typography } from "@mui/material"
+import { Box, Card, Typography } from "@mui/material"
 import agent from "app/api/agent";
 import { ActivityEvent } from "app/models/activityEvent";
 import { Board } from "app/models/board"
@@ -32,15 +32,21 @@ export default function RecentActivityCard({boards}: Props)  {
     }, [])
 
     return (
-        <Card elevation={3} sx={{height: '95%', width: '95%', overflowY: 'auto'}}>
+        <Card elevation={0} sx={{height: '95%', width: '95%', overflowY: 'auto', borderRadius: '25px', border: '1px solid', borderColor: 'grey.400', padding: '20px'}}>
             <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>Recent Activity</Typography>
-            {status.includes("pendingGetRecentActivity") ? 
-                <RecentWidgetLoadingComponent />
-             :
-                [...recentActivity]?.sort((a,b) => convertDateAndTimeStringToSeconds(a.date, a.time) - convertDateAndTimeStringToSeconds(b.date, b.time)).reverse().map((event, index) => (
-                    <RecentWidgetActivityCard event={event} index={index} max={recentActivity.length - 1} />
-                ))
-            }
+
+                {status.includes("pendingGetRecentActivity") ? 
+                    <RecentWidgetLoadingComponent />
+                :
+                    <Box sx={{ overflowY: 'auto', maxHeight: '75%' }}>
+                    {
+                        [...recentActivity]?.sort((a,b) => convertDateAndTimeStringToSeconds(a.date, a.time) - convertDateAndTimeStringToSeconds(b.date, b.time)).reverse().map((event, index) => (
+                            <RecentWidgetActivityCard event={event} index={index} max={recentActivity.length - 1} />
+                        ))
+                    }
+                    </Box>
+                }
+
 
         </Card>
     )

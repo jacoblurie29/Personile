@@ -32,7 +32,7 @@ export default function TodayView({seconds, minutes, pause, restartTimer, resume
     const cardHeight = '360px'
 
     return (
-        <Box height={'85%'} sx={{backgroundColor: '#D9E8F9', borderRadius: '15px', margin: '10px'}}>
+        <Box height={'85%'} sx={{margin: '10px'}}>
             <Grid container columns={19}>
                 <Grid item height={cardHeight} xs={xSmallCardSize} md={mediumCardSize} lg={largeCardSize} xl={xLargeCardSize} sx={cardStyles}>
                     <CurrentWidgetCard boards={boards} />

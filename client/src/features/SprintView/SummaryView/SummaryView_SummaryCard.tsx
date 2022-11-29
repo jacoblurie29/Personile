@@ -74,7 +74,7 @@ export default function SummaryCard({task, animationIndex, toggleEditTask, handl
 
     return (
         <Zoom in={true} timeout={true ? (animationIndex) * 250 : 250} key={"SummaryCard-" + animationIndex}>  
-            <Accordion elevation={3} expanded={expanded?.includes(task.taskEntityId)} onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
+            <Accordion sx={{borderLeft: '1px', borderRight: '1px', borderBottom: '1px', borderTop: expanded?.includes(task.taskEntityId) ? '1px' : '0px', borderStyle: 'solid', borderColor: 'grey.200'}} elevation={0} expanded={expanded?.includes(task.taskEntityId)} onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
                 <AccordionSummary  sx={{borderRadius: "0px"}}>
                     <Box flexGrow={1}>
                         <Grid container>

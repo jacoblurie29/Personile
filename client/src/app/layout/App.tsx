@@ -25,21 +25,25 @@ import NotFound from 'app/errors/NotFound';
   App (Contains body) -> SprintView -> TaskStateColumn
 */
 
+const heavyHeaderFont = "Raleway";
+const headerFont = "Roboto";
+const bodyFont = "Roboto"
+
 const theme = createTheme({
   palette: {
       primary: {
-          light: '#e3f2fd',
-          main: '#2196f3',
-          dark: '#1e88e5',
-          200: '#90caf9',
-          800: '#1565c0'
+          light: '#cce7e9',
+          main: '#99d0d3',
+          dark: '#66b8be',
+          200: '#e6f3f4',
+          800: '#33a1a8'
       },
       secondary: {
-          light: '#ede7f6',
+          light: '#c4a3f5',
           main: '#673ab7',
           dark: '#5e35b1',
-          200: 'b39ddb',
-          800: '#4527a0'
+          200: '#b39ddb',
+          800: '#007b83'
       },
       error: {
           light: '#f5c4c4',
@@ -78,64 +82,75 @@ const theme = createTheme({
       }
     },
     typography: {
-        fontFamily: "Poppins",
         h6: {
+            fontFamily: headerFont,
             fontWeight: 500,
             color: '#212121',
             fontSize: '0.75rem'
         },
         h5: {
+            fontFamily: headerFont,
             fontSize: '0.875rem',
             color: '#212121',
             fontWeight: 500
         },
         h4: {
+            fontFamily: heavyHeaderFont,
             fontSize: '1rem',
             color: '#212121',
             fontWeight: 600
         },
         h3: {
+            fontFamily: heavyHeaderFont,
             fontSize: '1.25rem',
             color: '#212121',
             fontWeight: 600
         },
         h2: {
+            fontFamily: heavyHeaderFont,
             fontSize: '1.5rem',
             color: '#212121',
-            fontWeight: 700
+            fontWeight: 800
         },
         h1: {
+            fontFamily: heavyHeaderFont,
             fontSize: '2.125rem',
             color: '#212121',
-            fontWeight: 700
+            fontWeight: 900
         },
         subtitle1: {
+            fontFamily: bodyFont,
             fontSize: '0.875rem',
-            fontWeight: 500,
+            fontWeight: 300,
             color: '#212121'
         },
         subtitle2: {
+            fontFamily: bodyFont,
             fontSize: '0.75rem',
-            fontWeight: 400,
+            fontWeight: 200,
             color: '#9e9e9e',
         },
         caption: {
+            fontFamily: bodyFont,
             fontSize: '0.75rem',
             color: '#9e9e9e',
-            fontWeight: 400
+            fontWeight: 300
         },
         body1: {
+            fontFamily: bodyFont,
             fontSize: '0.875rem',
-            fontWeight: 400,
+            fontWeight: 300,
             lineHeight: '1.334em'
         },
         body2: {
+            fontFamily: bodyFont,
             letterSpacing: '0em',
-            fontWeight: 400,
+            fontWeight: 300,
             lineHeight: '1.5em',
             color: '#616161'
         },
         button: {
+            fontFamily: bodyFont,
             textTransform: 'capitalize'
         }
     }
@@ -200,6 +215,9 @@ function App() {
             <Route path='/settings'>
                 {userData == null && <Redirect to="/" />}
                 <DashboardNavigation component='settings' />
+            </Route>
+            <Route path='/profile'>
+                <DashboardNavigation component='profile' />
             </Route>
             <Route path='/serverError'>
                 <DashboardNavigation component='serverError' />

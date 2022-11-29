@@ -51,8 +51,8 @@ export default function ViewBoardCard({board, setNewBoardState, indexForAnimatio
 
     return (
         <Zoom in={animationBoolean} timeout={(indexForAnimation + 1) * 300 } key={"boardCard-" + indexForAnimation}>  
-          <Card sx={{width: '90%', margin: 'auto', height: 'fit-content'}}>
-              <Grid container height='80px'>
+          <Card elevation={0} sx={{width: '90%', margin: 'auto', height: '400px', padding: '10px', borderRadius: '25px', border: '1px solid', borderColor: 'grey.400', ':hover': {backgroundColor: 'grey.50', cursor: 'pointer'}}} onClick={(event) => {event.stopPropagation(); handleOpenBoard(board.boardEntityId)}}>
+              <Grid container height='60px'>
                   <Grid item xs={8}>
                       <Typography variant="h2" sx={{paddingTop: '20px', paddingLeft: '20px'}}>{board.name}</Typography>
                   </Grid>
@@ -77,50 +77,49 @@ export default function ViewBoardCard({board, setNewBoardState, indexForAnimatio
                   </Grid>
               </Grid>
               <Typography variant="h5" sx={{paddingLeft: '20px'}}>{board.description}</Typography>
-              <br />
-              <Divider />
-              <br />
-              <Typography variant="h5" sx={{paddingLeft: '20px', paddingBottom: '5px'}}>Goals:</Typography>
-              <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px', height: '100px'}} >
-                {board.goals.length > 0 ? board.goals.map((goal, index) =>
-                  <ListItem key={"listItem-" + index} sx={{padding:"0px 0px 0px 20px"}}>
-                    <ListItemText>
-                      <CircleIcon sx={{color: 'grey.600', fontSize: '7px', marginRight: '4px'}} />  
-                      {goal.details}
-                    </ListItemText>
-                  </ListItem>,
-                ) : 
+              <Divider sx={{margin: '5px 0px'}} />
+              <Box sx={{overflowY: 'auto', maxHeight:'240px'}}>
+                <Typography variant="h5" sx={{paddingLeft: '20px', paddingBottom: '5px'}}>Goals:</Typography>
+                <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px', height: '100px'}} >
+                  {board.goals.length > 0 ? board.goals.map((goal, index) =>
+                    <ListItem key={"listItem-" + index} sx={{padding:"0px 0px 0px 20px"}}>
+                      <ListItemText>
+                        <CircleIcon sx={{color: 'grey.600', fontSize: '7px', marginRight: '4px'}} />  
+                        {goal.details}
+                      </ListItemText>
+                    </ListItem>,
+                  ) : 
+                    <Box flexGrow={1} height='100%' textAlign='center' margin= 'auto'>
+                        <Typography variant="h5" sx={{color: 'grey.400', paddingTop: '25px'}}>&#40;No goals&#41;</Typography>
+                    </Box>
+                  }
+                </List>
+                <Divider />
+                <br />
+                <Typography variant="h5" sx={{paddingLeft: '20px'}}>Milestones:</Typography>
+                <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px', height: '100px'}}>
+                  {board.milestones.length > 0 ? board.milestones.map((milestone, index) =>
+                    <ListItem key={"listItem-" + index} sx={{width: '100%'}}>
+                      <Typography variant="body2"
+                      sx={{display: 'flex', marginRight: '10px'}}>
+                        {milestone.status === "Incomplete" ? <TimerIcon sx={{color: 'warning.dark'}} /> : <CheckCircleIcon sx={{color: 'success.main'}}/>}
+                      </Typography>
+                      <Typography variant="body2" sx={{display: 'flex'}}>
+                        {milestone.description}
+                      </Typography>
+                      <Typography variant="caption" marginLeft='auto' marginRight='10px' noWrap>
+                        {milestone.dueDate !== "" ? (milestone.hardDeadline === true ? "Deadline: " : "Goal: ") + formatDateString(milestone.dueDate) : "No Goal"}
+                      </Typography>
+                    </ListItem>,
+                  ) : 
                   <Box flexGrow={1} height='100%' textAlign='center' margin= 'auto'>
-                      <Typography variant="h5" sx={{color: 'grey.400', paddingTop: '25px'}}>&#40;No goals&#41;</Typography>
+                      <Typography variant="h5" sx={{color: 'grey.400', paddingTop: '25px'}}>&#40;No milestones&#41;</Typography>
                   </Box>
                 }
-              </List>
-              <Divider />
-              <br />
-              <Typography variant="h5" sx={{paddingLeft: '20px'}}>Milestones:</Typography>
-              <List dense={true} disablePadding={true} sx={{paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px', height: '100px'}}>
-                {board.milestones.length > 0 ? board.milestones.map((milestone, index) =>
-                  <ListItem key={"listItem-" + index} sx={{width: '100%'}}>
-                    <Typography variant="body2"
-                    sx={{display: 'flex', marginRight: '10px'}}>
-                      {milestone.status === "Incomplete" ? <TimerIcon sx={{color: 'warning.dark'}} /> : <CheckCircleIcon sx={{color: 'success.main'}}/>}
-                    </Typography>
-                    <Typography variant="body2" sx={{display: 'flex'}}>
-                      {milestone.description}
-                    </Typography>
-                    <Typography variant="caption" marginLeft='auto' marginRight='10px' noWrap>
-                      {milestone.dueDate !== "" ? (milestone.hardDeadline === true ? "Deadline: " : "Goal: ") + formatDateString(milestone.dueDate) : "No Goal"}
-                    </Typography>
-                  </ListItem>,
-                ) : 
-                <Box flexGrow={1} height='100%' textAlign='center' margin= 'auto'>
-                    <Typography variant="h5" sx={{color: 'grey.400', paddingTop: '25px'}}>&#40;No milestones&#41;</Typography>
-                </Box>
-              }
-              </List>
-              <Box sx={{flexGrow: 1, textAlign: 'center'}}>
-                  <LoadingButton key={"edit-" + board.boardEntityId} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"0px", width: '50%'}} onClick={() => setNewBoardState(true, board)} ><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
-                  <LoadingButton key={"launch-" + board.boardEntityId} variant='contained' sx={{borderRadius:"0px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)', width: '50%'}} onClick={() => {handleOpenBoard(board.boardEntityId)}}><LaunchIcon sx={{color: 'background.paper'}} /></LoadingButton>
+                </List>
+              </Box>
+              <Box sx={{flexGrow: 1, textAlign: 'right'}}>
+                  <LoadingButton key={"edit-" + board.boardEntityId} variant='contained' sx={{backgroundColor: "grey.400", borderRadius:"25px", width: '50px', marginRight: '10px'}} onClick={(event) => {setNewBoardState(true, board); event.stopPropagation(); }} ><EditIcon sx={{color: 'background.paper'}}/></LoadingButton>
               </Box>
           </Card>
         </Zoom>

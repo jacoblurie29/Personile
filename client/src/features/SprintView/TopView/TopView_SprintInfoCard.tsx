@@ -106,28 +106,28 @@ export default function TopViewSprintInfoCard() {
     }
 
     return (
-        <Card sx={{background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
+        <Card elevation={0} sx={{backgroundColor: `background.paper`, borderRadius: '25px', padding: '10px', border: '1px solid', borderColor: 'grey.400'}}>
             <Grid container alignItems = "center" columns={20}>
-                <Grid item xl={17} lg={17} md={16} sm={20} xs={20}>
+                <Grid item xl={15} lg={15} md={15} sm={20} xs={20}>
                     <Grid container direction="row" alignItems="center" padding='10px' paddingBottom={0} paddingRight='10px' columns={12}>
-                        <Grid item xl={3} lg={3} md={4} sm={12} xs={12}>
+                        <Grid item xl={5} lg={5} md={6} sm={12} xs={12}>
                             <Stack paddingBottom='5px'>
-                                <Typography variant="h1" color='background.paper' sx={{paddingLeft: '10px'}}>
+                                <Typography variant="h1" color='grey.600' sx={{paddingLeft: '10px'}}>
                                     Current Sprint
                                 </Typography>
-                                <Typography variant="caption" color='background.default' sx={{paddingLeft: '10px'}}>
+                                <Typography variant="caption" color='grey.600' sx={{paddingLeft: '10px'}}>
                                     <>
                                     Start Date: {formatDateString(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "")}
                                     </>
                                 </Typography>
-                                <Typography variant="caption" color='background.default' sx={{paddingBottom: '5px', paddingLeft: '10px'}}>
+                                <Typography variant="caption" color='grey.600' sx={{paddingBottom: '5px', paddingLeft: '10px'}}>
                                     End Date: {formatDateString(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "")}
                                 </Typography>
                             </Stack>
                         </Grid>
-                        <Grid item xl={9} lg={9} md={8} sm={12} xs={12} alignContent='center' justifyContent='center'>
+                        <Grid item xl={7} lg={7} md={6} sm={12} xs={12} alignContent='center' justifyContent='center'>
                             <Box sx={{marginBottom: '3px', width: '90%', marginRight: 'auto', marginLeft:'auto'}} >
-                                <Typography variant="h6" sx={{color: 'background.paper'}}>
+                                <Typography variant="h6" sx={{color: 'grey.600'}}>
                                     Progress:
                                 </Typography>
                             </Box>
@@ -139,10 +139,10 @@ export default function TopViewSprintInfoCard() {
                                         </Grid>
                                     </Grid>
                                 :
-                                <Grid container columns={((calculateNewTaskNumber() + calculateTodayTaskNumber() + calculateCompletedTaskNumber()) * 4) + (calculateTodayTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 ? 1 : 0) + (calculateTodayTaskNumber() > 0 && calculateNewTaskNumber() > 0 ? 1 : 0) + (calculateNewTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 && calculateTodayTaskNumber() === 0 ? 1 : 0)}>
+                                <Grid sx={{fontSize: '10px'}} container columns={((calculateNewTaskNumber() + calculateTodayTaskNumber() + calculateCompletedTaskNumber()) * 4) + (calculateTodayTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 ? 1 : 0) + (calculateTodayTaskNumber() > 0 && calculateNewTaskNumber() > 0 ? 1 : 0) + (calculateNewTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 && calculateTodayTaskNumber() === 0 ? 1 : 0)}>
                                     {calculateNewTaskNumber() !== 0 && 
                                         <Grid item xs={calculateNewTaskNumber() * 4}>
-                                            <Box textAlign='center' sx={{borderRadius: calculateNewTaskBorder(), backgroundColor: 'error.light', color: 'background.paper', padding: '4px'}}>New&nbsp;&#40;{calculateNewTaskNumber()}&#41;</Box>
+                                            <Box textAlign='center' sx={{borderRadius: calculateNewTaskBorder(), backgroundColor: 'error.light', color: 'background.paper', padding: '4px'}}>&nbsp;</Box>
                                         </Grid>
                                     }
                                     {calculateTodayTaskNumber() > 0 && calculateNewTaskNumber() > 0 && <Grid item xs={1}>
@@ -150,7 +150,7 @@ export default function TopViewSprintInfoCard() {
                                     </Grid>}
                                     {calculateTodayTaskNumber() !== 0 && 
                                         <Grid item xs={calculateTodayTaskNumber() * 4}>
-                                            <Box textAlign='center' sx={{borderRadius: calculateTodayTaskBorder(), backgroundColor: 'warning.light', color: 'background.paper', padding: '4px'}}>Active&nbsp;&#40;{calculateTodayTaskNumber()}&#41;</Box>
+                                            <Box textAlign='center' sx={{borderRadius: calculateTodayTaskBorder(), backgroundColor: 'warning.light', color: 'background.paper', padding: '4px'}}>&nbsp;</Box>
                                         </Grid>
                                     }
                                     {calculateTodayTaskNumber() > 0 && calculateCompletedTaskNumber() > 0 && <Grid item xs={1}>
@@ -161,7 +161,7 @@ export default function TopViewSprintInfoCard() {
                                     </Grid>}
                                     {calculateCompletedTaskNumber() !== 0 && 
                                         <Grid item xs={calculateCompletedTaskNumber() * 4}>
-                                            <Box textAlign='center' sx={{borderRadius: calculateCompletedTaskBorder(), backgroundColor: 'success.light', color: 'background.paper', padding: '4px'}}>Completed&nbsp;&#40;{calculateCompletedTaskNumber()}&#41;</Box>
+                                            <Box textAlign='center' sx={{borderRadius: calculateCompletedTaskBorder(), backgroundColor: 'success.light', color: 'background.paper', padding: '4px'}}>&nbsp;</Box>
                                         </Grid>
                                     }
                                 </Grid>
@@ -170,12 +170,13 @@ export default function TopViewSprintInfoCard() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xl={3} lg={3} md={4} sm={20} xs={20} paddingRight='20px'>  
+                <Grid item xl={2} lg={1} md={1} sm={0} xs={0}></Grid>
+                <Grid item xl={3} lg={4} md={4} sm={20} xs={20} paddingRight='20px'>  
                     <Stack direction='row' alignContent='center'>
                         <IconButton onClick={() => handleSprintChangeBackwards()}>
                             <ChevronLeftIcon />
                         </IconButton>
-                        <Typography variant="h6" sx={{color: 'background.paper', textAlign:'center'}} margin='auto'>
+                        <Typography variant="h6" sx={{color: 'grey.600', textAlign:'center'}} margin='auto'>
                             {formatDateStringNoYear(sprints?.find(s => s.sprintEntityId === currentSprint)?.startDate || "") + " - " + formatDateStringNoYear(sprints?.find(s => s.sprintEntityId === currentSprint)?.endDate || "")}
                         </Typography>
                         <IconButton onClick={() => handleSprintChangeForwards()}>

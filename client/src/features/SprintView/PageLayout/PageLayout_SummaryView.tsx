@@ -32,19 +32,17 @@ export default function SummaryView({taskToBeEditedId, toggleEditTask}: Props) {
 
     // styles
     const iconButtonStyles = {
-        boxShadow: '0.1rem 0.1rem 0.1rem 0.1rem rgba(100,100,100, 0.2)',
         height: 'fit-content',
         marginTop: 'auto',
         marginBottom: 'auto',
         backgroundColor: theme.palette.background.paper,
         '&:hover': {
-            boxShadow: 'none',
             backgroundColor: '#DDDDDD',
         }
     }
     const cardStyles = {
-        borderRadius: '5px 5px 0 0',
-        background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
+        borderRadius: '25px 25px 0 0',
+        backgroundColor: 'primary.main'
     }
 
     const changeOrderOfTask = (taskId: string, sprintId: string, oldOrderLocation: number, newOrderLocation: number) => {

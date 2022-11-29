@@ -12,33 +12,20 @@ export default function SettingsView() {
     }
 
     return (
-        <Container>
-           <Typography gutterBottom variant='h2'>
-                   Errors for testing purposes
-            </Typography> 
-            <ButtonGroup fullWidth>
-                <Button variant='contained' onClick={() => agent.TestErrors.get400Error().catch(error => console.log(error))}>Test 400 Error</Button>
-                <Button variant='contained' onClick={() => agent.TestErrors.get401Error().catch(error => console.log(error))}>Test 401 Error</Button>
-                <Button variant='contained' onClick={() => agent.TestErrors.get404Error().catch(error => console.log(error))}>Test 404 Error</Button>
-                <Button variant='contained' onClick={() => agent.TestErrors.get500Error().catch(error => console.log(error))}>Test 500 Error</Button>
-                <Button variant='contained' onClick={getValidationError}>Test Validation Error</Button>
-            </ButtonGroup>
-            {validationErrors.length > 0 && 
-                <Alert severity='error'>
-                    <AlertTitle>
-                        Validation Errors
-                    </AlertTitle>
-                    <List>
-                        {validationErrors.map(error => (
-                            <ListItem key={error}>
-                                <ListItemText>
-                                    {error}
-                                </ListItemText>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Alert>
-            }
-        </Container>
+        <>
+            <Typography variant="h1">This is an h1</Typography>
+            <Typography variant="h2">This is an h2</Typography>
+            <Typography variant="h3">This is an h3</Typography>
+            <Typography variant="h4">This is an h4</Typography>
+            <Typography variant="h5">This is an h5</Typography>
+            <Typography variant="h6">This is an h6</Typography>
+            <Typography variant="body1">This is a body1</Typography>
+            <Typography variant="body2">This is an body2</Typography>
+            <Typography variant="subtitle1">This is a subtitle1</Typography>
+            <Typography variant="subtitle2">This is a subtitle2</Typography>
+            <Typography variant="button">This is a button</Typography><br />
+            <Typography variant="caption">This is a caption</Typography>
+        </>
+
     )
 }

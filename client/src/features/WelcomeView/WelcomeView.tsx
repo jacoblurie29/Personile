@@ -1,16 +1,26 @@
-import { makeStyles, AppBar, Toolbar, IconButton, Collapse, Box, Typography, Zoom, Grid, Button } from "@mui/material";
-import SortIcon from '@mui/icons-material/Sort';
+import { AppBar, Toolbar, Collapse, Box, Typography, Zoom, Button, Menu, MenuItem, IconButton } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
-import LoginView from "features/AccountViews/LoginView";
+import { useHistory } from "react-router-dom";
+import Logo from "logo/Logo";
+import MenuIcon from '@mui/icons-material/Menu';
 
 
 export default function WelcomeView() {
   const [checked, setChecked] = useState(false);
+
   const history = useHistory();
   useEffect(() => {
     setChecked(true);
   }, []);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
 
   return (
@@ -22,16 +32,37 @@ export default function WelcomeView() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 fontFamily: 'Nunito',
-                backgroundColor: 'primary.main',
+                background: 'linear-gradient(132deg, rgba(233,252,255,1) 0%, rgba(255,255,255,1) 48%, rgba(244,232,255,1) 100%)',
                 overflow: 'auto' }}>
-      <AppBar sx={{background: 'none'}} elevation={0}>
+      <AppBar sx={{background: 'none', paddingBottom: '10px'}} elevation={2}>
         <Toolbar sx={{ width: '80%', margin: '0 auto'}}>
           <Typography variant="h1" sx={{flexGrow: '1'}}>
-            <Box sx={{color: 'secondary.light'}}>Personile.</Box>
+            <Logo />
           </Typography>
-          <IconButton>
-            <SortIcon sx={{ color: 'secondary.light', fontSize: '2rem'}} />
-          </IconButton>
+          <div>
+            <IconButton
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+              sx={{ marginTop: '15px', }}
+            >
+              <MenuIcon sx={{color: 'grey.600',fontSize: '40px'}} />
+            </IconButton>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={() => {handleClose(); history.push('/login');}}>Login</MenuItem>
+              <MenuItem onClick={() => {handleClose(); history.push('/register');}}>Register</MenuItem>
+            </Menu>
+          </div>
         </Toolbar>
       </AppBar>
 
@@ -40,16 +71,12 @@ export default function WelcomeView() {
         {...(checked ? { timeout: 1000 } : {})}
       >
         <Box sx={{ textAlign: 'center'}}>
-          <Typography variant='h1' sx={{color: '#fff', fontSize: '4.5rem'}}>
-            Welcome to <br />
-            <Box sx={{color: 'secondary.light'}}>Personile.</Box>
+          <Typography variant='h1' sx={{color: 'grey.800', fontSize: '3rem'}}>
+             Agile planning<Box component={'span'} sx={{color: 'secondary.light', fontSize: '40px', fontFamily: 'Open Sans'}}>.</Box> Finally for students<Box component={'span'} sx={{color: 'secondary.light', fontSize: '40px', fontFamily: 'Open Sans'}}>.</Box>
           </Typography>
-            <Zoom in={checked}>
-                <Button  sx={{margin: '10px', color: 'white', background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px"}} onClick={() => history.push('/login')}>Login</Button>
-            </Zoom>
-            <Zoom in={checked}>
-                <Button  sx={{margin: '10px', color: 'white', background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px"}} onClick={() => history.push('/register')}>Register</Button>
-            </Zoom>
+        </Box>
+        <Box display={'flex'} justifyContent={'center'}>
+          <Box component={'img'} src='/oie_transparent.png' alt="Computer" sx={{height: '170px', opacity: '85%'}}></Box>
         </Box>
       </Collapse>
       

@@ -36,10 +36,10 @@ export default function SummaryTaskMoreDetails({ focusedTask }: Props) {
                     <Typography variant="caption" sx={{color: 'grey.600'}}>Tags&nbsp;({focusedTask.tags !== '' ? focusedTask.tags.split("|").length : 0})</Typography>
                     {focusedTask.tags !== '' ? 
                         <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
-                        
+                    
                             <Grid item justifyContent='center' sx={{margin: 'auto'}}>
                             {focusedTask?.tags.split('|').map((tag, index) => (
-                                <Chip key={tag} label={tag} sx={{margin: '2px', backgroundColor: 'primary.light'}} />
+                                <Chip size={'small'} key={tag} label={tag} sx={{margin: '2px', padding: '0px', backgroundColor: 'primary.light', fontSize: '11px'}} />
                             ))}
                             </Grid>
                         </Grid>
@@ -55,12 +55,11 @@ export default function SummaryTaskMoreDetails({ focusedTask }: Props) {
                 <Grid item xs={6}>
                     <Typography variant="caption" sx={{color: 'grey.600'}}>Links&nbsp;({focusedTask.links !== '' ? focusedTask.links.split("|").length : 0})</Typography>
                     {focusedTask.links !== '' ? 
-                        <Box sx={{paddingBottom: '5px'}}>                        
+                        <Box sx={{paddingBottom: '5px'}}>
                             <Grid container padding='10px' display='flex' alignItems="center" justifyContent="center" border='1px solid #ECECEC' sx={{borderRadius: '5px', mb: '5px'}}>
-                            
                                 <Grid item justifyContent='center' sx={{margin: 'auto'}}>
                                 {focusedTask?.links.split('|').map((tag, index) => (
-                                    <Chip key={tag} label={tag} onClick={()=> window.open(tag, "_blank")} sx={{margin: '2px', backgroundColor: 'primary.light'}} />
+                                    <Chip size={'small'} key={tag} label={tag} onClick={()=> window.open(tag, "_blank")} sx={{margin: '2px', padding: '0px', backgroundColor: 'primary.light', fontSize: '11px'}} />
                                 ))}
                                 </Grid>
                             </Grid>

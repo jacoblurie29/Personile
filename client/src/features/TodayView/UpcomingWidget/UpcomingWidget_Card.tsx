@@ -63,7 +63,7 @@ export default function UpcomingWidgetCard({boards}: Props) {
 
 
     return (
-        <Card elevation={3} sx={{height: '95%', width: '95%', overflowY: 'auto'}}>
+        <Card elevation={0} sx={{height: '95%', width: '95%', overflowY: 'auto', borderRadius: '25px', border: '1px solid', borderColor: 'grey.400', padding: '20px'}}>
             <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>{"Upcoming Items"}</Typography>
             {allTasksAndMilestones().map((object, index) => (
                 isTask(object) ? 
@@ -71,17 +71,17 @@ export default function UpcomingWidgetCard({boards}: Props) {
                     task={object}
                     index={index}
                     max={allTasksAndMilestones().length - 1}
-                    boardTitle={boards.find(b => b.sprints.flatMap(s => s.tasks.flatMap(t => t.taskEntityId == object.taskEntityId)))?.name || ""}
-                    boardId={boards.find(b => b.sprints.flatMap(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) != undefined))?.boardEntityId || ""}
-                    sprintId={boards.find(b => b.sprints.flatMap(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) != undefined))?.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) != undefined)?.sprintEntityId || ""} />
+                    boardTitle={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) !== undefined) !== undefined)?.name || ""}
+                    boardId={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) !== undefined) !== undefined)?.boardEntityId || ""}
+                    sprintId={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) !== undefined) !== undefined)?.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) != undefined)?.sprintEntityId || ""} />
                 :
                 <UpcomingWidgetMilestoneView
                     milestone={object}
                     index={index}
                     max={allTasksAndMilestones().length - 1}
-                    boardTitle={boards.find(b => b.milestones.flatMap(m => m.milestoneEntityId == object.milestoneEntityId))?.name || ""}
-                    boardId={boards.find(b => b.milestones.flatMap(m => m.milestoneEntityId == object.milestoneEntityId))?.boardEntityId || ""}
-                    sprintId={boards.find(b => b.milestones.flatMap(m => m.milestoneEntityId == object.milestoneEntityId))?.sprints[0].sprintEntityId || ""}
+                    boardTitle={boards.find(b => b.milestones.find(m => m.milestoneEntityId == object.milestoneEntityId) !== undefined)?.name || ""}
+                    boardId={boards.find(b => b.milestones.find(m => m.milestoneEntityId == object.milestoneEntityId) !== undefined)?.boardEntityId || ""}
+                    sprintId={boards.find(b => b.milestones.find(m => m.milestoneEntityId == object.milestoneEntityId) !== undefined)?.sprints[0].sprintEntityId || ""}
                  />
 
             ))}

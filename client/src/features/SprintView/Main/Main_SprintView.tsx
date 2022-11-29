@@ -40,14 +40,14 @@ export default function SprintView({page}: Props) {
 
     return (
         <Grid container margin='10px 10px 0px 0px' sx={{height: '88%'}} columns={12}>
-                <Grid item lg={9} md={8} sx={{backgroundColor: '#D9E8F9', borderRadius: '15px',}}>
+                <Grid item lg={9} md={8}>
                     {page == "sprint" &&
                     <Grid container 
                         columns={13}
                         justifyContent='center'
                         display='flex'
                         flexDirection='row'>
-                        <Grid item xs justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
+                        <Grid item xs justifyContent="center" sx={{borderRadius:'25px'}} margin='10px'>
                             <TopViewSprintInfoCard />
                         </Grid>
                     </Grid>
@@ -58,23 +58,23 @@ export default function SprintView({page}: Props) {
                         display='flex'
                         >
                             {page == "summary" &&
-                            <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
+                            <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'25px'}} margin='10px'>
                                 <SummaryView taskToBeEditedId={taskToBeEditedId} toggleEditTask={toggleEditTask} /> 
                             </Grid>
                             }
                             {page == "sprint" &&
                             <>
-                                <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'5px'}} margin='10px'>
+                                <Grid item md sm={12} xs={12} justifyContent="center" sx={{borderRadius:'25px'}} margin='10px'>
                                     <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"New"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                         return task.currentState === 0;
                                     }).sort((a ,b) => a.order - b.order) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId} />
                                 </Grid>  
-                                <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} margin='10px'>
+                                <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'25px'}} margin='10px'>
                                     <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"Active"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                         return task.currentState === 1;
                                     }).sort((a ,b) => a.order - b.order) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
                                 </Grid>
-                                <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'5px'}} margin='10px'>
+                                <Grid item lg md={12} sm={12} xs={12} justifyContent="center" sx={{ borderRadius:'25px'}} margin='10px'>
                                     <PageLayoutTaskColumnView sprintId={currentSprint || ""} stateTitle={"Completed"} tasks={sprints?.find(s => s.sprintEntityId == currentSprint)?.tasks.filter((task) => {
                                         return task.currentState === 2;
                                     }).sort((a ,b) => a.order - b.order) || []} toggleEditTask={toggleEditTask} tasksToBeEdited={taskToBeEditedId}/>
@@ -84,7 +84,7 @@ export default function SprintView({page}: Props) {
                     </Grid>
                 </Grid>
                 <Grid item lg={3} md={4}>
-                    <Box  sx={{backgroundColor: '#D9E8F9', borderRadius: '15px', marginLeft: '20px', height: '100%', width: '90%', padding: '10px'}}>
+                    <Box  sx={{marginLeft: '20px', height: '100%', width: '90%', padding: '10px'}}>
                         <SideViewTabbedSection />
                     </Box>
                 </Grid>         

@@ -191,7 +191,7 @@ export default function NewBoardCard(props: Props) {
               milestoneEntityId: uuidv4(),
               description: newMilestones[index],
               status: "Incomplete",
-              dueDate: enableMilestoneDates[index] ? newMilestoneDates[index].toString() === "" ? new Date().toString() : newMilestoneDates[index].toString() : "",
+              dueDate: (enableMilestoneDates[index] ? newMilestoneDates[index].toString() === "" ? new Date().toUTCString() : newMilestoneDates[index].toString() : "").substring(0, 15),
               hardDeadline: newMilestoneHardDeadline[index],
               associatedTaskIds: "",
               completedDate: "",

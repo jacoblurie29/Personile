@@ -269,7 +269,7 @@ export default function NewEditTaskCard({setNewTask, editTask, toggleEditTask}: 
 
     return (
         <Zoom in={true} timeout={800}>
-            <Card elevation={1} sx={{background: "background.paper", marginBottom: '10px', marginTop: '10px'}}>
+            <Card elevation={0} sx={{background: "background.paper", marginBottom: '10px', marginTop: '10px', border: '1px solid', borderColor: 'grey.200'}}>
                 <Typography margin="5% 10% 3% 4%" sx={{color: 'grey.800', fontSize: '20px'}}>{editTask === undefined ? "Add Task" : "Edit Task"}</Typography>
                 <FormProvider {...methods}>
                     <form onSubmit={handleSubmit((data) => handleAddOrUpdateTask(data))}>

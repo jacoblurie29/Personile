@@ -32,7 +32,7 @@ import { Typography } from '@mui/material';
 import TopView_LayoutBox from 'features/SprintView/TopView/TopView_LayoutBox';
 import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import HomeView from 'features/HomeView/HomeView';
+import ProfileView from 'features/ProfileView/ProfileView';
 
 const drawerWidth = 230;
 
@@ -50,7 +50,6 @@ const navButtonStyles = {
 }
 
 const sprintLinks = [
-  {linkTitle: "Home", linkRoute: '/home'},
   {linkTitle: "Dashboard", linkRoute: '/dashboard'},
   {linkTitle: "Sprint", linkRoute: '/sprint'},
   {linkTitle: "Boards", linkRoute: '/boards'}
@@ -58,7 +57,6 @@ const sprintLinks = [
 
 const adminLinks = [
   {linkTitle: "Profile", linkRoute: "/profile"},
-  {linkTitle: "Settings", linkRoute: "/settings"},
 ]
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -181,10 +179,11 @@ const restartTimerNum = (val: number) => {
 
 
   return (
-    <Box overflow='auto' height='100vh' sx={{ display: 'flex' }}>
+    <Box overflow='auto' height='100vh' sx={{ display: 'flex', background: 'linear-gradient(132deg, rgba(233,252,255,1) 0%, rgba(255,255,255,1) 48%, rgba(244,232,255,1) 100%)' }}>
       <Drawer variant="permanent" open={open} 
             sx={{"& .MuiPaper-root": {
-              border: '0px'
+              border: '0px',
+              backgroundColor: 'rgba(0,0,0,0)'
             }}} >
         <DrawerHeader>
           <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
@@ -214,7 +213,7 @@ const restartTimerNum = (val: number) => {
                     justifyContent: 'center',
                   }}
                 >
-                  {index == 0 ? <HomeIcon /> : index == 1 ? <DashboardIcon /> : index === 2 ? <DateRangeIcon /> : <AccessTimeIcon />}
+                  {index == 0 ? <HomeIcon />  : index === 1 ? <DateRangeIcon /> : <AccessTimeIcon />}
                 </ListItemIcon>
                 <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -242,7 +241,7 @@ const restartTimerNum = (val: number) => {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <AccountBoxIcon /> : <SettingsIcon /> }
+                  {<AccountBoxIcon />}
                 </ListItemIcon>
                 <ListItemText primary={linkTitle} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -276,21 +275,22 @@ const restartTimerNum = (val: number) => {
               <TimerIcon sx={{color: currentTimerMax == 25 ? "success.dark" : "error.dark"}} />
               <Typography sx={{color: currentTimerMax == 25 ? "success.dark" : "error.dark"}} variant='h5'> {minutes + ":" + (seconds < 10 ? "0" + seconds : seconds)}</Typography>
               <Typography variant="h5" sx={{color: currentTimerMax == 25 ? "success.dark" : "error.dark", textAlign: 'center', paddingBottom: '20px'}}>{currentTimerMax == 25 ? "Work" : "Rest"}</Typography>
-
             </Box>
             }
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, height: '100vh'}} paddingLeft='5px'>
-        <Box sx={{backgroundColor: 'background.default', width: '100%', height: '8%'}}>     
-          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "home" ? "" : component === "sprint" ? board?.name || "" : component === "dashboard" ? "Welcome back, " + user?.firstName : "Your boards"} />}
+        {component !== 'profile' &&
+        <Box sx={{width: '100%', height: '8%'}}>     
+          {!loading && <TopView_LayoutBox setPage={toggleSprintPageView} component={component} title={component === "sprint" ? board?.name || "" : component === "dashboard" ? "Welcome back, " + user?.firstName : "Your boards"} />}
         </Box>
+        }
         {/* Below handles the routing */}
           {loading && <LoadingComponent />}      
           {!loading && component === "sprint" && <SprintView page={currentSprintPage} />}
-          {!loading && component === "home" && <HomeView />}
           {!loading && component === "dashboard" && <TodayView seconds={seconds} minutes={minutes} pause={pause} restartTimer={restartTimer} resume={resume} currentMax={currentTimerMax} isRunning={isRunning} />}
           {!loading && component === "boards" && <BoardView />}
+          {!loading && component === "profile" && <ProfileView />}
           {!loading && component === "settings" && <SettingsView />}
           {!loading && component === "serverError" && <ServerError />}
           {!loading && component === "notFound" && <NotFound />} 

@@ -14,6 +14,7 @@ import { setCurrentBoard, setCurrentSprint } from "features/SprintView/Redux/spr
 import { Board } from "app/models/board";
 import { UpdateBoard } from "app/models/updateBoard";
 import { ActivityEvent } from "app/models/activityEvent";
+import { UpdateUser } from "app/models/updateUser";
 
 interface UserState {
     userData: User | null;
@@ -271,6 +272,17 @@ export const changeTaskFocusedAsync = createAsyncThunk<void, {userId: string, bo
     }
 )
 
+export const updateUserAsync = createAsyncThunk<void, {newData: UpdateUser}>(
+    'sprint/updateUser',
+    async ({newData}, thunkAPI) => {
+        try {
+            return await agent.Account.updateUser(newData);
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({error: error.data})
+        }
+    }
+)
+
 
 
 export const userSlice = createSlice({
@@ -294,6 +306,53 @@ export const userSlice = createSlice({
         }
     },
     extraReducers: (builder => {
+
+        // UPDATE USER
+        builder.addCase(updateUserAsync.pending, (state, action) => {
+            state.status = 'pendingUpdateUser';
+        });
+        builder.addCase(updateUserAsync.fulfilled, (state, action) => {
+
+            const {newData} = action.meta.arg;
+
+            if(state.userData === null || state.userData === undefined) return;
+
+            state.userData.email = newData.email;
+            state.userData.firstName = newData.firstName;
+            state.userData.lastName = newData.lastName;
+
+            state.status = 'idle';
+
+            toast.success('User updated!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+            });
+        });
+        builder.addCase(updateUserAsync.rejected, (state, action) => {
+            
+            state.status = 'idle';
+
+            toast.error('Failed to update user!', {
+                position: "bottom-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light'
+                });
+                
+            state.status = 'idle';
+
+            
+        });
 
         // GET RECENT ACTIVITY
         builder.addCase(getRecentActivityAsync.pending, (state, action) => {

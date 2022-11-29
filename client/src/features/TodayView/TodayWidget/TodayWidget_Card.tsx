@@ -32,18 +32,20 @@ export default function TodayWidgetCard({boards}: Props) {
 
 
     return (
-        <Card elevation={3} sx={{height: '95%', width: '95%', overflowY: 'auto'}}>
+        <Card elevation={0} sx={{height: '95%', width: '95%', borderRadius: '25px', border: '1px solid', borderColor: 'grey.400', padding: '20px'}}>
             <>
                 <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>Today's Tasks</Typography>
-                {allFocusedTasks.map((task, index) => (
-                <TodayWidgetCardTaskView 
-                    task={task}
-                    index={index}
-                    max={allFocusedTasks.length - 1}
-                    boardTitle={boards.find(b => b.sprints.flatMap(s => s.tasks.flatMap(t => t.taskEntityId == task.taskEntityId)))?.name || ""}
-                    boardId={boards.find(b => b.sprints.flatMap(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined))?.boardEntityId || ""}
-                    sprintId={boards.find(b => b.sprints.flatMap(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined))?.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined)?.sprintEntityId || ""}  />
-                ))}
+                <Box sx={{ overflowY: 'auto', maxHeight: '75%' }}>
+                    {allFocusedTasks.map((task, index) => (
+                    <TodayWidgetCardTaskView 
+                        task={task}
+                        index={index}
+                        max={allFocusedTasks.length - 1}
+                        boardTitle={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) !== undefined) !== undefined)?.name || ""}
+                        boardId={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined) !== undefined)?.boardEntityId || ""}
+                        sprintId={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined) !== undefined)?.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined)?.sprintEntityId || ""}  />
+                    ))}
+                </Box>
                 <Box margin={'8px auto'} display={'flex'} justifyContent={'center'}>
                     <IconButton 
                         sx={iconButtonStyles}

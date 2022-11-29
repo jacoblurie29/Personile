@@ -18,7 +18,7 @@ export default function RegisterView() {
 
   // react hook form
   const {register, watch, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
-      mode: 'all'
+      mode: 'onChange'
   });
 
   // redux
@@ -29,26 +29,34 @@ export default function RegisterView() {
   async function handleSubmitRegister(data: FieldValues)  {
     var registerData = {...data, username: data.email};
     await dispatch(registerUserAsync(registerData));
-    history.push('/sprint');
+    history.push('/dashboard');
   }
 
 
 
   return (
-    <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundColor: 'linear-gradient(352deg, rgba(7,20,22,1) 0%, rgba(13,37,41,1) 100%)',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
+        <Grid container sx={{ height: '100vh'}} columns={12}>
+          <Grid
+            item
+            sm={4}
+            md={7}
+            lg={7}
+            xl={7}
+            sx={{
+              background: 'linear-gradient(132deg, rgba(233,252,255,1) 0%, rgba(255,255,255,1) 48%, rgba(244,232,255,1) 100%)',
+            }}
+            display={{ xs: "none", sm: "block" }}
+          >
+            <Box textAlign={'center'} paddingTop={'350px'}>
+              <Typography fontSize={'50px'} variant='h1'>
+                Welcome<Box component={'span'} sx={{color: 'secondary.light', fontSize: '40px', fontFamily: 'Open Sans'}}>.</Box>
+              </Typography>
+              <Typography fontSize={'20px'} variant='body1'>
+                It's time to rethink your next project.
+              </Typography>
+            </Box>
+
+          </Grid>
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
@@ -153,15 +161,14 @@ export default function RegisterView() {
                 </Grid>
                 */}
                 <Grid item>
-                  <Link to="/register">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
+                <Typography component={'a'} sx={{textDecoration: 'underline', ':hover': {cursor: 'pointer'}}} onClick={() => {history.push('/login')}}>
+                    {"Have an account? Log in"}
+                  </Typography>
                 </Grid>
               </Grid>
             </Box>
           </Box>
         </Grid>
       </Grid>
-    </ThemeProvider>
   );
 }

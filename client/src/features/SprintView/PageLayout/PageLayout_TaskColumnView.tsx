@@ -51,8 +51,8 @@ export default function PageLayoutTaskColumnView({tasks, stateTitle, sprintId, t
 
     return (
         <>
-            <Card sx={{borderRadius: '5px 5px 0 0', background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`}}>
-            <Typography variant='h2' sx={{fontWeight: '700', color: 'white', padding: '15px'}}>{stateTitle}</Typography>
+            <Card elevation={0} sx={{borderRadius: '25px 25px 0 0', backgroundColor: `primary.main`, border: '1px solid', borderColor: 'grey.400'}}>
+                <Typography variant='h2' sx={{fontWeight: '700', color: 'grey.50', padding: '15px'}}>{stateTitle}</Typography>
             </Card>
 
             {tasks.map((task, index) => (

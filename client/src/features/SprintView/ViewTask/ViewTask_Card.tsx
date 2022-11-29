@@ -51,17 +51,17 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation, s
 
     const descriptionStylesNotExpanded = {
         fontSize: 14,
-        marginLeft: '4%',
+        marginLeft: '3%',
         width:'90%',
         display: '-webkit-box',
         overflow: 'hidden',
         WebkitBoxOrient: 'vertical',
-        WebkitLineClamp: 2
+        WebkitLineClamp: 3
     }
 
     const descriptionStylesExpanded = {
         fontSize: 14,
-        marginLeft: '4%',
+        marginLeft: '3%',
         width:'90%',
     }
 
@@ -115,21 +115,21 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation, s
 
     return (
         <Zoom in={zoom} timeout={zoom ? (indexForAnimation + 1) * 500 : 500}>  
-            <Accordion elevation={2} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
+            <Accordion sx={{borderLeft: '1px', borderRight: '1px', borderBottom: '1px', borderTop: expanded?.includes(task.taskEntityId) ? '1px' : '0px', borderStyle: 'solid', borderColor: 'grey.200'}} elevation={0} expanded={expanded?.includes(task.taskEntityId)}  onChange={handleChange(task.taskEntityId)} key={task.taskEntityId}>
                 <AccordionSummary sx={{'.MuiAccordionSummary-content': {margin: '10px 0px !important'}}}>
                     <Box flexGrow={1}>
-                        <Grid container columns={1}>
+                        <Grid container columns={6}>
                             <Grid item xs = {6}>
                                 <ViewTaskStateDisplay title={task.name} currentState={task.currentState}/>
                             </Grid>
                             <Grid item xs = {6}>
                                 <Grid container>
-                                    <Grid item xl={9} lg={9} md={10} sm={10} xs={10}>
+                                    <Grid item xs={9}>
                                         <Typography sx={expanded?.includes(task.taskEntityId) ? descriptionStylesExpanded : descriptionStylesNotExpanded} color="grey.500">
                                             {task.description}
                                         </Typography>   
                                     </Grid>    
-                                    <Grid item xl={3} lg={3} md={2} sm={2} xs={2} display={"flex"} justifyContent={'flex-end'} sx={{fontSize: '20px'}}>
+                                    <Grid item xs={3} display={"flex"} justifyContent={'flex-end'} sx={{fontSize: '20px'}}>
                                         <IconButton disabled={index == 0 || status.includes("pending")} sx={{height: 'fit-content',  margin: 'auto'}} onClick={(event) => {onClickDelete(event); changeOrderOfTask(task.taskEntityId, sprintId, task.order, previousIndex)}}>
                                             <KeyboardArrowUpIcon sx={{ fontSize: '20px'}} />
                                         </IconButton>
@@ -143,22 +143,21 @@ export default function ViewTaskCard({task, toggleEditTask, indexForAnimation, s
 
                     </Box>
                 </AccordionSummary>
-                <Divider />
                 <AccordionDetails sx={{alignItems: 'center'}}>
-                <ViewTaskMoreDetails focusedTask={task} />
-                <Grid container sx={{display: 'flex', width: 'auto'}}>
-                    <Grid item xs={6}>
-                        <Box sx={{flexGrow: 1, textAlign: 'left', marginRight: '5px', marginTop: '5px'}}>
-                            <ViewTaskStateToggleButton sprintId={sprintId} startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
-                        </Box>
+                    <ViewTaskMoreDetails focusedTask={task} />
+                    <Grid container sx={{display: 'flex', width: 'auto'}}>
+                        <Grid item xs={6}>
+                            <Box sx={{flexGrow: 1, textAlign: 'left', marginRight: '5px', marginTop: '5px'}}>
+                                <ViewTaskStateToggleButton sprintId={sprintId} startingState={task.currentState} task={task} handleChangeState={handleStateChange}/>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
+                                <ViewTaskActionButton task={task} toggleEditTask={toggleEditTask} setZoom={setZoom} setMoveSprint={setMoveSprint} />
+                                {moveSprint && <TaskChangeSprintCard setMoveSprint={setMoveSprint} task={task} oldSprintId={sprintId || ""} />}
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px'}}>
-                            <ViewTaskActionButton task={task} toggleEditTask={toggleEditTask} setZoom={setZoom} setMoveSprint={setMoveSprint} />
-                            {moveSprint && <TaskChangeSprintCard setMoveSprint={setMoveSprint} task={task} oldSprintId={sprintId || ""} />}
-                        </Box>
-                    </Grid>
-                </Grid>
                 </AccordionDetails>
             </Accordion>
         </Zoom>

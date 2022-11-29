@@ -48,8 +48,8 @@ export default function TodayWidgetTaskView({task, index, max, boardTitle, isLef
 
     const handleMoveTask = () => {
 
-        const boardId = boards.find(b => b.sprints.find(s => s.tasks.filter(t => t.taskEntityId == task.taskEntityId)) != undefined)?.boardEntityId;
-        const sprintId = boards.find(b => b.sprints.find(s => s.tasks.filter(t => t.taskEntityId == task.taskEntityId)) != undefined)?.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined)?.sprintEntityId;
+        var boardId= boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined) !== undefined)?.boardEntityId || "";
+        var sprintId = boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined) !== undefined)?.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined)?.sprintEntityId || ""; 
 
         if(userId == undefined || boardId == undefined || sprintId == undefined) return;
 

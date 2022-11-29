@@ -28,7 +28,7 @@ export default function ProgressWidgetCard({boards}: Props) {
     }
 
     return (
-        <Card elevation={3} sx={{height: '95%', width: '95%', overflowY: 'auto'}}>
+        <Card elevation={0} sx={{height: '95%', width: '95%', overflowY: 'auto', borderRadius: '25px', border: '1px solid', borderColor: 'grey.400', padding: '20px'}}>
             <>
                 <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>Board progress</Typography>
                 {boards.map((board, index) => (

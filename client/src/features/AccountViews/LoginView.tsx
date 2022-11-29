@@ -20,29 +20,39 @@ export default function LoginView() {
 
   // react hook form
   const {register, handleSubmit, formState: {isSubmitting, errors, isValid}} = useForm({
-      mode: 'all'
+      mode: 'onChange',
   });
 
   // submit the form to sign in
   async function submitForm(data: FieldValues) {
     await dispatch(signInUserAsync(data));
-    history.push('/sprint')     
+    history.push('/dashboard')     
   }
 
   return (
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container sx={{ height: '100vh'}} columns={12}>
         <Grid
           item
-          xs={false}
           sm={4}
           md={7}
+          lg={7}
+          xl={7}
           sx={{
-            backgroundColor: 'linear-gradient(352deg, rgba(7,20,22,1) 0%, rgba(13,37,41,1) 100%)',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            background: 'linear-gradient(132deg, rgba(233,252,255,1) 0%, rgba(255,255,255,1) 48%, rgba(244,232,255,1) 100%)',
           }}
-        />
+          display={{ xs: "none", sm: "block" }}
+        >
+          <Box textAlign={'center'} paddingTop={'350px'}>
+            <Typography fontSize={'50px'} variant='h1'>
+               Welcome back<Box component={'span'} sx={{color: 'secondary.light', fontSize: '40px', fontFamily: 'Open Sans'}}>.</Box>
+            </Typography>
+            <Typography fontSize={'20px'} variant='body1'>
+               Let's get back to work.
+            </Typography>
+          </Box>
+
+        </Grid>
+
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
@@ -109,9 +119,9 @@ export default function LoginView() {
                 </Grid>
                 */}
                 <Grid item>
-                  <Link to="/register">
+                  <Typography component={'a'} sx={{textDecoration: 'underline', ':hover': {cursor: 'pointer'}}} onClick={() => {history.push('/register')}}>
                     {"Don't have an account? Sign Up"}
-                  </Link>
+                  </Typography>
                 </Grid>
               </Grid>
             </Box>

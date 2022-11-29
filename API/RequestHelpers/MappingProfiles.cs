@@ -29,7 +29,6 @@ namespace API.RequestHelpers
             CreateMap<UpdateBoardDto, BoardEntity>();
             CreateMap<ActivityEventEntity, ActivityEventDto>();
             CreateMap<ActivityEventDto, ActivityEventEntity>();
-
             
         }
     }

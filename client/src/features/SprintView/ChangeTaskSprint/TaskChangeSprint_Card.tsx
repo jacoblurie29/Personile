@@ -46,10 +46,11 @@ export default function TaskChangeSprintCard({setMoveSprint, task, oldSprintId}:
                 <Card sx={{width: '50%', minWidth: '500px', maxWidth: '600px', margin: 'auto', textAlign: 'center'}}>
                     <>
                         <Typography variant="h2" paddingTop={'20px'}>
-                            Change Task Sprint
+                            {"Change Task Sprint"}
                         </Typography>
                         <Divider sx={{paddingTop: '10px'}} />
-                        {sprints?.map((sprint, index) => (
+                        <Box sx={{overflowY: 'auto', maxHeight: '400px'}}>
+                        {[...sprints || []]?.sort((a,b) => Date.parse(a.startDate) - Date.parse(b.startDate)).map((sprint, index) => (
                             <Fragment key={index}>
                                 <Grid container width={'100%'} columns={18}>
                                     <Grid item xs={6} padding={'0px 20px'}>
@@ -91,6 +92,7 @@ export default function TaskChangeSprintCard({setMoveSprint, task, oldSprintId}:
                                 <Divider sx={{paddingTop: '10px'}} />
                             </Fragment>
                         ))}
+                        </Box>
                         <Box sx={{flexGrow: 1, textAlign: 'right', marginRight: '5px', marginTop: '5px', padding: '10px'}}>
                             <LoadingButton key={"cancel"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => setMoveSprint(false)}><ArrowBackIcon sx={{color: 'background.paper'}} /></LoadingButton>
                             <LoadingButton disabled={currentSprintButton == oldSprintId} type="submit" key={"next"} variant='contained' onClick={() => changeTaskSprint(currentSprintButton)} sx={{borderRadius:"5px", background: currentSprintButton == oldSprintId ? 'grey.400' : 'rgba(58,203,152,1)'}}><CheckCircleIcon sx={{color: 'background.paper'}}/></LoadingButton>
