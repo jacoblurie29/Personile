@@ -104,9 +104,16 @@ export default function RegisterView() {
                 id="email"
                 label="Email Address"
                 autoComplete="email"
-                {...register('email', {required: 'Email is required!'})}
-                error={!!errors.username}
-                helperText={errors?.username?.message?.toString()}
+                {...register('email', {
+                  required: 'Email is required!',
+                  validate: (val: string) => {
+                    if(!(/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/.test(val))) {
+                      return "Invalid email address!"
+                    }
+                  }
+                })}
+                error={!!errors.email}
+                helperText={errors?.email?.message?.toString()}
               />
               <TextField
                 margin="normal"
@@ -115,7 +122,23 @@ export default function RegisterView() {
                 label="Password"
                 type="password"
                 id="password"
-                {...register('password', {required: 'Password is required!'})}
+                {...register('password', {
+                  required: 'Password is required!',
+                  validate: (val: string) => {
+                      if (val.length < 8) {
+                        return "Your password must be at least 8 characters"; 
+                      }
+                      if (val.search(/[a-z]/i) < 0) {
+                          return "Your password must contain at least six letters.";
+                      }
+                      if (val.search(/[0-9]/) < 0) {
+                          return "Your password must contain at least one digit."; 
+                      }
+                      if(val.search(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/) < 0) {
+                          return "Your password must contain at least one special character."; 
+                      }
+                    }
+                })}
                 error={!!errors.password}
                 helperText={errors?.password?.message?.toString()}
               />
