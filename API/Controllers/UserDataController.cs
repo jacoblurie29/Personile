@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace API.Controllers
 {
 
-
+    [Authorize]
     public class UserDataController : BaseApiController
     {
         private readonly PersonileContext _context;
@@ -672,6 +672,55 @@ namespace API.Controllers
 
 
         }
+
+        
+        [HttpPut("{userId}/boards/{boardId}/sprints/addSprints/{numSprints}")]
+        public async Task<ActionResult<SubTaskDto>> AddSprints(string userId, string boardId, string numSprints) {
+            var CurrentUser = await RetrieveUserEntity(userId);
+
+            if(CurrentUser == null) return NotFound();
+
+            var CurrentBoard = CurrentUser.Boards.Where(b => b.BoardEntityId == boardId).FirstOrDefault();
+
+            if(CurrentBoard == null) return NotFound();
+
+            var NewSprints = new List<SprintEntity>();
+
+            var lastSprint = CurrentBoard.Sprints[0];
+            CurrentBoard.Sprints.ForEach(s => {
+                    if(DateTime.ParseExact(s.EndDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture)
+                            > DateTime.ParseExact(lastSprint.EndDate,"ddd MMM dd yyyy", CultureInfo.InvariantCulture)) {
+                        lastSprint = s;
+                    }
+                }
+            );
+
+            var newStartDate = DateTime.ParseExact(lastSprint.EndDate,"ddd MMM dd yyyy", CultureInfo.InvariantCulture).AddDays(1);
+
+            for(int i = 0; i < Int32.Parse(numSprints); i++) {
+                var newSprint = new SprintEntity();
+                newSprint.StartDate = newStartDate.ToString("ddd MMM dd yyyy");
+                newSprint.EndDate = newStartDate.AddDays(CurrentBoard.SprintDaysLength - 1).ToString("ddd MMM dd yyyy");
+                newSprint.SprintEntityId = Guid.NewGuid().ToString();
+                newSprint.Tasks = new List<TaskEntity>();
+                NewSprints.Add(newSprint);
+                newStartDate = newStartDate.AddDays(CurrentBoard.SprintDaysLength);
+            }
+
+            NewSprints.ForEach(s => CurrentBoard.Sprints.Add(s));
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result) {
+                var logResult = await LogUserAction("Board \"" + CurrentBoard.Name + "\" updated with new sprints.", userId, CurrentBoard.BoardEntityId);
+                if (logResult) return Ok();
+                return BadRequest(new ProblemDetails{Title = "Problem logging user data"});
+            }
+
+            return BadRequest(new ProblemDetails { Title = "Problem adding sprints to board." });
+        }
+         
+
 
  
         private async Task<UserEntity> RetrieveUserEntity(string userEntityId) {

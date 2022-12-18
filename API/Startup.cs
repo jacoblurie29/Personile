@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using API.Data;
@@ -59,8 +60,31 @@ namespace API
                 });
 
             });
-            services.AddDbContext<PersonileContext>(opt => {
-                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+
+            string connString;
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") 
+                connString = Configuration.GetConnectionString("DefaultConnection");
+            else 
+            {
+                    // Use connection string provided at runtime by Flyiio.
+                    var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                    // Parse connection URL to connection string for Npgsql
+                    connUrl = connUrl.Replace("postgres://", string.Empty);
+                    var pgUserPass = connUrl.Split("@")[0];
+                    var pgHostPortDb = connUrl.Split("@")[1];
+                    var pgHostPort = pgHostPortDb.Split("/")[0];
+                    var pgDb = pgHostPortDb.Split("/")[1];
+                    var pgUser = pgUserPass.Split(":")[0];
+                    var pgPass = pgUserPass.Split(":")[1];
+                    var pgHost = pgHostPort.Split(":")[0];
+                    var pgPort = pgHostPort.Split(":")[1];
+
+                    connString = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+            }
+            services.AddDbContext<PersonileContext>(opt =>
+            {
+                opt.UseNpgsql(connString);
             });
             services.AddCors();
             services.AddIdentityCore<UserEntity>(opt => {
@@ -79,8 +103,6 @@ namespace API
                         .GetBytes(Configuration["JWTSettings:TokenKey"]))
                 };
             });
-
-
             services.AddAuthorization();
             services.AddScoped<TokenService>();
         }
@@ -97,9 +119,12 @@ namespace API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseCors(opt => {
                 opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
@@ -112,6 +137,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

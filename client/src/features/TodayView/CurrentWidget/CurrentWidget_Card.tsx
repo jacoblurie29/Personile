@@ -18,6 +18,7 @@ export default function CurrentWidgetCard({boards}: Props) {
                     <CurrentWidgetTaskView 
                         task={task}
                         index={index}
+                        key={index}
                         max={allInProgressTasks.length - 1}
                         boardTitle={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) !== undefined) !== undefined)?.name || ""}
                         boardId={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == task.taskEntityId) != undefined) !== undefined)?.boardEntityId || ""}

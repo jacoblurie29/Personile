@@ -41,7 +41,7 @@ export default function RecentActivityCard({boards}: Props)  {
                     <Box sx={{ overflowY: 'auto', maxHeight: '75%' }}>
                     {
                         [...recentActivity]?.sort((a,b) => convertDateAndTimeStringToSeconds(a.date, a.time) - convertDateAndTimeStringToSeconds(b.date, b.time)).reverse().map((event, index) => (
-                            <RecentWidgetActivityCard event={event} index={index} max={recentActivity.length - 1} />
+                            <RecentWidgetActivityCard event={event} index={index} key={index} max={recentActivity.length - 1} />
                         ))
                     }
                     </Box>

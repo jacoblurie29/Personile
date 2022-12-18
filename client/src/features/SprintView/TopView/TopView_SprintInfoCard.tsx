@@ -43,8 +43,14 @@ export default function TopViewSprintInfoCard() {
 
         /*
             This will be where we generate new sprints for the group. The default group will have 5 sprints. If you get to a sprint that doesn't have a 
-            future sprint that is 5 sprints away, we generate that in the background
+            future sprint that is 5 sprints away, we generate that in the background.
+
+
+            TODO
+            Parse through all the sprints and find the highest one. When the next sprint is that and the board has no end date, call the generate sprints
+            and set the status as loading. The new sprints will be sent over upon completion of the request and added to the board.
         */
+
 
         // undefined check
         if (newSprint !== undefined) {

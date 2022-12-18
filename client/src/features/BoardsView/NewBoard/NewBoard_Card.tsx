@@ -550,13 +550,13 @@ export default function NewBoardCard(props: Props) {
                         {props.editBoard == undefined ?
                           <>
                             <LoadingButton key={"cancel"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => props.setNewBoardState(false)}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
-                            <LoadingButton type="submit" key={"next"} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>NEXT</LoadingButton>
+                            <LoadingButton type="submit" key={"next"} variant='contained' sx={{color:"background.paper", borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>NEXT</LoadingButton>
                           </>
                         :
                           <>
                             <LoadingButton key={"cancel"} variant='contained' sx={{background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={() => props.setNewBoardState(false)}><ArrowBackIcon sx={{color: 'background.paper'}} /></LoadingButton>
                             <LoadingButton key={"delete"} variant='contained' sx={{background: 'linear-gradient(90deg, rgba(231,104,72,1) 0%, rgba(207,67,43,1) 100%)', borderRadius:"5px", mr:"10px"}} onClick={() => handleDeleteBoard(props.editBoard?.boardEntityId || "")}><DeleteIcon sx={{color: 'background.paper'}} /></LoadingButton>
-                            <LoadingButton type="submit" key={"next"} variant='contained' sx={{borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>UPDATE</LoadingButton>
+                            <LoadingButton type="submit" key={"next"} variant='contained' sx={{color:"background.paper", borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>UPDATE</LoadingButton>
                           </>
                         }
                     </Box>
@@ -697,7 +697,7 @@ export default function NewBoardCard(props: Props) {
                   <Grid container>
                       <Grid item xs={3}>
                         <Box sx={{flexGrow: 1, textAlign: 'left', marginRight: '5px', marginTop: '5px', padding: '10px'}}>
-                          <Button key={"back"} variant='contained' sx={{margin: 'auto', background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={() => handleGoBack()}>GO BACK</Button>
+                          <Button key={"back"} variant='contained' sx={{color:"background.paper", margin: 'auto', background: "linear-gradient(232deg, rgba(173,173,173,1) 0%, rgba(158,158,158,1) 100%)", borderRadius:"5px", mr:"10px"}} onClick={() => handleGoBack()}>GO BACK</Button>
                         </Box>
                       </Grid>
                       <Grid item xs={6}>
@@ -705,7 +705,7 @@ export default function NewBoardCard(props: Props) {
                       </Grid>
                       <Grid item xs={3}>
                         <Box sx={{flexGrow: 1, textAlign: 'right',  marginRight: '5px', marginTop: '5px', padding: '10px'}}>
-                          <LoadingButton type="submit" key={"submit"} variant='contained' sx={{margin: 'auto', borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>CREATE</LoadingButton>
+                          <LoadingButton type="submit" key={"submit"} variant='contained' sx={{color:"background.paper", margin: 'auto', borderRadius:"5px", background:'linear-gradient(90deg, rgba(58,203,152,1) 0%, rgba(30,177,121,1) 100%)'}} onClick={() => console.log(errors)}>CREATE</LoadingButton>
                         </Box>
                       </Grid>
                   </Grid>

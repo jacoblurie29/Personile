@@ -32,7 +32,7 @@ export default function ProgressWidgetCard({boards}: Props) {
             <>
                 <Typography variant="h2" sx={{margin: '10px 0px 5px 10px', color: 'grey.600'}}>Board progress</Typography>
                 {boards.map((board, index) => (
-                    <ProgressWidgetBoardView board={board} index={index} max={boards.length - 1} />
+                    <ProgressWidgetBoardView board={board} index={index} max={boards.length - 1} key={index} />
                 ))}
                 <Box sx={boxStyles}>
                     <Link variant="subtitle2" sx={linkStyles} onClick={() => {history.push('/boards')}}>Go to boards</Link>

@@ -38,6 +38,7 @@ export default function TodayWidgetCard({boards}: Props) {
                 <Box sx={{ overflowY: 'auto', maxHeight: '75%' }}>
                     {allFocusedTasks.map((task, index) => (
                     <TodayWidgetCardTaskView 
+                        key={index}
                         task={task}
                         index={index}
                         max={allFocusedTasks.length - 1}

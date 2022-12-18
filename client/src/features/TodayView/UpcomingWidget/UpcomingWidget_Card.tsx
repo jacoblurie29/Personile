@@ -1,3 +1,4 @@
+import { IndeterminateCheckBoxSharp } from "@mui/icons-material";
 import { Card, Typography } from "@mui/material";
 import { Board } from "app/models/board";
 import { Milestone } from "app/models/milestone";
@@ -70,6 +71,7 @@ export default function UpcomingWidgetCard({boards}: Props) {
                 <UpcomingWidgetTaskView 
                     task={object}
                     index={index}
+                    key={index}
                     max={allTasksAndMilestones().length - 1}
                     boardTitle={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) !== undefined) !== undefined)?.name || ""}
                     boardId={boards.find(b => b.sprints.find(s => s.tasks.find(t => t.taskEntityId == object.taskEntityId) !== undefined) !== undefined)?.boardEntityId || ""}
@@ -78,6 +80,7 @@ export default function UpcomingWidgetCard({boards}: Props) {
                 <UpcomingWidgetMilestoneView
                     milestone={object}
                     index={index}
+                    key={index}
                     max={allTasksAndMilestones().length - 1}
                     boardTitle={boards.find(b => b.milestones.find(m => m.milestoneEntityId == object.milestoneEntityId) !== undefined)?.name || ""}
                     boardId={boards.find(b => b.milestones.find(m => m.milestoneEntityId == object.milestoneEntityId) !== undefined)?.boardEntityId || ""}

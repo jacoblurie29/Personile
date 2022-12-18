@@ -185,7 +185,7 @@ function App() {
 
         <Switch>
             <Route exact path='/'>
-                {userData !== null ? <Redirect to="/home" /> : <Redirect to="/welcome" />} 
+                {userData !== null ? <Redirect to="/dashboard" /> : <Redirect to="/welcome" />} 
             </Route>
             <Route exact path='/welcome'>
                 <HomeView />
@@ -198,7 +198,7 @@ function App() {
             </Route>
             <Route path='/home'>
                 {userData == null && <Redirect to="/" />}
-                <DashboardNavigation component='home' />
+                <DashboardNavigation component='dashboard' />
             </Route>
             <Route path='/sprint'>
                 {userData == null && <Redirect to="/" />}

@@ -31,18 +31,20 @@ export default function NewBoardDatePicker(formProps: Props) {
         },
         color: 'primary.main',
         textArea: {color: 'grey.800'},
-        input: {color: 'grey.800'},
+        input: {color: 'grey.800', backgroundColor: 'background.paper'},
+        marginLeft: '10px',
         borderRadius: '5px',
-        backgroundColor: 'background.paper'
       };
 
-    // styles for disabled date picker
-    const disabledStlyes = {
-    color: 'grey.200',
-    textArea: {color: 'grey.200'},
-    input: {color: 'grey.200'},
-    borderRadius: '5px'
-    }
+      // styles when switch is disabled
+      const disabledStlyes = {
+        color: 'grey.200',
+        textArea: {color: 'grey.200'},
+        input: {color: 'grey.200'},
+        marginLeft: '10px',
+        borderRadius: '5px',
+        
+      }
     
     
     return (
@@ -51,7 +53,7 @@ export default function NewBoardDatePicker(formProps: Props) {
             disabled={formProps.disabled}
             minDate={Date.parse(new Date().toString())}
             openTo="year"    
-            value={formProps.value || new Date().toString()}
+            value={formProps.value || null}
             views={['year', 'month', 'day']}
             label="Year, month, and date"
             InputProps={{ sx: {
