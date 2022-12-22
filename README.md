@@ -5,4 +5,4 @@
 ## [LINK](https://personile.fly.dev)
 
 # App Images
-## [LINK](https://personile.fly.dev](https://github.com/jacoblurie29/Personile/wiki/App-Pictures)
+## [LINK](https://github.com/jacoblurie29/Personile/wiki/App-Pictures)
