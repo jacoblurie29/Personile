@@ -1,5 +1,5 @@
 export interface SubTask {
-    subTaskEntityId: string;
-    status: string;
-    details: string;
+  subTaskEntityId: string;
+  status: string;
+  details: string;
 }

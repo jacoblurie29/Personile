@@ -26,11 +26,13 @@ namespace API.Entities
         public List<MilestoneEntity> Milestones { get; set; }
 
 
-        public void AddSubtask(SubTaskEntity subTaskEntity) {
-            if (SubTasks.All(subTask => subTask.SubTaskEntityId != subTaskEntity.SubTaskEntityId)) {
+        public void AddSubtask(SubTaskEntity subTaskEntity)
+        {
+            if (SubTasks.All(subTask => subTask.SubTaskEntityId != subTaskEntity.SubTaskEntityId))
+            {
                 SubTasks.Add(subTaskEntity);
             }
         }
-        
+
     }
 }

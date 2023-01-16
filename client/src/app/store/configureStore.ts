@@ -8,11 +8,11 @@ import { userSlice } from "../state/userSlice";
 //}
 
 export const store = configureStore({
-    reducer: {
-        user: userSlice.reducer,
-        sprintView: sprintSlice.reducer
-    }
-})
+  reducer: {
+    user: userSlice.reducer,
+    sprintView: sprintSlice.reducer,
+  },
+});
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

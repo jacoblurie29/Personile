@@ -12,8 +12,10 @@ namespace API.Entities
         public BoardEntity BoardEntity { get; set; }
         public string BoardEntityId { get; set; }
 
-        public void AddTask(TaskEntity taskEntity) {
-            if (Tasks.All(task => task.TaskEntityId != taskEntity.TaskEntityId)) {
+        public void AddTask(TaskEntity taskEntity)
+        {
+            if (Tasks.All(task => task.TaskEntityId != taskEntity.TaskEntityId))
+            {
                 Tasks.Add(taskEntity);
             }
         }

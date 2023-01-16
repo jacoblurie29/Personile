@@ -12,11 +12,12 @@ namespace API.Data
 {
     public static class DbInitializer
     {
-        public static async Task Initialize(PersonileContext context, UserManager<UserEntity> userManager) {
+        public static async Task Initialize(PersonileContext context, UserManager<UserEntity> userManager)
+        {
 
-            
 
-            if(context.Users.Any()) return;
+
+            if (context.Users.Any()) return;
 
 
             var board = new List<BoardEntity> {
@@ -76,7 +77,7 @@ namespace API.Data
                         EndDate="Sat Aug 06 2022"
                     }
                 };
-                
+
 
             var tasksForSprint0 = new List<TaskEntity> {
                 new TaskEntity {
@@ -142,8 +143,8 @@ namespace API.Data
                     Milestones = new List<MilestoneEntity>()
                 }
         };
-        
-        var tasksForSprint1 = new List<TaskEntity> { 
+
+            var tasksForSprint1 = new List<TaskEntity> {
             new TaskEntity {
                     TaskEntityId = "TASK_ID_4",
                     Name = "Create app social media",
@@ -222,7 +223,7 @@ namespace API.Data
                 },
         };
 
-        var milestones = new List<MilestoneEntity> {
+            var milestones = new List<MilestoneEntity> {
             new MilestoneEntity {
                 MilestoneEntityId = Guid.NewGuid().ToString(),
                 Description = "Finish Controllers",
@@ -275,54 +276,57 @@ namespace API.Data
             }
         };
 
-        
-
-        sprints[0].Tasks = tasksForSprint0;
-        sprints[1].Tasks = tasksForSprint1;
-
-        tasksForSprint0[0].Milestones.Add(milestones[0]);
-        tasksForSprint0[0].Milestones.Add(milestones[1]);
-        tasksForSprint0[1].Milestones.Add(milestones[2]);
-        tasksForSprint0[2].Milestones.Add(milestones[0]);
-        tasksForSprint0[2].Milestones.Add(milestones[1]);
-        tasksForSprint0[2].Milestones.Add(milestones[1]);
-
-        board[0].Sprints.Add(sprints[0]);
-        board[0].Sprints.Add(sprints[1]);
-
-        board[0].Goals.Add(goals[0]);
-        board[0].Goals.Add(goals[1]);
-        board[0].Goals.Add(goals[2]);
-
-        board[0].Milestones.Add(milestones[0]);
-        board[0].Milestones.Add(milestones[1]);
-        board[0].Milestones.Add(milestones[2]);
 
 
-        if (!userManager.Users.Any()) {
-               var userMember = new UserEntity {
+            sprints[0].Tasks = tasksForSprint0;
+            sprints[1].Tasks = tasksForSprint1;
+
+            tasksForSprint0[0].Milestones.Add(milestones[0]);
+            tasksForSprint0[0].Milestones.Add(milestones[1]);
+            tasksForSprint0[1].Milestones.Add(milestones[2]);
+            tasksForSprint0[2].Milestones.Add(milestones[0]);
+            tasksForSprint0[2].Milestones.Add(milestones[1]);
+            tasksForSprint0[2].Milestones.Add(milestones[1]);
+
+            board[0].Sprints.Add(sprints[0]);
+            board[0].Sprints.Add(sprints[1]);
+
+            board[0].Goals.Add(goals[0]);
+            board[0].Goals.Add(goals[1]);
+            board[0].Goals.Add(goals[2]);
+
+            board[0].Milestones.Add(milestones[0]);
+            board[0].Milestones.Add(milestones[1]);
+            board[0].Milestones.Add(milestones[2]);
+
+
+            if (!userManager.Users.Any())
+            {
+                var userMember = new UserEntity
+                {
                     UserName = "memberuser@test.com",
                     FirstName = "Member",
                     LastName = "User",
                     Email = "memberuser@test.com",
                     Boards = board
                 };
-                var userAdmin = new UserEntity {
+                var userAdmin = new UserEntity
+                {
                     UserName = "adminuser@test.com",
                     FirstName = "Admin",
                     LastName = "User",
                     Email = "adminuser@test.com",
-                    Boards = {}
+                    Boards = { }
                 };
 
                 await userManager.CreateAsync(userMember, "Pa$$w0rd");
                 await userManager.AddToRoleAsync(userMember, "Member");
 
                 await userManager.CreateAsync(userAdmin, "Pa$$w0rd");
-                await userManager.AddToRolesAsync(userAdmin, new[] {"Member","Admin"});
+                await userManager.AddToRolesAsync(userAdmin, new[] { "Member", "Admin" });
             }
 
-        context.SaveChanges();
+            context.SaveChanges();
         }
     }
 }

@@ -123,7 +123,8 @@ export default function AboutView() {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="h5" sx={{ textAlign: "left" }}>
-                Keep track of your work on multiple projects.<br/> 
+                Keep track of your work on multiple projects.
+                <br />
               </Typography>
             </Grid>
           </Grid>
@@ -189,19 +190,20 @@ export default function AboutView() {
         >
           <Grid container>
             <Grid item xs={12}>
-            <Typography variant="h1" sx={{ textAlign: "right" }}>
-            Manage all your projects in one place
-            <Box
-              component="span"
-              sx={{ color: "secondary.light", fontFamily: "Open Sans" }}
-            >
-              .
-            </Box>
-          </Typography>
+              <Typography variant="h1" sx={{ textAlign: "right" }}>
+                Manage all your projects in one place
+                <Box
+                  component="span"
+                  sx={{ color: "secondary.light", fontFamily: "Open Sans" }}
+                >
+                  .
+                </Box>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography variant="h5" sx={{ textAlign: "right" }}>
-                Become a pro at managing every project.<br/> 
+              <Typography variant="h5" sx={{ textAlign: "right" }}>
+                Become a pro at managing every project.
+                <br />
               </Typography>
             </Grid>
           </Grid>

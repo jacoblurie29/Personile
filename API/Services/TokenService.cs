@@ -20,18 +20,20 @@ namespace API.Services
         {
             _userManager = userManager;
             _config = config;
-            
+
         }
 
-        public async Task<string> GenerateToken(UserEntity userEntity) {
-            
+        public async Task<string> GenerateToken(UserEntity userEntity)
+        {
+
             var claims = new List<Claim> {
                 new Claim(ClaimTypes.Email, userEntity.Email),
                 new Claim(ClaimTypes.Name, userEntity.UserName)
             };
 
             var roles = await _userManager.GetRolesAsync(userEntity);
-            foreach (var role in roles) {
+            foreach (var role in roles)
+            {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 

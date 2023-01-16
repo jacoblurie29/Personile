@@ -9,27 +9,29 @@ namespace API.Data
 {
     public class AccountInitializer
     {
-        public BoardEntity generateInitialUserBoard(string userId, string userName) {
+        public BoardEntity generateInitialUserBoard(string userId, string userName)
+        {
 
 
-            BoardEntity defaultBoard = new BoardEntity{
-                    BoardEntityId = Guid.NewGuid().ToString(),
-                    Name = "Main board",
-                    Description = "Your main board with all of your tasks!",
-                    StartDate = DateTime.Today.ToString("ddd MMM dd yyyy"),
-                    EndDate = DateTime.Today.AddDays(30).ToString("ddd MMM dd yyyy"),
-                    SprintDaysLength = 14,
-                    HandleOverflow = "start",
-                    Sprints= new List<SprintEntity> {},
-                    Goals= new List<GoalEntity> {
+            BoardEntity defaultBoard = new BoardEntity
+            {
+                BoardEntityId = Guid.NewGuid().ToString(),
+                Name = "Main board",
+                Description = "Your main board with all of your tasks!",
+                StartDate = DateTime.Today.ToString("ddd MMM dd yyyy"),
+                EndDate = DateTime.Today.AddDays(30).ToString("ddd MMM dd yyyy"),
+                SprintDaysLength = 14,
+                HandleOverflow = "start",
+                Sprints = new List<SprintEntity> { },
+                Goals = new List<GoalEntity> {
                         new GoalEntity {
                             GoalEntityId = Guid.NewGuid().ToString(),
                             Details = "Define your goals!",
                             Status = "Incomplete"
                         }
                     },
-                    Milestones = new List<MilestoneEntity> {},
-                    ActivityEvents = new List<ActivityEventEntity> {
+                Milestones = new List<MilestoneEntity> { },
+                ActivityEvents = new List<ActivityEventEntity> {
                         new ActivityEventEntity {
                             ActivityEventEntityId = Guid.NewGuid().ToString(),
                             Message = "New account created",
@@ -44,13 +46,15 @@ namespace API.Data
             return defaultBoard;
         }
 
-        public TaskEntity generateInitialUserTask() {
+        public TaskEntity generateInitialUserTask()
+        {
 
-            return new TaskEntity {
+            return new TaskEntity
+            {
                 TaskEntityId = Guid.NewGuid().ToString(),
                 Name = "Create tasks!",
                 Description = "Track your work with tasks in each sprint.",
-                Links="https://www.google.com/",
+                Links = "https://www.google.com/",
                 DateCreated = DateTime.Today.ToString("ddd MMM dd yyyy"),
                 DateFinished = "",
                 DueDate = "",
@@ -66,9 +70,11 @@ namespace API.Data
 
         }
 
-        public MilestoneEntity generateInitialUserMilestone(string desc, int addDays) {
+        public MilestoneEntity generateInitialUserMilestone(string desc, int addDays)
+        {
 
-            return new MilestoneEntity {
+            return new MilestoneEntity
+            {
                 MilestoneEntityId = Guid.NewGuid().ToString(),
                 Description = desc,
                 Status = "Incomplete",
@@ -78,7 +84,7 @@ namespace API.Data
                 CompletedDate = "",
                 Tasks = new List<TaskEntity>()
             };
-                    
+
         }
     }
 }

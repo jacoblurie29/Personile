@@ -37,7 +37,8 @@ namespace API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
                     Description = "Jwt auth header",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
@@ -62,47 +63,50 @@ namespace API
             });
 
             string connString;
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") 
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
                 connString = Configuration.GetConnectionString("DefaultConnection");
-            else 
+            else
             {
-                    // Use connection string provided at runtime by Flyiio.
-                    var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                // Use connection string provided at runtime by Flyiio.
+                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-                    // Parse connection URL to connection string for Npgsql
-                    connUrl = connUrl.Replace("postgres://", string.Empty);
-                    var pgUserPass = connUrl.Split("@")[0];
-                    var pgHostPortDb = connUrl.Split("@")[1];
-                    var pgHostPort = pgHostPortDb.Split("/")[0];
-                    var pgDb = pgHostPortDb.Split("/")[1];
-                    var pgUser = pgUserPass.Split(":")[0];
-                    var pgPass = pgUserPass.Split(":")[1];
-                    var pgHost = pgHostPort.Split(":")[0];
-                    var pgPort = pgHostPort.Split(":")[1];
+                // Parse connection URL to connection string for Npgsql
+                connUrl = connUrl.Replace("postgres://", string.Empty);
+                var pgUserPass = connUrl.Split("@")[0];
+                var pgHostPortDb = connUrl.Split("@")[1];
+                var pgHostPort = pgHostPortDb.Split("/")[0];
+                var pgDb = pgHostPortDb.Split("/")[1];
+                var pgUser = pgUserPass.Split(":")[0];
+                var pgPass = pgUserPass.Split(":")[1];
+                var pgHost = pgHostPort.Split(":")[0];
+                var pgPort = pgHostPort.Split(":")[1];
 
-                    connString = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+                connString = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
             }
             services.AddDbContext<PersonileContext>(opt =>
             {
                 opt.UseNpgsql(connString);
             });
             services.AddCors();
-            services.AddIdentityCore<UserEntity>(opt => {
+            services.AddIdentityCore<UserEntity>(opt =>
+            {
                 opt.User.RequireUniqueEmail = true;
             })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<PersonileContext>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt => {
-                opt.TokenValidationParameters = new TokenValidationParameters {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                        .GetBytes(Configuration["JWTSettings:TokenKey"]))
-                };
-            });
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                            .GetBytes(Configuration["JWTSettings:TokenKey"]))
+                    };
+                });
             services.AddAuthorization();
             services.AddScoped<TokenService>();
         }
@@ -126,7 +130,8 @@ namespace API
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            app.UseCors(opt => {
+            app.UseCors(opt =>
+            {
                 opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
             });
 

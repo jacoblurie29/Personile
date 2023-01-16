@@ -12,7 +12,7 @@ namespace API.Data
         public PersonileContext(DbContextOptions options) : base(options)
         {
         }
-        
+
         public DbSet<BoardEntity> Boards { get; set; }
         public DbSet<GoalEntity> Goals { get; set; }
         public DbSet<MilestoneEntity> Milestones { get; set; }
@@ -86,12 +86,12 @@ namespace API.Data
                     .WithMany()
                     .HasForeignKey("TaskEntityId")
             ).ToTable("TaskMilestones")
-             .HasKey(tm => new { tm.TaskEntityId, tm.MilestoneEntityId});
+             .HasKey(tm => new { tm.TaskEntityId, tm.MilestoneEntityId });
 
             modelBuilder.Entity<IdentityRole>()
                 .HasData(
-                    new IdentityRole{Name= "Member", NormalizedName= "MEMBER"},
-                    new IdentityRole{Name= "Admin", NormalizedName= "ADMIN"}
+                    new IdentityRole { Name = "Member", NormalizedName = "MEMBER" },
+                    new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" }
                 );
 
         }

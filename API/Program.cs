@@ -20,10 +20,13 @@ namespace API
             var context = scope.ServiceProvider.GetRequiredService<PersonileContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-            try {
+            try
+            {
                 await context.Database.MigrateAsync();
                 await DbInitializer.Initialize(context, userManager);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 logger.LogError(ex, "ERROR: Problem migrating data");
             }
 
