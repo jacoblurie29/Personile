@@ -12,6 +12,7 @@ import LoginView from 'features/AccountViews/LoginView';
 import RegisterView from 'features/AccountViews/RegisterView';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import NotFound from 'app/errors/NotFound';
+import AboutView from 'features/AboutView/AboutView';
 
 
 /*
@@ -188,13 +189,16 @@ function App() {
                 {userData !== null ? <Redirect to="/dashboard" /> : <Redirect to="/welcome" />} 
             </Route>
             <Route exact path='/welcome'>
-                <HomeView />
+                <HomeView page={'home'} />
             </Route>
             <Route path='/login'>
                 <LoginView />
             </Route>
             <Route path='/register'>
                 <RegisterView />
+            </Route>
+            <Route path='/about'>
+                <HomeView page={'about'} />
             </Route>
             <Route path='/home'>
                 {userData == null && <Redirect to="/" />}
